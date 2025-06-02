@@ -25,4 +25,9 @@ public class UploadServiceImpl implements UploadService {
     public List<Upload> getAll() {
         return List.of();
     }
+
+    @Override
+    public void deleteAll() {
+        uploadRepo.deleteAll();
+    }
 }

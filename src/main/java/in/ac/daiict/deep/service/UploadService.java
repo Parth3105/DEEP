@@ -8,4 +8,5 @@ import java.util.Map;
 public interface UploadService {
     public void insertAll(Map<String,Upload> uploads);
     public List<Upload> getAll();
+    public void deleteAll();
 }

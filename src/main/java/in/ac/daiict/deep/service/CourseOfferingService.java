@@ -5,6 +5,7 @@ import in.ac.daiict.deep.dto.CourseOfferingDto;
 import java.util.List;
 
 public interface CourseOfferingService {
-    public void insertAll(List<CourseOfferingDto> courseOfferDtos);
+    public void insertAll(byte[] courseOfferData);
     public List<CourseOfferingDto> getAll();
+    public void deleteAll();
 }
