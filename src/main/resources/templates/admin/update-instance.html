@@ -147,7 +147,7 @@
                     <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
                     <h3 class="text-3xl font-semibold text-gray-800 mb-6">Student Data</h3>
                     
-                    <form th:action="@{/upload}" method="post" enctype="multipart/form-data" class="space-y-4">                        
+                    <form th:action="@{/upload/{type}(type='students.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
                         <!-- Custom File Input -->
                         <div class="relative">
                             <label
@@ -184,7 +184,7 @@
                     <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
                     <h3 class="text-3xl font-semibold text-gray-800 mb-6">Institute Requirements</h3>
                     
-                    <form th:action="@{/upload}" method="post" enctype="multipart/form-data" class="space-y-4">                        
+                    <form th:action="@{/upload/{type}(type='instituteRequirements.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
                         <!-- Custom File Input -->
                         <div class="relative">
                             <label
@@ -221,7 +221,7 @@
                     <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
                     <h3 class="text-3xl font-semibold text-gray-800 mb-6">Course Data</h3>
                     
-                    <form th:action="@{/upload}" method="post" enctype="multipart/form-data" class="space-y-4">                        
+                    <form th:action="@{/upload/{type}(type='courses.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
                         <!-- Custom File Input -->
                         <div class="relative">
                             <label
@@ -258,7 +258,7 @@
                     <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
                     <h3 class="text-3xl font-semibold text-gray-800 mb-6">Course Offerings</h3>
 
-                    <form th:action="@{/upload}" method="post" enctype="multipart/form-data" class="space-y-4">                        
+                    <form th:action="@{/upload/{type}(type='courseOfferings.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
                         <!-- Custom File Input -->
                         <div class="relative">
                             <label
