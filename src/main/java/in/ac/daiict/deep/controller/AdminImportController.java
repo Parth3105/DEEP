@@ -6,6 +6,7 @@ import in.ac.daiict.deep.service.UploadService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,11 @@ public class AdminImportController {
     private void initiateStorage(){
         uploads=new HashMap<>();
     }
+    @GetMapping("/")
+    public String showUploadPage(){
+        return "admin/update-instance";
+    }
+
     @PostMapping("/upload/{type}")
     public void loadFile(@RequestParam("file") MultipartFile file, @PathVariable("type") String name, @Value("${upload.file}") String fileNames){
         if(uploads==null) initiateStorage();

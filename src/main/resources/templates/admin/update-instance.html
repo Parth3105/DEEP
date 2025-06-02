@@ -33,7 +33,7 @@
             <div class="flex justify-between items-center">
                 <!-- Logo -->
                 <div class="flex items-center gap-3">
-                <img src="../../../static/admin/images/DEEP Logo.png" alt="DEEP Logo" class="w-10 h-10 md:w-14 md:h-14">
+                <img src="/static/admin/images/DEEP Logo.png" alt="DEEP Logo" class="w-10 h-10 md:w-14 md:h-14">
                 <div>
                     <h1 class="text-3xl lg:text-3xl font-bold text-gray-800">DEEP</h1>
                     <p class="text-[0.6rem] sm:text-xs text-gray-500">DAIICT Elective Enrollment Portal</p>
@@ -80,7 +80,7 @@
             <!-- Submission Status -->
             <section class="bg-[#B8D7FF] rounded-2xl p-6 lg:p-8 mb-8 lg:mb-10" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
                 <div class="flex items-center gap-3 mb-6 lg:mb-8">
-                    <img src="../../../static/admin/images/external-link.png" alt="Link Img" class="w-5 h-5 lg:w-7 lg:h-7">
+                    <img src="/static/admin/images/external-link.png" alt="Link Img" class="w-5 h-5 lg:w-7 lg:h-7">
                     <h2 class="text-2xl lg:text-3xl font-bold text-[#1E3C72]">Submission Status</h2>
                 </div>
 
@@ -89,7 +89,7 @@
                     <!-- Semester 5 -->
                     <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
                         <div class="w-25 h-25 lg:w-30 lg:h-30 bg-[#3DE382] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
-                            <img src="../../../static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
+                            <img src="/static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
                         </div>
                         <div>
                             <div class="font-bold text-gray-800 text-xl lg:text-3xl">Semester 5</div>
@@ -102,7 +102,7 @@
                     <!-- Semester 6 -->
                     <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
                         <div class="w-25 h-25 lg:w-30 lg:h-30 bg-[#EEF12B] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
-                            <img src="../../../static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
+                            <img src="/static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
                         </div>
                         <div>
                             <div class="font-bold text-gray-800 text-xl lg:text-3xl">Semester 6</div>
@@ -115,7 +115,7 @@
                     <!-- Semester 7 -->
                     <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
                         <div class="w-25 h-25 lg:w-30 lg:h-30 bg-[#D9D9D9] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
-                            <img src="../../../static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
+                            <img src="/static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
                         </div>
                         <div>
                             <div class="font-bold text-gray-800 text-xl lg:text-3xl">Semester 7</div>
@@ -128,7 +128,7 @@
                     <!-- Semester 8 -->
                     <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
                         <div class="w-25 h-25 lg:w-30 lg:h-30 bg-[#D9D9D9] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
-                            <img src="../../../static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
+                            <img src="/static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
                         </div>
                         <div>
                             <div class="font-bold text-gray-800 text-xl lg:text-3xl">Semester 8</div>
@@ -144,7 +144,7 @@
             <div class="bg-[#96D6FF] rounded-3xl grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 mb-8 lg:mb-10 p-8 lg:px-[6rem] lg:py-[3rem]" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
                 <!-- Student Data -->
                 <div class="border-2 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
-                    <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
+                    <img src="/static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
                     <h3 class="text-3xl font-semibold text-gray-800 mb-6">Student Data</h3>
                     
                     <form th:action="@{/upload/{type}(type='students.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
@@ -154,7 +154,7 @@
                             for="fileInput-student"
                             class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center cursor-pointer hover:bg-blue-200"
                             >
-                            <span id="fileLabel-student"><img src="../../../static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
+                            <span id="fileLabel-student"><img src="/static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
                             </label>
                             <input
                             id="fileInput-student"
@@ -181,7 +181,7 @@
 
                 <!-- Institute Requirements -->
                 <div class="border-2 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
-                    <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
+                    <img src="/static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
                     <h3 class="text-3xl font-semibold text-gray-800 mb-6">Institute Requirements</h3>
                     
                     <form th:action="@{/upload/{type}(type='instituteRequirements.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
@@ -191,7 +191,7 @@
                             for="fileInput-Institute"
                             class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center cursor-pointer hover:bg-blue-200"
                             >
-                            <span id="fileLabel-Institute"><img src="../../../static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
+                            <span id="fileLabel-Institute"><img src="/static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
                             </label>
                             <input
                             id="fileInput-Institute"
@@ -218,7 +218,7 @@
 
                 <!-- Course Data -->
                 <div class="border-2 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
-                    <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
+                    <img src="/static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
                     <h3 class="text-3xl font-semibold text-gray-800 mb-6">Course Data</h3>
                     
                     <form th:action="@{/upload/{type}(type='courses.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
@@ -228,7 +228,7 @@
                             for="fileInput-Course"
                             class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center cursor-pointer hover:bg-blue-200"
                             >
-                            <span id="fileLabel-Course"><img src="../../../static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
+                            <span id="fileLabel-Course"><img src="/static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
                             </label>
                             <input
                             id="fileInput-Course"
@@ -255,7 +255,7 @@
 
                 <!-- Course Offerings -->
                 <div class="border-2 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
-                    <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
+                    <img src="/static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
                     <h3 class="text-3xl font-semibold text-gray-800 mb-6">Course Offerings</h3>
 
                     <form th:action="@{/upload/{type}(type='courseOfferings.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
@@ -265,7 +265,7 @@
                             for="fileInput-offerings"
                             class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center cursor-pointer hover:bg-blue-200"
                             >
-                            <span id="fileLabel-offerings"><img src="../../../static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
+                            <span id="fileLabel-offerings"><img src="/static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
                             </label>
                             <input
                             id="fileInput-offerings"
@@ -302,6 +302,6 @@
         </main>
     </div>
 
-    <script src="../../../static/admin/js/update-instance.js"></script>
+    <script src="/static/admin/js/update-instance.js"></script>
 </body>
 </html>
