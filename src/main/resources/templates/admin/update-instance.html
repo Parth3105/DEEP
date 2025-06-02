@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEEP - Create Allocation Instance</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+    <div class="mx-auto">
+        <!-- Header -->
+        <header class="bg-[#96D6FF] px-4 md:px-8 py-2">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                <img src="../../../static/admin/images/DEEP Logo.png" alt="DEEP Logo" class="w-10 h-10 md:w-14 md:h-14">
+                <div>
+                    <h1 class="text-3xl lg:text-3xl font-bold text-gray-800">DEEP</h1>
+                    <p class="text-[0.6rem] sm:text-xs text-gray-500">DAIICT Elective Enrollment Portal</p>
+                </div>
+                </div>
+
+                <!-- Mobile Menu Icon -->
+                <div class="lg:hidden">
+                <button id="menuToggle" class="text-[#080049] text-3xl focus:outline-none">
+                    ☰
+                </button>
+                </div>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden lg:flex items-center gap-2 md:gap-4 lg:gap-8">
+                <a href="#" class="text-sm sm:text-base md:text-lg text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Dashboard</a>
+                <a href="#" class="text-sm sm:text-base md:text-lg text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Students Preferences</a>
+                <a href="#" class="text-sm sm:text-base md:text-lg text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Allocation Result</a>
+                <a href="#" class="text-sm sm:text-base md:text-lg text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Help | FAQs</a>
+                <a href="#" class="text-sm sm:text-base md:text-lg bg-[#3F0F83] text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition duration-300 transform hover:scale-105 hover:shadow-lg">Logout</a>
+                </nav>
+            </div>
+
+            <!-- Mobile Nav (Dropdown) -->
+            <div id="menu" class="lg:hidden hidden absolute right-8 top-15 mt-2 bg-white rounded-lg shadow-lg p-4 w-56 z-50 animate-fade-in">
+            <a href="#" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Dashboard</a>
+            <a href="#" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Students Preferences</a>
+            <a href="#" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Allocation Result</a>
+            <a href="#" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Help | FAQs</a>
+            <a href="#" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Logout</a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="backdrop-blur-lg rounded-3xl p-6 lg:p-10">
+            <div class="bg-white rounded-3xl py-4 px-8 md:px-12 mb-8 lg:mb-10" 
+                style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
+                <h1 class="text-2xl lg:text-4xl font-bold text-[#1E3C72]">
+                    Configure Allocation Instance
+                </h1>
+            </div>
+
+
+            <!-- Submission Status -->
+            <section class="bg-[#B8D7FF] rounded-2xl p-6 lg:p-8 mb-8 lg:mb-10" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
+                <div class="flex items-center gap-3 mb-6 lg:mb-8">
+                    <img src="../../../static/admin/images/external-link.png" alt="Link Img" class="w-5 h-5 lg:w-7 lg:h-7">
+                    <h2 class="text-2xl lg:text-3xl font-bold text-[#1E3C72]">Submission Status</h2>
+                </div>
+
+                <!-- Semesters Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-y-8 lg:gap-y-6 gap-x-4 lg:gap-x-6 mb-6">
+                    <!-- Semester 5 -->
+                    <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
+                        <div class="w-25 h-25 lg:w-30 lg:h-30 bg-[#3DE382] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
+                            <img src="../../../static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-800 text-xl lg:text-3xl">Semester 5</div>
+                            <div class="text-sm lg:text-lg mb-4 lg:mb-8">Submitted</div>
+                            <div class="text-xs lg:text-sm font-semibold text-gray-800">Available Students Data</div>
+                            <div class="text-3xl lg:text-5xl font-bold text-gray-800">120</div>
+                        </div>
+                    </div>
+
+                    <!-- Semester 6 -->
+                    <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
+                        <div class="w-25 h-25 lg:w-30 lg:h-30 bg-[#EEF12B] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
+                            <img src="../../../static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-800 text-xl lg:text-3xl">Semester 6</div>
+                            <div class="text-sm lg:text-lg mb-4 lg:mb-8">Partially Submitted</div>
+                            <div class="text-xs lg:text-sm font-semibold text-gray-800">Available Students Data</div>
+                            <div class="text-3xl lg:text-5xl font-bold text-gray-800">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Semester 7 -->
+                    <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
+                        <div class="w-25 h-25 lg:w-30 lg:h-30 bg-[#D9D9D9] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
+                            <img src="../../../static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-800 text-xl lg:text-3xl">Semester 7</div>
+                            <div class="text-sm lg:text-lg mb-4 lg:mb-8">Pending</div>
+                            <div class="text-xs lg:text-sm font-semibold text-gray-800">Available Students Data</div>
+                            <div class="text-3xl lg:text-5xl font-bold text-gray-800">100</div>
+                        </div>
+                    </div>
+
+                    <!-- Semester 8 -->
+                    <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
+                        <div class="w-25 h-25 lg:w-30 lg:h-30 bg-[#D9D9D9] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
+                            <img src="../../../static/admin/images/open-book.png" alt="Checkmark" class="w-12 h-12 lg:w-15 lg:h-15">
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-800 text-xl lg:text-3xl">Semester 8</div>
+                            <div class="text-sm lg:text-lg mb-4 lg:mb-8">Pending</div>
+                            <div class="text-xs lg:text-sm font-semibold text-gray-800">Available Students Data</div>
+                            <div class="text-3xl lg:text-5xl font-bold text-gray-800">0</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upload Sections -->
+            <div class="bg-[#96D6FF] rounded-3xl grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 mb-8 lg:mb-10 p-8 lg:px-[6rem] lg:py-[3rem]" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
+                <!-- Student Data -->
+                <div class="border-2 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
+                    <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
+                    <h3 class="text-3xl font-semibold text-gray-800 mb-6">Student Data</h3>
+                    
+                    <form th:action="@{/upload/{type}(type='students.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
+                        <!-- Custom File Input -->
+                        <div class="relative">
+                            <label
+                            for="fileInput-student"
+                            class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center cursor-pointer hover:bg-blue-200"
+                            >
+                            <span id="fileLabel-student"><img src="../../../static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
+                            </label>
+                            <input
+                            id="fileInput-student"
+                            type="file"
+                            name="file"
+                            accept=".xlsx"
+                            required
+                            class="hidden"
+                            onchange="document.getElementById('fileLabel-student').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                            />
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button
+                            type="submit"
+                            class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+                        >
+                            Upload .xlsx File
+                        </button>
+                        </form>
+
+                    <p th:if="${message}" th:text="${message}" class="mt-4 text-center text-blue-600 font-medium"></p>
+                </div>
+
+                <!-- Institute Requirements -->
+                <div class="border-2 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
+                    <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
+                    <h3 class="text-3xl font-semibold text-gray-800 mb-6">Institute Requirements</h3>
+                    
+                    <form th:action="@{/upload/{type}(type='instituteRequirements.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
+                        <!-- Custom File Input -->
+                        <div class="relative">
+                            <label
+                            for="fileInput-Institute"
+                            class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center cursor-pointer hover:bg-blue-200"
+                            >
+                            <span id="fileLabel-Institute"><img src="../../../static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
+                            </label>
+                            <input
+                            id="fileInput-Institute"
+                            type="file"
+                            name="file"
+                            accept=".xlsx"
+                            required
+                            class="hidden"
+                            onchange="document.getElementById('fileLabel-Institute').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                            />
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button
+                            type="submit"
+                            class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+                        >
+                            Upload .xlsx File
+                        </button>
+                        </form>
+
+                    <p th:if="${message}" th:text="${message}" class="mt-4 text-center text-blue-600 font-medium"></p>
+                </div>
+
+                <!-- Course Data -->
+                <div class="border-2 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
+                    <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
+                    <h3 class="text-3xl font-semibold text-gray-800 mb-6">Course Data</h3>
+                    
+                    <form th:action="@{/upload/{type}(type='courses.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
+                        <!-- Custom File Input -->
+                        <div class="relative">
+                            <label
+                            for="fileInput-Course"
+                            class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center cursor-pointer hover:bg-blue-200"
+                            >
+                            <span id="fileLabel-Course"><img src="../../../static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
+                            </label>
+                            <input
+                            id="fileInput-Course"
+                            type="file"
+                            name="file"
+                            accept=".xlsx,.xls"
+                            required
+                            class="hidden"
+                            onchange="document.getElementById('fileLabel-Course').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                            />
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button
+                            type="submit"
+                            class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+                        >
+                            Upload .xlsx File
+                        </button>
+                        </form>
+
+                    <p th:if="${message}" th:text="${message}" class="mt-4 text-center text-blue-600 font-medium"></p>
+                </div>
+
+                <!-- Course Offerings -->
+                <div class="border-2 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
+                    <img src="../../../static/admin/images/uploading.png" alt="Student Icon" class="w-13 h-13 mx-auto mb-6">
+                    <h3 class="text-3xl font-semibold text-gray-800 mb-6">Course Offerings</h3>
+
+                    <form th:action="@{/upload/{type}(type='courseOfferings.xlsx')}" method="post" enctype="multipart/form-data" class="space-y-4">
+                        <!-- Custom File Input -->
+                        <div class="relative">
+                            <label
+                            for="fileInput-offerings"
+                            class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center cursor-pointer hover:bg-blue-200"
+                            >
+                            <span id="fileLabel-offerings"><img src="../../../static/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-8 h-8 mr-2"> Max upload size: 10MB</span>
+                            </label>
+                            <input
+                            id="fileInput-offerings"
+                            type="file"
+                            name="file"
+                            accept=".xlsx,.xls"
+                            required
+                            class="hidden"
+                            onchange="document.getElementById('fileLabel-offerings').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                            />
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button
+                            type="submit"
+                            class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+                        >
+                            Upload .xlsx File
+                        </button>
+                        </form>
+
+                    <p th:if="${message}" th:text="${message}" class="mt-4 text-center text-blue-600 font-medium"></p>
+                </div>
+            </div>
+
+            <!-- Create Instance Button -->
+            <form th:action="@{/submit-data}" method="post" class="text-center mt-6">
+                <button id="create-instance"
+                    class="text-white px-12 py-4 rounded-2xl text-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    style="background: linear-gradient(to right, #27AE60, #2ECC71); box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
+                    Submit
+                </button>
+            </form>
+        </main>
+    </div>
+
+    <script src="../../../static/admin/js/update-instance.js"></script>
+</body>
+</html>
