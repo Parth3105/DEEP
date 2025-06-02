@@ -5,52 +5,77 @@ toggle.addEventListener('click', () => {
   menu.classList.toggle('hidden');
 });
 
-// File upload functionality
-// document.querySelectorAll('.upload-btn').forEach(btn => {
-//   btn.addEventListener('click', function () {
-//     const input = document.createElement('input');
-//     input.type = 'file';
-//     input.accept = '.xlsx,.xls';
-//     input.click();
+// Send the uploaded file to backend
+const HandleUpload = async (type) => {
+    const input = document.getElementById(`fileInput-${type}`);
+    const messageBox = document.getElementById(`uploadMessage-${type}`);
 
-//     input.addEventListener('change', function () {
-//       if (this.files.length > 0) {
-//         btn.textContent = `Selected: ${this.files[0].name}`;
-//         btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
-//         btn.classList.add('bg-green-600', 'hover:bg-green-700');
-//       }
-//     });
-//   });
-// });
+    if (!input) {
+        showMessage(messageBox, 'Input element not found.', true);
+        return;
+    }
 
-// Create Instance button functionality
-// document.getElementById('create-instance').addEventListener('click', function () {
-//   this.textContent = 'Creating Instance...';
-//   this.classList.remove('bg-green-600', 'hover:bg-green-700');
-//   this.classList.add('bg-gray-600', 'cursor-not-allowed');
-//   this.disabled = true;
+    const file = input.files?.[0];
 
-//   setTimeout(() => {
-//     this.textContent = 'Instance Created!';
-//     this.classList.remove('bg-gray-600');
-//     this.classList.add('bg-green-600');
+    if (!file) {
+        showMessage(messageBox, 'Please select a file first.', true);
+        return;
+    }
 
-//     setTimeout(() => {
-//       this.textContent = 'Create Instance';
-//       this.classList.add('hover:bg-green-700');
-//       this.classList.remove('cursor-not-allowed');
-//       this.disabled = false;
-//     }, 2000);
-//   }, 1500);
-// });
+    const formData = new FormData();
+    formData.append('file', file);
 
-// Add some interactive hover effects
-// document.querySelectorAll('.upload-btn').forEach(btn => {
-//   btn.addEventListener('mouseenter', function () {
-//     this.style.transform = 'scale(1.05) translateY(-2px)';
-//   });
+    try {
+        const response = await fetch(`/upload/${type}`, {
+            method: 'POST',
+            body: formData
+        });
 
-//   btn.addEventListener('mouseleave', function () {
-//     this.style.transform = 'scale(1) translateY(0)';
-//   });
-// });
+        const text = await response.text();
+        const isError = !response.ok;
+        showMessage(messageBox, isError ? `Error: Internal Server Error!` : text, isError);
+    } catch (error) {
+        showMessage(messageBox, 'Upload failed: ' + error.message, true);
+    }
+};
+
+// Utility to show and auto-hide message
+function showMessage(element, message, isError) {
+    if (!element) return;
+
+    element.textContent = message;
+    element.classList.toggle('text-red-600', isError);
+    element.classList.toggle('text-blue-600', !isError);
+
+    // Clear after 2 seconds
+    setTimeout(() => {
+        element.textContent = '';
+        element.classList.remove('text-red-600', 'text-blue-600');
+    }, 2000);
+}
+
+// Enabling submit button only if at least one file is selected
+const fileInputIds = ['fileInput-students', 'fileInput-offerings', 'fileInput-instituteRequirements', 'fileInput-courses'];
+const submitBtn = document.getElementById('create-instance');
+
+function checkFiles() {
+    const anyFileSelected = fileInputIds.some(id => {
+        const input = document.getElementById(id);
+        return input && input.files.length > 0;
+    });
+
+    submitBtn.disabled = !anyFileSelected;
+    submitBtn.classList.toggle('opacity-50', !anyFileSelected);
+    submitBtn.classList.toggle('cursor-not-allowed', !anyFileSelected);
+}
+
+// Attach listeners to all file inputs
+fileInputIds.forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+        input.addEventListener('change', checkFiles);
+    }
+});
+
+// Initial check in case user reloads with a file already selected
+checkFiles();
