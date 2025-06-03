@@ -19,7 +19,7 @@ public class CourseOffering {
     @Column
     private String category;
     @Column
-    private Integer semester;
+    private int semester;
     @Column
-    private Integer seats;
+    private int seats;
 }
