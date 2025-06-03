@@ -39,4 +39,9 @@ public class StudentServiceImpl implements StudentService {
     public void deleteAll() {
         studentRepo.deleteAll();
     }
+
+    @Override
+    public long countBySemester(int semester) {
+        return studentRepo.countBySemester(semester);
+    }
 }

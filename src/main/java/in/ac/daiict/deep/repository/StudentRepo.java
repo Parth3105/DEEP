@@ -13,4 +13,5 @@ public interface StudentRepo extends JpaRepository<Student,String>{
     @Modifying
     @Query(value = "DELETE FROM "+ Database.STUDENT_TABLE,nativeQuery = true)
     void deleteAll();
+    long countBySemester(int semester);
 }

@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +28,8 @@ public class AllocationInstanceController {
     private JdbcTemplate jdbcTemplate;
 
     private Map<String, Upload> uploads=null;
-    private void initiateSetup(String newSchemaName){
+    @GetMapping("/create-instance/{schema}")
+    public String initiateSetup(@PathVariable("schema") String newSchemaName){
         uploads=new HashMap<>();
         if(Database.SAVE_SCHEMA_NAME !=null) {
             String sql = String.format("ALTER SCHEMA %s RENAME TO %s", Database.WORKING_SCHEMA_NAME, Database.SAVE_SCHEMA_NAME);
@@ -35,10 +37,17 @@ public class AllocationInstanceController {
             schemaSetupService.createSchemaAndSwitch(Database.WORKING_SCHEMA_NAME);
         }
         Database.SAVE_SCHEMA_NAME=newSchemaName;
+        return "forward:/update-instance";
     }
-    @GetMapping("/create-instance")
-    public String showUploadPage(@RequestParam("schema-name") String newSchemaName){
-        initiateSetup(newSchemaName);
+
+    @GetMapping("/update-instance")
+    public String showUploadPage(Model model){
+        Map<Integer,Long> uploadStatus=new HashMap<>();
+        uploadStatus.put(5,studentService.countBySemester(5));
+        uploadStatus.put(6,studentService.countBySemester(6));
+        uploadStatus.put(7,studentService.countBySemester(7));
+        uploadStatus.put(8,studentService.countBySemester(8));
+        model.addAttribute("uploadStatus",uploadStatus);
         return "admin/update-instance";
     }
 
@@ -116,7 +125,7 @@ public class AllocationInstanceController {
             // handle error
             throw new RuntimeException(e);
         }
-        return "admin/update-instance";
+        return "forward:/update-instance";
     }
 
 }
