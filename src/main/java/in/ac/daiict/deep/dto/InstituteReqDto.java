@@ -21,7 +21,7 @@ public class InstituteReqDto {
     private String category;
     @Positive
     @Max(10)
-    private int semester;
+    private Integer semester;
     @PositiveOrZero
-    private int course_cnt;
+    private Integer course_cnt;
 }

@@ -26,7 +26,7 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         List<CourseOfferingDto> courseOfferDtos=courseOfferLoader.getCourseForProgram();
         // TypeToken helps retain generic of list
         List<CourseOffering> courseOffers=modelMapper.map(courseOfferDtos,new TypeToken<List<CourseOffering>>(){}.getType());
-        courseOfferingRepo.saveAllAndFlush(courseOffers);
+        courseOfferingRepo.saveAll(courseOffers);
     }
 
     @Override

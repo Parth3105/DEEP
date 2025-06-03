@@ -26,7 +26,7 @@ public class CourseServiceImpl implements CourseService {
         List<CourseDto> courseDtos=courseLoader.getCourseData();
         // TypeToken helps retain generic of list
         List<Course> courses=modelMapper.map(courseDtos,new TypeToken<List<Course>>(){}.getType());
-        courseRepo.saveAllAndFlush(courses);
+        courseRepo.saveAll(courses);
     }
 
     @Override
