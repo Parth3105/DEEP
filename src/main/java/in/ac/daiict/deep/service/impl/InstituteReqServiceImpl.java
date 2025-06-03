@@ -26,7 +26,7 @@ public class InstituteReqServiceImpl implements InstituteReqService {
         List<InstituteReqDto> instituteReqDtos=instituteReqLoader.getInstituteRequirements();
         // TypeToken helps retain generic of list
         List<InstituteReq> instituteReqs=modelMapper.map(instituteReqDtos,new TypeToken<List<InstituteReq>>(){}.getType());
-        instituteReqRepo.saveAllAndFlush(instituteReqs);
+        instituteReqRepo.saveAll(instituteReqs);
     }
 
     @Override

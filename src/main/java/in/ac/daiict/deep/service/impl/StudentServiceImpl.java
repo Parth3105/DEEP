@@ -26,7 +26,7 @@ public class StudentServiceImpl implements StudentService {
         List<StudentDto> studentDtos=studentLoader.getStudentData();
         // TypeToken helps retain generic of list
         List<Student> students=modelMapper.map(studentDtos,new TypeToken<List<Student>>(){}.getType());
-        studentRepo.saveAllAndFlush(students);
+        studentRepo.saveAll(students);
     }
 
     @Override

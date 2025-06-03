@@ -24,7 +24,7 @@ public class CourseOfferingDto {
     private String category;
     @Positive
     @Max(10)
-    private int semester;
+    private Integer semester;
     @PositiveOrZero
-    private int seats;
+    private Integer seats;
 }

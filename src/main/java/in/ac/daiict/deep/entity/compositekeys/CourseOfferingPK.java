@@ -3,6 +3,7 @@ package in.ac.daiict.deep.entity.compositekeys;
 import lombok.*;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode

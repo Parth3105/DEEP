@@ -17,6 +17,7 @@ public class UploadServiceImpl implements UploadService {
 
     @Override
     public void insertAll(Map<String, Upload> uploads) {
+        deleteAll();
         List<Upload> uploadList = new ArrayList<>(uploads.values());
         uploadRepo.saveAllAndFlush(uploadList);
     }

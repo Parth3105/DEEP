@@ -20,7 +20,7 @@ public class InstituteReq {
     @Id
     private String category;
     @Column
-    private int semester;
+    private Integer semester;
     @Column
-    private int course_cnt;
+    private Integer course_cnt;
 }
