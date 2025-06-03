@@ -23,7 +23,7 @@ public class Course {
     private String name;
 
     @Column
-    private int credits;
+    private Integer credits;
 
     @Column
     private String slot;

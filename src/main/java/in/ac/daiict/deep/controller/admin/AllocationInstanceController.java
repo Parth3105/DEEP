@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Controller
 @AllArgsConstructor
@@ -28,26 +29,25 @@ public class AllocationInstanceController {
     private JdbcTemplate jdbcTemplate;
 
     private Map<String, Upload> uploads=null;
-
-    @GetMapping("/create-instance/{schema}")
-    public String initiateSetup(@PathVariable("schema") String newSchemaName){
+    @PostMapping("/create-instance")
+    public String initiateSetup(@RequestParam String season, @RequestParam String Year, Model model){
         uploads=new HashMap<>();
         if(Database.SAVE_SCHEMA_NAME !=null) {
             String sql = String.format("ALTER SCHEMA %s RENAME TO %s", Database.WORKING_SCHEMA_NAME, Database.SAVE_SCHEMA_NAME);
             jdbcTemplate.execute(sql);
             schemaSetupService.createSchemaAndSwitch(Database.WORKING_SCHEMA_NAME);
         }
-        Database.SAVE_SCHEMA_NAME=newSchemaName;
-        return "forward:/update-instance";
+        Database.SAVE_SCHEMA_NAME= season+"_"+Year;
+        return "redirect:/update-instance";
     }
 
     @GetMapping("/update-instance")
     public String showUploadPage(Model model){
-        Map<Integer,Long> uploadStatus=new HashMap<>();
-        uploadStatus.put(5,studentService.countBySemester(5));
-        uploadStatus.put(6,studentService.countBySemester(6));
-        uploadStatus.put(7,studentService.countBySemester(7));
-        uploadStatus.put(8,studentService.countBySemester(8));
+        Map<String,Long> uploadStatus=new TreeMap<>();
+        uploadStatus.put("Semester 5",studentService.countBySemester(5));
+        uploadStatus.put("Semester 6",studentService.countBySemester(6));
+        uploadStatus.put("Semester 7",studentService.countBySemester(7));
+        uploadStatus.put("Semester 8",studentService.countBySemester(8));
         model.addAttribute("uploadStatus",uploadStatus);
         return "admin/update-instance";
     }
@@ -83,32 +83,32 @@ public class AllocationInstanceController {
         Thread u1=new Thread(new Runnable() {
             @Override
             public void run() {
-                studentService.insertAll(uploads.get(names[0]).getFile());
+                if(uploads.containsKey(names[0])) studentService.insertAll(uploads.get(names[0]).getFile());
                 System.out.println("\n\nFinished uploading .......\n\n");
             }
         });
         Thread u2=new Thread(new Runnable() {
             @Override
             public void run() {
-                courseService.insertAll(uploads.get(names[1]).getFile());
+                if(uploads.containsKey(names[1])) courseService.insertAll(uploads.get(names[1]).getFile());
             }
         });
         Thread u3=new Thread(new Runnable() {
             @Override
             public void run() {
-                instituteReqService.insertAll(uploads.get(names[2]).getFile());
+                if(uploads.containsKey(names[2])) instituteReqService.insertAll(uploads.get(names[2]).getFile());
             }
         });
         Thread u4=new Thread(new Runnable() {
             @Override
             public void run() {
-                courseOfferingService.insertAll(uploads.get(names[3]).getFile());
+                if(uploads.containsKey(names[3])) courseOfferingService.insertAll(uploads.get(names[3]).getFile());
             }
         });
         Thread u5=new Thread(new Runnable() {
             @Override
             public void run() {
-                uploadService.insertAll(uploads);
+                if(uploads.containsKey(names[4]))uploadService.insertAll(uploads);
             }
         });
         u1.start();
@@ -126,7 +126,7 @@ public class AllocationInstanceController {
             // handle error
             throw new RuntimeException(e);
         }
-        return "forward:/update-instance";
+        return "redirect:/update-instance";
     }
 
 }
