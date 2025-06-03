@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEEP - Create Allocation Instance</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+</head>
+
+<body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+<div class="mx-auto">
+  <!-- Header -->
+  <div th:replace="~{common/admin-navbar::admin-navbar}"></div>
+
+  <!-- Welcome Section -->
+  <main class="backdrop-blur-lg px-7 py-6">
+    <section class="bg-[#B8D7FF] rounded-3xl px-8 py-4 mb-6 shadow-lg">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div>
+          <h2 class="text-4xl font-bold text-[#1E3C72] mb-1">Welcome, Admin</h2>
+          <p class="text-[#666666] mb-6 text-sm lg:text-md">Manage student registrations, run allocations, and track results.</p>
+          <button class="text-white text-md md:text-md font-bold align-center px-4 lg:px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg" style="/* background: linear-gradient(to right, #4CAF50, #45A049); */ background: linear-gradient(to right, #e74b48, #d63e3e);">
+            <img src="/admin/images/cross.svg" alt="tick Icon" class="inline-block w-4 h-4 mr-2 mb-1">
+            Registration Not Open
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Dashboard Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3  w-full gap-6 mb-6">
+      <!-- Registration Status -->
+      <div class="col-span-2">
+        <div class="flex flex-col lg:flex-row bg-[#B8D7FF] rounded-3xl px-6 py-8 xl:py-12 shadow-lg">
+          <!-- Left Section -->
+          <div class="flex flex-col items-center justify-center text-center mr-4">
+            <div class="mb-8">
+              <h3 class="text-2xl text-center md:text-2xl font-bold text-[#1E3C72]">Registration Status</h3>
+              <p class="text-xs text-center text-[#666666]">Monitor student registration and allocation status</p>
+            </div>
+
+            <!-- Semesters -->
+            <div class="semester-tags grid grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-y-4 gap-x-3">
+              <span class="bg-[#46A24A] text-white px-4 py-2 rounded-full text-md font-medium">Semester - 5</span>
+              <span class="bg-[#22437E] text-white px-4 py-2 rounded-full text-md font-medium">Semester - 6</span>
+              <span class="bg-[#22437E] text-white px-4 py-2 rounded-full text-md font-medium">Semester - 7</span>
+              <span class="bg-[#22437E] text-white px-4 py-2 rounded-full text-md font-medium">Semester - 8</span>
+            </div>
+          </div>
+
+          <!-- Right Section (Cards) -->
+          <div class="flex flex-col md:flex-row lg:flex-col xl:flex-row justify-center items-center gap-6 mt-6 flex-1">
+            <!-- Card 1 -->
+            <div class="w-10/12 h-full bg-[#5EC1FF] rounded-3xl py-8 px-4 text-center shadow-lg flex flex-col justify-between flex-1">
+              <div class="flex flex-wrap gap-4 items-center justify-center mb-5">
+                <img src="/admin/images/student.svg" alt="student icon" class="w-12 h-12 mb-2">
+                <div class="text-4xl font-bold text-gray-800">120 / 132</div>
+              </div>
+              <div class="text-xl md:text-sm lg:text-xl font-bold text-[#1E3C72]">Preferences submitted</div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="w-10/12 h-full bg-[#5EC1FF] rounded-3xl py-8 px-4 text-center shadow-lg flex flex-col justify-between flex-1">
+              <div class="flex flex-wrap items-center gap-x-9 gap-y-4 justify-center mb-5">
+                <img src="/admin/images/allocation-status.svg" alt="status icon" class="w-12 h-12 mb-2">
+                <div class="text-4xl font-bold text-gray-800">Pending</div>
+              </div>
+              <div class="text-xl md:text-sm lg:text-xl font-bold text-[#1E3C72]">Allocation Status</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration Toggle -->
+      <div class="bg-[#B8D7FF] rounded-3xl shadow-lg flex justify-center align-center mr-[-20px] md:mr-0">
+        <div class="text-center flex flex-col items-center justify-center p-6">
+          <label class="inline-flex items-center cursor-pointer mb-8">
+            <input type="checkbox" value="" class="sr-only peer">
+            <div class="relative w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
+          </label>
+
+          <h3 class="text-xl font-bold text-[#1E3C72] mb-1">Open/Close Registration</h3>
+          <p class="text-xs text-gray-600 mb-6">Manually toggle registration window</p>
+
+          <div class="flex flex-col gap-1 justify-center items-center">
+            <p class="text-black font-bold"> Close Date: </p>
+            <div class="relative w-40 mx-auto">
+              <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+                </svg>
+              </div>
+              <input id="datepicker-autohide" datepicker datepicker-autohide type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <!-- Create Allocation Instance -->
+      <button onclick="openModal()" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+        <img src="/admin/images/create-instance.svg" alt="create icon" class="w-13 h-13 mb-2 mx-auto transition-transform duration-300">
+        <h3 class="text-lg font-bold text-[#1E3C72]">Create Allocation Instance</h3>
+        <p class="text-xs text-gray-600">Start a new allocation session</p>
+      </button>
+
+      <!-- Modal -->
+      <div id="create-instance-modal" class="hidden fixed inset-0 z-40 backdrop-blur-sm bg-black/30 flex justify-center items-center px-4">
+        <div class="bg-gradient-to-br from-[#E6F0FF] to-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-blue-100 z-50 transition-all">
+          <h2 class="text-2xl font-bold text-[#1E3C72] mb-1 text-center">Create Allocation Instance</h2>
+          <p class="text-sm text-gray-600 text-center mb-6">Fill in the details to create a new Instance</p>
+
+          <form th:action="@{/create-instance}" method="post" id="createForm" class="space-y-4">
+            <!-- Season -->
+            <div>
+              <label class="block text-sm font-medium text-[#1E3C72] mb-1">Season</label>
+              <select name="season" required class="w-full border border-blue-200 focus:ring-2 focus:ring-blue-400 focus:outline-none p-2 rounded-lg bg-white text-[#1E3C72]">
+                <option value="">Select Season</option>
+                <option value="WINTER">WINTER</option>
+                <option value="AUTUMN">AUTUMN</option>
+                <option value="SUMMER">SUMMER</option>
+              </select>
+            </div>
+
+            <!-- Year -->
+            <div class="flex gap-3">
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-[#1E3C72] mb-1">Year</label>
+                <input type="text" name="Year" placeholder="e.g. 2023" maxlength="4" required
+                       class="w-full border border-blue-200 focus:ring-2 focus:ring-blue-400 focus:outline-none p-2 rounded-lg text-[#1E3C72]" />
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end gap-4 pt-4">
+              <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-[#1E3C72] transition">
+                Cancel
+              </button>
+              <button type="submit" class="px-4 py-2 rounded-lg bg-[#1E3C72] text-white hover:bg-[#16355f] transition">
+                OK
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- View Preferences -->
+      <div class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+        <img src="/admin/images/view-preferences.svg" alt="view icon" class="w-13 h-13 mb-2 mx-auto group-hover:scale-101 transition-transform duration-300">
+        <h3 class="text-lg font-bold text-[#1E3C72]">View Preferences</h3>
+        <p class="text-xs text-gray-600">View submitted student preferences</p>
+      </div>
+
+      <!-- View Allocation Results -->
+      <div class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+        <img src="/admin/images/view-allocation-result.svg" alt="view icon" class="w-13 h-13 mb-2 mx-auto transition-transform duration-300">
+        <h3 class="text-lg font-bold text-[#1E3C72]">View Allocation Results</h3>
+        <p class="text-xs text-gray-600">Review or publish results</p>
+      </div>
+
+      <!-- Update Instance -->
+      <button onclick="HandleRoute('/update-instance')" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+        <img src="/admin/images/update-instance.svg" alt="update icon" class="w-10 h-10 mb-4 mx-auto transition-transform duration-300">
+        <h3 class="text-lg font-bold text-[#1E3C72]">Update Instance</h3>
+        <p class="text-xs text-gray-600">Permanently removes current instance and associated data</p>
+      </button>
+
+      <!-- Run Allocation -->
+      <div class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+        <img src="/admin/images/run-allocation.svg" alt="run icon" class="w-11 h-11 mb-4 mx-auto transition-transform duration-300">
+        <h3 class="text-lg font-bold text-[#1E3C72]">Run Allocation</h3>
+        <p class="text-xs text-gray-600">Trigger the backend allocation program</p>
+      </div>
+
+      <!-- Download Reports -->
+      <div class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+        <img src="/admin/images/download-reports.svg" alt="download icon" class="w-11 h-11 mb-4 mx-auto transition-transform duration-300">
+        <h3 class="text-lg font-bold text-[#1E3C72]">Download Reports</h3>
+        <p class="text-xs text-gray-600">Export Excel reports of preferences/results</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-[#B8D7FF] rounded-2xl text-center shadow-lg">
+      <footer class="text-center mt-8 py-6">
+        <p class="text-gray-600 font-semibold text-sm">DAIICT Elective Enrollment Portal (DEEP)</p>
+      </footer>
+    </div>
+  </main>
+</div>
+
+<script src="/admin/js/dashboard.js"></script>
+</body>
+</html>

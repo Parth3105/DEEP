@@ -8,7 +8,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @AllArgsConstructor
 public class DashboardController {
+
+    /**
+     * only for current testing purpose.
+     * @return admin dashboard
+     */
+    @GetMapping("/")
+    public String test(){
+        return "redirect:/admin-dashboard";
+    }
     @GetMapping("/admin-dashboard")
-    public void showDashboard(Model model){
+    public String showDashboard(){
+        return "admin/dashboard";
     }
 }
