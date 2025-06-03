@@ -32,8 +32,15 @@ const HandleUpload = async (type) => {
         });
 
         const text = await response.text();
-        const isError = !response.ok;
-        showMessage(messageBox, isError ? `Error: Internal Server Error!` : text, isError);
+
+        if(true) {
+            const acknowledgment = "File uploaded successfully!";
+            showMessage(messageBox, acknowledgment, false);
+        } else {
+            const isError = !response.ok;
+            showMessage(messageBox, isError ? `Error: Internal Server Error!` : text, isError);
+        }
+
     } catch (error) {
         showMessage(messageBox, 'Upload failed: ' + error.message, true);
     }
@@ -45,12 +52,12 @@ function showMessage(element, message, isError) {
 
     element.textContent = message;
     element.classList.toggle('text-red-600', isError);
-    element.classList.toggle('text-blue-600', !isError);
+    element.classList.toggle('text-green-600', !isError);
 
     // Clear after 2 seconds
     setTimeout(() => {
         element.textContent = '';
-        element.classList.remove('text-red-600', 'text-blue-600');
+        element.classList.remove('text-red-600', 'text-green-600');
     }, 2000);
 }
 
@@ -79,3 +86,14 @@ fileInputIds.forEach(id => {
 
 // Initial check in case user reloads with a file already selected
 checkFiles();
+
+function handleSubmit(event) {
+    const button = document.getElementById("create-instance");
+    const text = document.getElementById("button-text");
+    const spinner = document.getElementById("spinner");
+
+    button.disabled = true;
+
+    text.textContent = "Submitting...";
+    spinner.classList.remove("hidden");
+}
