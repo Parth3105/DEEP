@@ -8,4 +8,5 @@ public interface StudentService {
     public void insertAll(byte[] studentData);
     public List<StudentDto> getAll();
     public void deleteAll();
+    public long countBySemester(int semester);
 }
