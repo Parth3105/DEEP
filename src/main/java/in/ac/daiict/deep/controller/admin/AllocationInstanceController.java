@@ -28,7 +28,6 @@ public class AllocationInstanceController {
     private JdbcTemplate jdbcTemplate;
 
     private Map<String, Upload> uploads=null;
-
     @GetMapping("/create-instance/{schema}")
     public String initiateSetup(@PathVariable("schema") String newSchemaName){
         uploads=new HashMap<>();
