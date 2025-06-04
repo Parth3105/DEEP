@@ -48,6 +48,8 @@ public class AllocationInstanceController {
 
     @GetMapping("/update-instance")
     public String renderUploadPage(Model model){
+        if(DBConstants.SAVE_SCHEMA_NAME == null) return "redirect:/admin-dashboard";
+
         Map<String,Long> uploadStatus=new TreeMap<>();
         uploadStatus.put("Semester 5",studentService.countBySemester(5));
         uploadStatus.put("Semester 6",studentService.countBySemester(6));

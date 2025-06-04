@@ -41,6 +41,6 @@ public class EnrollmentController {
         for(int j=0;j<instituteReqDto.size();j++) studentReqDtos.add(new StudentReqDto(studentId));
         model.addAttribute("studentRequirements",studentReqDtos);
 
-        return "registration";
+        return "student/registration";
     }
 }
