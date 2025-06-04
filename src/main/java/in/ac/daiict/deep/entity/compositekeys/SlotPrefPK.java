@@ -7,8 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class CourseOfferingPK {
-    private String cid;
-    private String program;
-    private int semester;
+public class SlotPrefPK {
+    private String sid;
+    private int pref;
 }

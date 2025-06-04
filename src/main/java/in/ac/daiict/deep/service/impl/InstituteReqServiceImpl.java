@@ -1,16 +1,19 @@
 package in.ac.daiict.deep.service.impl;
 
+import in.ac.daiict.deep.constant.ResponseConstants;
 import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.entity.InstituteReq;
 import in.ac.daiict.deep.repository.InstituteReqRepo;
 import in.ac.daiict.deep.service.InstituteReqService;
-import in.ac.daiict.deep.utility.InstituteReqLoader;
+import in.ac.daiict.deep.utility.DataLoader;
+import in.ac.daiict.deep.utility.Response;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,15 +21,18 @@ import java.util.List;
 public class InstituteReqServiceImpl implements InstituteReqService {
     private InstituteReqRepo instituteReqRepo;
     private ModelMapper modelMapper;
+    DataLoader dataLoader;
 
     @Override
-    public void insertAll(byte[] instituteReqData) {
+    public Response insertAll(byte[] instituteReqData) {
         deleteAll();
-        InstituteReqLoader instituteReqLoader=new InstituteReqLoader(new ByteArrayInputStream(instituteReqData));
-        List<InstituteReqDto> instituteReqDtos=instituteReqLoader.getInstituteRequirements();
+        List<InstituteReqDto> instituteReqDtos=new ArrayList<>();
+        Response status=dataLoader.getInstituteRequirements(new ByteArrayInputStream(instituteReqData),instituteReqDtos);
+        if(status.getStatus()!= ResponseConstants.OK) return status;
         // TypeToken helps retain generic of list
         List<InstituteReq> instituteReqs=modelMapper.map(instituteReqDtos,new TypeToken<List<InstituteReq>>(){}.getType());
         instituteReqRepo.saveAll(instituteReqs);
+        return new Response(ResponseConstants.OK,"Data Inserted Successfully!");
     }
 
     @Override

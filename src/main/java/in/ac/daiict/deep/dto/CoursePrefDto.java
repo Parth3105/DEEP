@@ -1,10 +1,9 @@
 package in.ac.daiict.deep.dto;
 
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,14 +13,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class InstituteReqDto {
+public class CoursePrefDto {
     @NotBlank
-    private String program;
+    @Pattern(regexp = "^\\d+$", message = "Must contain only digits")
+    private String sid;
     @NotBlank
-    private String category;
+    private String slot;
     @Positive
-    @Max(10)
-    private int semester;
-    @PositiveOrZero
-    private int course_cnt;
+    private int pref;
+    @NotBlank
+    private String cid;
 }
