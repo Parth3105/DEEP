@@ -1,5 +1,6 @@
 package in.ac.daiict.deep.entity;
 
+import in.ac.daiict.deep.constant.DBConstants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -14,10 +15,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "uploads")
+@Table(name = DBConstants.UPLOAD_TABLE)
 public class Upload {
     @Id
-    String name;
+    @Column(length = 100)
+    private String name;
     @Column
-    byte[] file;
+    private byte[] file;
 }

@@ -9,6 +9,7 @@ import lombok.*;
 @EqualsAndHashCode
 public class InstituteReqPK {
     private String program;
+    private int semester;
     private String category;
 
     /**
