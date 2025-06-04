@@ -94,6 +94,6 @@ function handleSubmit(event) {
 
     button.disabled = true;
 
-    text.textContent = "Submitting...";
+    text.textContent = "This may take a while!";
     spinner.classList.remove("hidden");
 }
