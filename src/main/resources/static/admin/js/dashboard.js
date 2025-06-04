@@ -16,3 +16,17 @@ function closeModal() {
 function HandleRoute(url) {
     window.location.href = url;
 }
+
+const form = document.getElementById('createForm');
+const btnText = document.getElementById('submitBtnText');
+const spinner = document.getElementById('spinner');
+const submitBtn = document.getElementById('submitBtn');
+
+form.addEventListener('submit', function (e) {
+    if (!form.checkValidity()) return;
+
+    // Otherwise, show loading state
+    btnText.textContent = "This may take a while!";
+    spinner.classList.remove("hidden");
+    submitBtn.disabled = true;
+});

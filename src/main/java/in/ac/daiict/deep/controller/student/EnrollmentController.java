@@ -21,7 +21,7 @@ public class EnrollmentController {
     private InstituteReqService instituteReqService;
 
     @GetMapping("/enroll")
-    public String renderEnrollmentForm(@CookieValue(name = "student_id", required = false, defaultValue = "202201174") String studentId,Model model){
+    public String renderEnrollmentForm(@CookieValue(name = "student_id", required = false, defaultValue = "202203029") String studentId,Model model){
         // send the semester of the student & program & instituteReq object
         StudentDto studentDto=studentService.findStudentData(studentId);
         if(studentDto==null){
@@ -33,6 +33,6 @@ public class EnrollmentController {
         model.addAttribute("program",studentDto.getProgram());
         List<InstituteReqDto> instituteReqDto=instituteReqService.findInstituteReq(studentDto.getProgram(),studentDto.getSemester());
         model.addAttribute("instituteRequirements",instituteReqDto);
-        return "registration";
+        return "student/registration";
     }
 }
