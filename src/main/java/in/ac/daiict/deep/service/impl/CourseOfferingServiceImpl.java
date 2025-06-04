@@ -1,16 +1,19 @@
 package in.ac.daiict.deep.service.impl;
 
+import in.ac.daiict.deep.constant.ResponseConstants;
 import in.ac.daiict.deep.dto.CourseOfferingDto;
 import in.ac.daiict.deep.entity.CourseOffering;
 import in.ac.daiict.deep.repository.CourseOfferingRepo;
 import in.ac.daiict.deep.service.CourseOfferingService;
-import in.ac.daiict.deep.utility.CourseOfferLoader;
+import in.ac.daiict.deep.utility.DataLoader;
+import in.ac.daiict.deep.utility.Response;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,15 +21,18 @@ import java.util.List;
 public class CourseOfferingServiceImpl implements CourseOfferingService {
     private CourseOfferingRepo courseOfferingRepo;
     private ModelMapper modelMapper;
+    private DataLoader dataLoader;
 
     @Override
-    public void insertAll(byte[] courseOfferData) {
+    public Response insertAll(byte[] courseOfferData) {
         deleteAll();
-        CourseOfferLoader courseOfferLoader=new CourseOfferLoader(new ByteArrayInputStream(courseOfferData));
-        List<CourseOfferingDto> courseOfferDtos=courseOfferLoader.getCourseForProgram();
+        List<CourseOfferingDto> courseOfferDtos=new ArrayList<>();
+        Response status=dataLoader.getCourseForProgram(new ByteArrayInputStream(courseOfferData),courseOfferDtos);
+        if(status.getStatus()!= ResponseConstants.OK) return status;
         // TypeToken helps retain generic of list
         List<CourseOffering> courseOffers=modelMapper.map(courseOfferDtos,new TypeToken<List<CourseOffering>>(){}.getType());
         courseOfferingRepo.saveAll(courseOffers);
+        return new Response(ResponseConstants.OK,"Data Inserted Successfully!");
     }
 
     @Override

@@ -1,9 +1,7 @@
 package in.ac.daiict.deep.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import in.ac.daiict.deep.constant.DBConstants;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,17 +12,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "courses")
+@Table(name = DBConstants.COURSE_TABLE)
 public class Course {
     @Id
+    @Column(length = 10)
     private String cid;
 
-    @Column
+    @Column(length = 100, nullable = false)
     private String name;
 
-    @Column
-    private Integer credits;
+    @Column(nullable = false)
+    private int credits;
 
-    @Column
+    @Column(length = 4, nullable = false)
     private String slot;
 }

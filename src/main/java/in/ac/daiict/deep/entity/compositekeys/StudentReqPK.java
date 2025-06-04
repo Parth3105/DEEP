@@ -4,11 +4,10 @@ import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
+@Getter
 @EqualsAndHashCode
-public class CourseOfferingPK {
-    private String cid;
-    private String program;
-    private int semester;
+public class StudentReqPK {
+    private String sid;
+    private String category;
 }

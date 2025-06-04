@@ -1,4 +1,4 @@
-package in.ac.daiict.deep.utility;
+package in.ac.daiict.deep.utility.sheetHeaders;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -7,9 +7,9 @@ import org.apache.poi.ss.usermodel.Row;
 import java.util.Iterator;
 
 public class CourseSheetHeader {
-    int COURSE_ID = -1, COURSE_NAME = -1, CREDITS = -1, SLOT = -1;
+    public int COURSE_ID = -1, COURSE_NAME = -1, CREDITS = -1, SLOT = -1;
 
-    CourseSheetHeader(Row headerRow) {
+    public CourseSheetHeader(Row headerRow) {
         Iterator<Cell> headerCells = headerRow.cellIterator();
         while (headerCells.hasNext()) {
             Cell headerCell = headerCells.next();

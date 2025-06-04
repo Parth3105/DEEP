@@ -19,6 +19,6 @@ public class CourseDto {
     private String name;
     @Positive
     private Integer credits;
-    @Positive
+    @NotBlank
     private String slot;
 }

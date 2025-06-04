@@ -1,7 +1,6 @@
 package in.ac.daiict.deep.entity;
 
-import in.ac.daiict.deep.constant.DBConstants;
-import in.ac.daiict.deep.entity.compositekeys.InstituteReqPK;
+import in.ac.daiict.deep.entity.compositekeys.StudentReqPK;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,17 +12,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name= DBConstants.INST_REQ_TABLE)
-@IdClass(InstituteReqPK.class)
-public class InstituteReq {
+@Table(name = "student_reqs")
+@IdClass(StudentReqPK.class)
+public class StudentReq {
     @Id
-    @Column(length = 10)
-    private String program;
-    @Id
-    private int semester;
+    @Column(length = 12)
+    private String sid;
     @Id
     @Column(length = 10)
     private String category;
     @Column(nullable = false)
     private int course_cnt;
+
 }

@@ -1,7 +1,9 @@
-package in.ac.daiict.deep.service.impl;
+package in.ac.daiict.deep.config;
 
+import in.ac.daiict.deep.constant.DBConstants;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.ApplicationContext;
@@ -17,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class InstanceCreationService {
+public class DBConfig {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -35,11 +37,22 @@ public class InstanceCreationService {
 
     @PostConstruct
     public void initDefaultSchema() {
-        createEntityManagerFactory("public");
+        runFlyway(DBConstants.WORKING_SCHEMA_NAME);
+        createEntityManagerFactory(DBConstants.WORKING_SCHEMA_NAME);
+    }
+    public void runFlyway(String newSchemaName) {
+        Flyway flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .baselineOnMigrate(true)
+                .load();
+
+        flyway.migrate();
     }
 
     public void createSchemaAndSwitch(String schemaName) {
         jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS " + schemaName);
+//        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS " + DBConstants.FLYWAY_TABLE);
+        runFlyway(schemaName);
         createEntityManagerFactory(schemaName);
     }
 
