@@ -7,9 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface InstituteReqRepo extends JpaRepository<InstituteReq, InstituteReqPK> {
     @Override
     @Modifying
     @Query(value = "DELETE FROM "+ DBConstants.INST_REQ_TABLE,nativeQuery = true)
     void deleteAll();
+    List<InstituteReq> findByProgramAndSemester(String program, int semester);
 }
