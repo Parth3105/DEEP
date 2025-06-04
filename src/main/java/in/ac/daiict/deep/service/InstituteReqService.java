@@ -9,4 +9,5 @@ public interface InstituteReqService {
     public Response insertAll(byte[] instituteData);
     public List<InstituteReqDto> getAll();
     public void deleteAll();
+    public List<InstituteReqDto> findInstituteReq(String program, int semester);
 }

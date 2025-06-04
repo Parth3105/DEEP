@@ -49,4 +49,11 @@ public class StudentServiceImpl implements StudentService {
     public long countBySemester(int semester) {
         return studentRepo.countBySemester(semester);
     }
+
+    @Override
+    public StudentDto findStudentData(String sid) {
+        Student student=studentRepo.findById(sid).orElse(null);
+        if(student==null) return null;
+        return modelMapper.map(student, StudentDto.class);
+    }
 }
