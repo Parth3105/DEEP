@@ -45,4 +45,11 @@ public class InstituteReqServiceImpl implements InstituteReqService {
     public void deleteAll() {
         instituteReqRepo.deleteAll();
     }
+
+    @Override
+    public List<InstituteReqDto> findInstituteReq(String program, int semester) {
+        List<InstituteReq> instituteReqs=instituteReqRepo.findByProgramAndSemester(program,semester);
+        if(instituteReqs==null) return null;
+        return modelMapper.map(instituteReqs,new TypeToken<List<InstituteReqDto>>(){}.getType());
+    }
 }

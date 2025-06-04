@@ -10,4 +10,5 @@ public interface StudentService {
     public List<StudentDto> getAll();
     public void deleteAll();
     public long countBySemester(int semester);
+    public StudentDto findStudentData(String sid);
 }
