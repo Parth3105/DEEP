@@ -49,7 +49,7 @@
   </div>
 
   <div id="toast-error"
-       class="hidden max-w-xs bg-red-500 text-sm text-white rounded-xl shadow-lg fixed top-6 right-6 z-50"
+       class="hidden max-w-xs text-sm text-white rounded-xl shadow-lg fixed top-6 right-6 z-50"
        role="alert" tabindex="-1" aria-labelledby="hs-toast-solid-color-red-label">
     <div id="hs-toast-solid-color-red-label" class="flex p-4 gap-2 items-start">
       <span id="toast-message"></span>
@@ -142,7 +142,7 @@
                    th:each="obj : ${instituteRequirements}"
                    th:if="${#strings.toUpperCase(obj.category) == 'ICTE' and obj.course_cnt != null}">
                 <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
-                <input type="number" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+                <input type="number" name="ICTE" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
                   [&::-webkit-outer-spin-button]:appearance-none
                   [&::-webkit-inner-spin-button]:appearance-none" />
               </div>
@@ -152,7 +152,7 @@
                    th:each="obj : ${instituteRequirements}"
                    th:if="${#strings.toUpperCase(obj.category) == 'TE' and obj.course_cnt != null}">
                 <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
-                <input type="number" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+                <input type="number" name="TE" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
                   [&::-webkit-outer-spin-button]:appearance-none
                   [&::-webkit-inner-spin-button]:appearance-none" />
               </div>
@@ -162,7 +162,7 @@
                    th:each="obj : ${instituteRequirements}"
                    th:if="${#strings.toUpperCase(obj.category) == 'SE' and obj.course_cnt != null}">
                 <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
-                <input type="number" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+                <input type="number" name="SE" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
                   [&::-webkit-outer-spin-button]:appearance-none
                   [&::-webkit-inner-spin-button]:appearance-none" />
               </div>
@@ -172,7 +172,7 @@
                    th:each="obj : ${instituteRequirements}"
                    th:if="${#strings.toUpperCase(obj.category) == 'MNCE' and obj.course_cnt != null}">
                 <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
-                <input type="number" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+                <input type="number" name="MNCE" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
                   [&::-webkit-outer-spin-button]:appearance-none
                   [&::-webkit-inner-spin-button]:appearance-none" />
               </div>
@@ -182,7 +182,7 @@
                    th:each="obj : ${instituteRequirements}"
                    th:if="${#strings.toUpperCase(obj.category) == 'OE' and obj.course_cnt != null}">
                 <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
-                <input type="number" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+                <input type="number" name="OE"src=""  class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
                   [&::-webkit-outer-spin-button]:appearance-none
                   [&::-webkit-inner-spin-button]:appearance-none" />
               </div>
@@ -203,70 +203,86 @@
 
   <!-- Form-2  -->
   <div id="step-2" class="hidden">
-    <div class="flex flex-col lg:flex-row">
-      <!-- Left Sidebar - Slots -->
-      <div id="slotContainer"
-           class="grid grid-cols-4 gap-y-4 md:grid-cols-7 gap-x-4 md:gap-y-0 lg:block lg:w-32 bg-blue-200 p-4 lg:p-5 lg:space-y-3">
-        <!-- Dynamically list unique slots -->
-        <div th:each="slot : ${#lists.toSet(availableCourses.?[slot])}">
-          <div class="slot text-xs md:text-md bg-cyan-300 text-gray-800 font-semibold text-center py-3 px-4 rounded-lg shadow-md cursor-pointer"
-               th:text="${slot}">
-          </div>
+    <div class="max-w-7xl mx-auto bg-[#c4d8f5] rounded-2xl shadow-lg overflow-hidden">
+      <div class="flex flex-col lg:flex-row">
+        <!-- Left Sidebar - Dynamic Slots -->
+        <div id="slotContainer" class="grid grid-cols-4 gap-y-4 md:grid-cols-7 gap-x-4 md:gap-y-0 lg:block lg:w-32 bg-blue-200 p-4 lg:p-5 lg:space-y-3">
+          <!-- Extract and Sort Unique Slots -->
+          <th:block th:with="uniqueSlots=${#sets.toSet(availableCourses.![slot])}, sortedSlots=${#lists.sort(uniqueSlots)}">
+            <div th:each="slot, iterStat : ${sortedSlots}"
+                 th:class="'slot text-xs md:text-md font-semibold text-center py-3 px-4 rounded-lg shadow-md cursor-pointer ' + (${iterStat.index == 0} ? 'bg-blue-500 text-white' : 'bg-cyan-300 text-gray-800')"
+                 th:data-slot="${slot}">
+              <span th:text="'Slot-' + ${slot}">Slot</span>
+            </div>
+          </th:block>
         </div>
-      </div>
 
-      <!-- Main Content Area -->
-      <div class="flex-1 bg-blue-300 p-4 lg:p-6">
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-          <!-- Table Header -->
-          <div class="bg-blue-500 text-white">
-            <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm font-semibold">
-              <div class="p-1 lg:p-3 text-center border-r border-blue-300">ACTION</div>
-              <div class="p-1 lg:p-3 text-center border-r border-blue-300">COURSE CODE</div>
-              <div class="p-1 lg:p-3 text-center border-r border-blue-300 col-span-2 lg:col-span-2">COURSE NAME</div>
-              <div class="p-1 lg:p-3 text-center border-r border-blue-300">PROGRAM</div>
-              <div class="p-1 lg:p-3 text-center border-r border-blue-300">CATEGORY</div>
-              <div class="p-1 lg:p-3 text-center">CREDITS</div>
-            </div>
-          </div>
-
-          <!-- Table Body -->
-          <div class="bg-blue-200">
-            <div id="selectedCourses">
-              <div class="h-4"></div>
+        <!-- Main Content Area -->
+        <div class="flex-1 bg-blue-300 p-4 lg:p-6">
+          <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Table Header -->
+            <div class="bg-blue-500 text-white">
+              <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm font-semibold">
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300">ACTION</div>
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300">COURSE CODE</div>
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300 col-span-2">COURSE NAME</div>
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300">PROGRAM</div>
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300">CATEGORY</div>
+                <div class="p-1 lg:p-3 text-center">CREDITS</div>
+              </div>
             </div>
 
-            <!-- Separator -->
-            <div class="border-b-4 border-black"></div>
+            <!-- Table Body -->
+            <div class="bg-blue-200">
+              <!-- Selected Courses -->
+              <div id="selectedCourses"><div class="h-4"></div></div>
 
-            <!-- Group by slot -->
-            <div th:each="slot : ${#lists.toSet(availableCourses.?[slot])}">
-              <div th:each="course : ${availableCourses.?[slot == slot]}">
-                <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 course-row"
-                     th:attr="data-course-id=${course.cid}">
-                  <div class="p-2 lg:p-3 flex justify-center items-center">
-                    <button class="course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors">
-                      +
-                    </button>
+              <!-- Separator -->
+              <div class="border-b-4 border-black"></div>
+
+              <!-- Available Courses -->
+              <div id="availableCourses">
+                <th:block th:with="uniqueSlots=${#sets.toSet(availableCourses.![slot])}, sortedSlots=${#lists.sort(uniqueSlots)}">
+                  <div th:each="slot : ${sortedSlots}"
+                       th:id="'slot-' + ${slot}"
+                       th:class="'slot-courses ' + (${slot == sortedSlots[0]} ? '' : 'hidden')">
+
+                    <div th:each="course : ${availableCourses}"
+                         th:if="${course.slot == slot}"
+                         class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 course-row"
+                         th:data-course-id="${course.cid}"
+                         th:data-slot="${course.slot}">
+
+                      <div class="p-2 lg:p-3 flex justify-center items-center">
+                        <button class="course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors"
+                                th:data-cid="${course.cid}"
+                                th:data-slot="${course.slot}"
+                                th:data-name="${course.name}"
+                                th:data-program="${course.program}"
+                                th:data-category="${course.category}"
+                                th:data-credits="${course.credits}">
+                          +
+                        </button>
+                      </div>
+                      <div class="p-2 lg:p-3 text-center font-medium" th:text="${course.cid}">Course Code</div>
+                      <div class="p-2 lg:p-3 col-span-2 font-medium" th:text="${course.name}">Course Name</div>
+                      <div class="p-2 lg:p-3 text-center font-medium" th:text="${course.program}">Program</div>
+                      <div class="p-2 lg:p-3 text-center font-medium" th:text="${course.category}">Category</div>
+                      <div class="p-2 lg:p-3 text-center font-medium" th:text="${course.credits}">Credits</div>
+                    </div>
                   </div>
-                  <div class="p-2 lg:p-3 text-center font-medium" th:text="${course.cid}"></div>
-                  <div class="p-2 lg:p-3 col-span-2 font-medium" th:text="${course.name}"></div>
-                  <div class="p-2 lg:p-3 text-center font-medium" th:text="${course.program}"></div>
-                  <div class="p-2 lg:p-3 text-center font-medium" th:text="${course.category}"></div>
-                  <div class="p-2 lg:p-3 text-center font-medium" th:text="${course.credits}"></div>
-                </div>
+                </th:block>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Bottom Checkbox -->
-        <div class="mt-6 flex justify-center items-center">
-          <input type="checkbox" id="noSlotCourse"
-                 class="w-4 h-4 md:w-5 md:h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
-          <label for="noSlotCourse" class="ml-3 text-xs md:text-base font-medium text-gray-700">
-            I don't want to take any course from this slot.
-          </label>
+          <!-- Bottom Checkbox -->
+          <div class="mt-6 flex justify-center items-center">
+            <input type="checkbox" id="noSlotCourse" class="w-4 h-4 md:w-5 md:h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+            <label for="noSlotCourse" class="ml-3 text-xs md:text-base font-medium text-gray-700">
+              I don't want to take any course from this slot.
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -293,49 +309,24 @@
     <h1 class="text-2xl font-bold text-center text-black mt-5 mb-4">Slot Preference Order</h1>
 
     <!-- Main Container -->
-    <div class="bg-blue-300 rounded-3xl px-8 py-6 shadow-lg mb-8">
+    <div class="bg-blue-300 rounded-3xl px-8 py-6 shadow-lg mb-8"
+         th:with="slotList=${availableCourses.![slot]},
+              numericSlots=${#lists.sort(slotList)},
+              maxSlot=${numericSlots[numericSlots.size() - 1]}">
+
       <div class="flex flex-col justify-center items-center space-y-5">
-        <!-- Preference 1 -->
-        <div class="flex items-center">
-          <label class="text-lg font-bold text-black w-45">Preference - 1 :</label>
-          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+
+        <!-- Preference inputs from 1 to maxSlot -->
+        <div th:each="prefNum : ${#numbers.sequence(1, maxSlot)}" class="flex items-center">
+          <label class="text-lg font-bold text-black w-45"
+                 th:text="'Preference - ' + ${prefNum} + ' :'">
+            Preference
+          </label>
+          <input type="number"
+                 min="1" th:max="${maxSlot}"
+                 class="slot-preference-input px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
         </div>
 
-        <!-- Preference 2 -->
-        <div class="flex items-center">
-          <label class="text-lg font-bold text-black w-45">Preference - 2 :</label>
-          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-        </div>
-
-        <!-- Preference 3 -->
-        <div class="flex items-center">
-          <label class="text-lg font-bold text-black w-45">Preference - 3 :</label>
-          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-        </div>
-
-        <!-- Preference 4 -->
-        <div class="flex items-center">
-          <label class="text-lg font-bold text-black w-45">Preference - 4 :</label>
-          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-        </div>
-
-        <!-- Preference 5 -->
-        <div class="flex items-center">
-          <label class="text-lg font-bold text-black w-45">Preference - 5 :</label>
-          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-        </div>
-
-        <!-- Preference 6 -->
-        <div class="flex items-center">
-          <label class="text-lg font-bold text-black w-45">Preference - 6 :</label>
-          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-        </div>
-
-        <!-- Preference 7 -->
-        <div class="flex items-center">
-          <label class="text-lg font-bold text-black w-45">Preference - 7 :</label>
-          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-        </div>
       </div>
     </div>
 
@@ -347,11 +338,19 @@
         </button>
       </div>
 
-      <div class="flex justify-center mt-2">
-        <button class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
-          <span class="text-sm md:text-md">Submit Response</span>
-        </button>
-      </div>
+      <form id="myForm" th:action="@{/submit-preferences}" method="post">
+        <!-- Hidden inputs to hold the strings -->
+        <input type="hidden" name="studentRequirements" id="studentRequirements" />
+        <input type="hidden" name="coursePreferences" id="coursePreferences" />
+        <input type="hidden" name="slotPreferences" id="slotPreferences" />
+
+        <div class="flex justify-center mt-2">
+          <button type="button" id="submitButton"
+                  class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
+            <span class="text-sm md:text-md">Submit Response</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </main>
