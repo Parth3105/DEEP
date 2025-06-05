@@ -43,7 +43,10 @@ public class EnrollmentController {
 
         // Send the available courses to Student with required information
         List<AvailableCourseDto> availableCourses = courseService.fetchAvailableCourses(studentDto.getProgram(),studentDto.getSemester());
-        for(AvailableCourseDto availableCourse: availableCourses) System.out.println(availableCourse.getSlot()+"\t"+availableCourse.getCid()+"\t"+availableCourse.getName()+"\t\t\t"+availableCourse.getProgram()+"\t"+availableCourse.getCategory()+"\t"+availableCourse.getCredits());
+
+        //debug
+        // for(AvailableCourseDto availableCourse: availableCourses) System.out.println(availableCourse.getSlot()+"\t"+availableCourse.getCid()+"\t"+availableCourse.getName()+"\t\t\t"+availableCourse.getProgram()+"\t"+availableCourse.getCategory()+"\t"+availableCourse.getCredits());
+
         model.addAttribute("availableCourses", availableCourses);
 
         // Setup model to fetch student requirements.
