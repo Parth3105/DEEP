@@ -27,7 +27,7 @@ CREATE TABLE course_offerings (
     category VARCHAR(10) NOT NULL,
     seats INTEGER NOT NULL,
     PRIMARY KEY (cid, program, semester),
-    FOREIGN KEY (cid) REFERENCES courses(cid)
+    FOREIGN KEY (cid) REFERENCES courses(cid) ON DELETE CASCADE
 );
 
 CREATE TABLE student_reqs (
@@ -35,7 +35,7 @@ CREATE TABLE student_reqs (
     category VARCHAR(10),
     course_cnt INTEGER NOT NULL,
     PRIMARY KEY (sid, category),
-    FOREIGN KEY (sid) REFERENCES students(sid)
+    FOREIGN KEY (sid) REFERENCES students(sid) ON DELETE CASCADE
 );
 
 CREATE TABLE slot_prefs (
@@ -43,7 +43,7 @@ CREATE TABLE slot_prefs (
     pref INTEGER,
     slot VARCHAR(4),
     PRIMARY KEY (sid, pref),
-    FOREIGN KEY (sid) REFERENCES students(sid)
+    FOREIGN KEY (sid) REFERENCES students(sid) ON DELETE CASCADE
 );
 
 CREATE TABLE course_prefs (
@@ -52,8 +52,8 @@ CREATE TABLE course_prefs (
     pref INTEGER,
     cid VARCHAR(10),
     PRIMARY KEY (sid, slot, pref),
-    FOREIGN KEY (sid) REFERENCES students(sid),
-    FOREIGN KEY (cid) REFERENCES courses(cid)
+    FOREIGN KEY (sid) REFERENCES students(sid) ON DELETE CASCADE,
+    FOREIGN KEY (cid) REFERENCES courses(cid) ON DELETE CASCADE
 );
 
 CREATE TABLE uploads(
