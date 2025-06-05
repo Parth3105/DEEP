@@ -1,6 +1,7 @@
 package in.ac.daiict.deep.service.impl;
 
 import in.ac.daiict.deep.constant.ResponseConstants;
+import in.ac.daiict.deep.dto.AvailableCourseDto;
 import in.ac.daiict.deep.dto.CourseDto;
 import in.ac.daiict.deep.entity.Course;
 import in.ac.daiict.deep.repository.CourseRepo;
@@ -36,7 +37,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseDto> getAll() {
+    public List<CourseDto> fetchAll() {
         List<Course> courses=courseRepo.findAll();
         return modelMapper.map(courses,new TypeToken<List<CourseDto>>(){}.getType());
     }
@@ -49,5 +50,10 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public boolean isPresent(String cid) {
         return courseRepo.existsById(cid);
+    }
+
+    @Override
+    public List<AvailableCourseDto> fetchAvailableCourses(String program, int semester) {
+        return courseRepo.fetchAvailableCourses(program,semester);
     }
 }

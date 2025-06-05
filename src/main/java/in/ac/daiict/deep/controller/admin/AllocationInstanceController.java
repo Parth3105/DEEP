@@ -7,8 +7,6 @@ import in.ac.daiict.deep.entity.Upload;
 import in.ac.daiict.deep.service.*;
 import in.ac.daiict.deep.config.DBConfig;
 import in.ac.daiict.deep.utility.Response;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -131,7 +129,7 @@ public class AllocationInstanceController {
                         isOffersUploaded = true;
                     }
                 }
-                if(isCoursesUploaded && !isOffersUploaded && offersUploadedOnce) warningStatus.set(new Response(ResponseConstants.WARNING, List.of("Warning: The uploaded file was saved successfully, but a connected file is missing. Associated data may be deleted or incomplete. Please ensure all related files are uploaded to avoid data loss.")));
+                if(isCoursesUploaded && !isOffersUploaded && offersUploadedOnce) warningStatus.set(new Response(ResponseConstants.WARNING, List.of("Warning: Course Data has been updated. Please re-upload Course Offering file to avoid data loss.")));
             }
         });
         Thread u3=new Thread(new Runnable() {
@@ -167,7 +165,7 @@ public class AllocationInstanceController {
         if(cnt.get()==0){
             Response warnings=warningStatus.get();
             if(warnings==null) warnings=new Response(ResponseConstants.WARNING,new ArrayList<>());
-            warnings.addWarning("No files were uploaded. Please make sure to select and upload files before submitting.");
+            warnings.addWarning("Warning: No files were uploaded. Please make sure to select and upload files before submitting.");
             warningStatus.set(warnings);
         }
         if(errorStatus.get()!=null) redirectAttributes.addFlashAttribute("uploadError",errorStatus.get());
