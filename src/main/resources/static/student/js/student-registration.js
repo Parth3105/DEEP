@@ -6,11 +6,22 @@ toggle.addEventListener('click', () => {
 });
 
 // Toast Notification
-function showToast(message) {
+function showToast(message, type = 'error') {
     const toast = document.getElementById("toast-error");
     const text = document.getElementById("toast-message");
 
     text.innerText = message;
+
+    // Reset any previous background color
+    toast.classList.remove("bg-red-500", "bg-yellow-400");
+
+    // Apply based on type
+    if (type === 'error') {
+        toast.classList.add("bg-red-500");
+    } else if (type === 'warning') {
+        toast.classList.add("bg-yellow-400", "text-gray-900");
+    }
+
     toast.classList.remove("hidden");
     toast.classList.add("flex");
 
@@ -24,6 +35,20 @@ function hideToast() {
     toast.classList.remove("flex");
     toast.classList.add("hidden");
 }
+
+const categories = ['ICTE', 'TE', 'SE', 'MNCE', 'OE'];
+const values = {};
+
+categories.forEach(cat => {
+    values[cat] = '0';
+
+    const input = document.querySelector(`input[name="${cat}"]`);
+    if (input) {
+    input.addEventListener('input', () => {
+        values[cat] = input.value.trim() || '0';
+    });
+    }
+});
 
 // Registration Form Steps
 let currentStep = 1;
@@ -58,6 +83,9 @@ function showStep(step) {
 }
 
 function CheckInputs() {
+    if(currentStep === 2) {
+        console.log(selectedCoursesBySlot);
+    }
     if(currentStep !== 1) {
         return true;
     }
@@ -90,125 +118,187 @@ function prevStep() {
 }
 
 // Registration Form 2
-const slots = document.querySelectorAll("#slotContainer .slot");
-slots.forEach(slot => {
-slot.addEventListener("click", () => {
-    // Remove active style from all
+let selectedCoursesBySlot = {};
+let currentSlot = '';
+
+// Show courses for a specific slot
+function showSlotCourses(slot) {
+    slot = String(slot);
+    if (slot === currentSlot) return;
+
+    const currentSlotCourses = document.querySelectorAll(`#slot-${currentSlot} .course-row`);
+    const selectedCIDsInCurrent = selectedCoursesBySlot[currentSlot] || [];
+    const totalCoursesInCurrent = currentSlotCourses.length;
+
+    const noSlotCourseCheckbox = document.getElementById('noSlotCourse');
+
+    const hasAllSelected = selectedCIDsInCurrent.length === totalCoursesInCurrent;
+
+    if (currentStep === 2 && !hasAllSelected && (!noSlotCourseCheckbox || !noSlotCourseCheckbox.checked)) {
+        showToast(`Please select all courses or confirm you don't want any from Slot ${currentSlot}.`, "warning");
+        return;
+    }
+
+    // Slot switch is allowed
+    currentSlot = slot;
+
+    if (noSlotCourseCheckbox) noSlotCourseCheckbox.checked = false;
+
+    // Hide all slot courses
+    document.querySelectorAll('.slot-courses').forEach(el => el.classList.add('hidden'));
+
+    // Show selected slot
+    const slotElement = document.getElementById('slot-' + slot);
+    if (slotElement) slotElement.classList.remove('hidden');
+
+    // Update active styles
+    const slots = document.querySelectorAll("#slotContainer .slot");
     slots.forEach(s => {
-    s.classList.remove("bg-blue-500", "text-white");
-    s.classList.add("bg-cyan-300", "text-gray-800");
+        s.classList.remove("bg-blue-500", "text-white");
+        s.classList.add("bg-cyan-300", "text-gray-800");
     });
 
-    // Apply active style to clicked one
-    slot.classList.remove("bg-cyan-300", "text-gray-800");
-    slot.classList.add("bg-blue-500", "text-white");
-});
-});
+    const selectedSlotBtn = document.querySelector(`.slot[data-slot="${slot}"]`);
+    if (selectedSlotBtn) {
+        selectedSlotBtn.classList.remove("bg-cyan-300", "text-gray-800");
+        selectedSlotBtn.classList.add("bg-blue-500", "text-white");
+    }
 
-// Course management functionality
-let selectedCourses = [];
-document.addEventListener('DOMContentLoaded', function() {
-    attachEventListeners();
-});
+    updateSelectedCoursesDisplay();
+    updateCourseVisibility();
+}
 
-function attachEventListeners() {
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('course-btn')) {
-            e.preventDefault();
-            const courseRow = e.target.closest('.course-row');
-            const courseId = courseRow.dataset.courseId;
+// Hide already selected courses in current slot
+function updateCourseVisibility() {
+    document.querySelectorAll('.course-row').forEach(courseRow => {
+        const courseId = courseRow.getAttribute('data-course-id');
+        const slot = courseRow.getAttribute('data-slot');
 
-            if (e.target.textContent.trim() === '+') {
-                addCourse(courseRow, courseId);
-            } else if (e.target.textContent.trim() === '-') {
-                removeCourse(courseRow, courseId);
-            }
-        }
+        const selectedInSlot = selectedCoursesBySlot[slot] || [];
+        const isSelected = selectedInSlot.some(course => course.cid === courseId);
+
+        courseRow.style.display = (slot === currentSlot && !isSelected) ? 'grid' : 'none';
     });
 }
 
-function addCourse(courseRow, courseId) {
-    selectedCourses.push(courseId);
-    const clonedRow = courseRow.cloneNode(true);
-
-    const button = clonedRow.querySelector('.course-btn');
-    button.textContent = '-';
-    button.className = 'course-btn w-4 h-4 md:w-6 md:h-6 bg-red-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-red-600 transition-colors';
-
-    clonedRow.className = clonedRow.className.replace('border-b border-gray-300', '');
-    courseRow.remove();
-
-    const selectedCoursesDiv = document.getElementById('selectedCourses');
-    const existingSelectedRows = selectedCoursesDiv.querySelectorAll('.course-row');
-    if (existingSelectedRows.length > 0) {
-        const lastRow = existingSelectedRows[existingSelectedRows.length - 1];
-        if (!lastRow.classList.contains('border-b')) {
-            lastRow.classList.add('border-b', 'border-gray-300');
-        }
+function addCourseToSelected(cid, slot, name, program, category, credits) {
+    if (!selectedCoursesBySlot[slot]) {
+        selectedCoursesBySlot[slot] = [];
     }
 
-    selectedCoursesDiv.appendChild(clonedRow);
+    if (selectedCoursesBySlot[slot].find(course => course.cid === cid)) {
+        alert('Course already selected in this slot!');
+        return;
+    }
 
-    // console.log('Course added:', courseId);
-    // console.log('Selected courses:', selectedCourses);
+    selectedCoursesBySlot[slot].push({ cid, slot, name, program, category, credits });
+
+    updateSelectedCoursesDisplay();
+    updateCourseVisibility();
 }
 
-function removeCourse(courseRow, courseId) {
-    selectedCourses = selectedCourses.filter(id => id !== courseId);
-    const clonedRow = courseRow.cloneNode(true);
+function removeCourseFromSelected(cid) {
+    const coursesInSlot = selectedCoursesBySlot[currentSlot] || [];
+    selectedCoursesBySlot[currentSlot] = coursesInSlot.filter(course => course.cid !== cid);
 
-    const button = clonedRow.querySelector('.course-btn');
-    button.textContent = '+';
-    button.className = 'course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors';
-    courseRow.remove();
-
-    const selectedCoursesDiv = document.getElementById('selectedCourses');
-    const remainingSelectedRows = selectedCoursesDiv.querySelectorAll('.course-row');
-    if (remainingSelectedRows.length > 0) {
-        const lastRow = remainingSelectedRows[remainingSelectedRows.length - 1];
-        lastRow.classList.remove('border-b', 'border-gray-300');
-    }
-
-    const availableCoursesDiv = document.getElementById('availableCourses');
-    const existingRows = availableCoursesDiv.querySelectorAll('.course-row');
-
-    let insertPosition = null;
-    for (let i = 0; i < existingRows.length; i++) {
-        const existingId = parseInt(existingRows[i].dataset.courseId);
-        const currentId = parseInt(courseId);
-        if (currentId < existingId) {
-            insertPosition = existingRows[i];
-            break;
-        }
-    }
-
-    if (insertPosition) {
-        clonedRow.classList.add('border-b', 'border-gray-300');
-        availableCoursesDiv.insertBefore(clonedRow, insertPosition);
-    } else {
-        if (existingRows.length > 0) {
-            clonedRow.classList.add('border-b', 'border-gray-300');
-            const currentLastRow = existingRows[existingRows.length - 1];
-            currentLastRow.classList.add('border-b', 'border-gray-300');
-        }
-        availableCoursesDiv.appendChild(clonedRow);
-    }
-
-    // console.log('Course removed:', courseId);
-    // console.log('Selected courses:', selectedCourses);
+    updateSelectedCoursesDisplay();
+    updateCourseVisibility();
 }
 
-// Slot selection functionality
-document.querySelectorAll('.bg-cyan-300').forEach(slot => {
-    slot.addEventListener('click', function() {
-        document.querySelectorAll('.bg-green-400, .bg-cyan-300').forEach(s => {
-            s.className = s.className.replace('bg-green-400', 'bg-cyan-300');
-            s.className = s.className.replace('text-white', 'text-gray-800');
+function updateSelectedCoursesDisplay() {
+    const selectedCoursesContainer = document.getElementById('selectedCourses');
+    const courses = selectedCoursesBySlot[currentSlot] || [];
+
+    if (courses.length === 0) {
+        selectedCoursesContainer.innerHTML = '<div class="h-4"></div>';
+        return;
+    }
+
+    let html = '<div class="h-4"></div>';
+    courses.forEach(course => {
+        html += `
+            <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 bg-green-100">
+                <div class="p-2 lg:p-3 flex justify-center items-center">
+                    <button class="w-4 h-4 md:w-6 md:h-6 bg-red-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-red-600 transition-colors"
+                            onclick="removeCourseFromSelected('${course.cid}')">
+                        -
+                    </button>
+                </div>
+                <div class="p-2 lg:p-3 text-center font-medium">${course.cid}</div>
+                <div class="p-2 lg:p-3 col-span-2 font-medium">${course.name}</div>
+                <div class="p-2 lg:p-3 text-center font-medium">${course.program}</div>
+                <div class="p-2 lg:p-3 text-center font-medium">${course.category}</div>
+                <div class="p-2 lg:p-3 text-center font-medium">${course.credits}</div>
+            </div>
+        `;
+    });
+
+    selectedCoursesContainer.innerHTML = html;
+}
+
+// Initialization
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.slot[data-slot]').forEach(slotBtn => {
+        slotBtn.addEventListener('click', function () {
+            const slot = this.getAttribute('data-slot');
+            showSlotCourses(slot);
         });
-
-        this.className = this.className.replace('bg-cyan-300', 'bg-green-400');
-        this.className = this.className.replace('text-gray-800', 'text-white');
     });
+
+    document.querySelectorAll('.course-btn').forEach(courseBtn => {
+        courseBtn.addEventListener('click', function () {
+            const cid = this.getAttribute('data-cid');
+            const slot = this.getAttribute('data-slot');
+            const name = this.getAttribute('data-name');
+            const program = this.getAttribute('data-program');
+            const category = this.getAttribute('data-category');
+            const credits = parseInt(this.getAttribute('data-credits'));
+            addCourseToSelected(cid, slot, name, program, category, credits);
+        });
+    });
+
+    // Set first slot as active initially
+    const firstSlot = document.querySelector('.slot[data-slot]');
+    if (firstSlot) {
+        showSlotCourses(firstSlot.getAttribute('data-slot'));
+    }
 });
 
 // Registration Form 3
+function collectPreferences() {
+    const inputs = document.querySelectorAll('.slot-preference-input');
+    const preferences = Array.from(inputs).map(input => input.value.trim());
+    console.log('User Preferences:', preferences);
+    return preferences;
+}
+
+function getSlotPrefsToString(slotPrefs) {
+    return slotPrefs.join('$');
+}
+
+function getCoursePrefsToString(coursePrefs) {
+  return Object.entries(coursePrefs)
+    .map(([slotId, courses]) => {
+      const cids = courses.map(course => course.cid).join('$');
+      return `${slotId}:${cids}`;
+    })
+    .join('#');
+}
+
+function getAcadReqToString(obj) {
+  return Object.entries(obj)
+    .map(([key, value]) => `${key}:${value}`)
+    .join('#');
+}
+
+document.getElementById('submitButton').addEventListener('click', function () {
+    const acad = getAcadReqToString(values);
+    const course = getCoursePrefsToString(selectedCoursesBySlot);
+    const slot = getSlotPrefsToString(collectPreferences());
+
+    document.getElementById('studentRequirements').value = acad;
+    document.getElementById('coursePreferences').value = course;
+    document.getElementById('slotPreferences').value = slot;
+
+    document.getElementById('myForm').submit();
+});

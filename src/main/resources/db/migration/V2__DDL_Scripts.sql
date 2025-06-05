@@ -56,6 +56,23 @@ CREATE TABLE course_prefs (
     FOREIGN KEY (cid) REFERENCES courses(cid) ON DELETE CASCADE
 );
 
+CREATE TABLE allocation_results (
+    sid VARCHAR(12),
+    cid VARCHAR(10),
+    PRIMARY KEY (sid, cid),
+    FOREIGN KEY (sid) REFERENCES students(sid) ON DELETE CASCADE,
+    FOREIGN KEY (cid) REFERENCES courses(cid) ON DELETE CASCADE
+);
+
+CREATE TABLE seat_summary (
+    cid VARCHAR(10),
+    program VARCHAR(10),
+    semester INTEGER,
+    available_seats INTEGER,
+    PRIMARY KEY (cid, program, semester),
+    FOREIGN KEY (cid) REFERENCES courses(cid) ON DELETE CASCADE
+);
+
 CREATE TABLE uploads(
     name VARCHAR(100) PRIMARY KEY,
     file BYTEA
