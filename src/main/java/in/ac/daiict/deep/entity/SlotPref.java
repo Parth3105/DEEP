@@ -1,5 +1,6 @@
 package in.ac.daiict.deep.entity;
 
+import in.ac.daiict.deep.constant.DBConstants;
 import in.ac.daiict.deep.entity.compositekeys.SlotPrefPK;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "slot_prefs")
+@Table(name = DBConstants.SLOT_PREFERENCE_TABLE)
 @IdClass(SlotPrefPK.class)
 public class SlotPref {
     @Id

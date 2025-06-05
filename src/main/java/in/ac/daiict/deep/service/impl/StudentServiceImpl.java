@@ -5,7 +5,7 @@ import in.ac.daiict.deep.dto.StudentDto;
 import in.ac.daiict.deep.entity.Student;
 import in.ac.daiict.deep.repository.StudentRepo;
 import in.ac.daiict.deep.service.StudentService;
-import in.ac.daiict.deep.utility.DataLoader;
+import in.ac.daiict.deep.utility.dataloader.DataLoader;
 import in.ac.daiict.deep.utility.Response;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -35,9 +35,14 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentDto> getAll() {
+    public List<StudentDto> fetchAllStudentDtos() {
         List<Student> students=studentRepo.findAll();
         return modelMapper.map(students,new TypeToken<List<StudentDto>>(){}.getType());
+    }
+
+    @Override
+    public List<Student> fetchAllStudents() {
+        return studentRepo.findAll();
     }
 
     @Override

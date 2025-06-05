@@ -5,7 +5,7 @@ import in.ac.daiict.deep.dto.CourseOfferingDto;
 import in.ac.daiict.deep.entity.CourseOffering;
 import in.ac.daiict.deep.repository.CourseOfferingRepo;
 import in.ac.daiict.deep.service.CourseOfferingService;
-import in.ac.daiict.deep.utility.DataLoader;
+import in.ac.daiict.deep.utility.dataloader.DataLoader;
 import in.ac.daiict.deep.utility.Response;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -36,7 +36,12 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     }
 
     @Override
-    public List<CourseOfferingDto> getAll() {
+    public List<CourseOffering> fetchAllCourseOfferings() {
+        return courseOfferingRepo.findAll();
+    }
+
+    @Override
+    public List<CourseOfferingDto> fetchAllCourseOfferingDtos() {
         List<CourseOffering> courseOffers=courseOfferingRepo.findAll();
         return modelMapper.map(courseOffers,new TypeToken<List<CourseOfferingDto>>(){}.getType());
     }
