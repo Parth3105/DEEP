@@ -59,7 +59,6 @@ public class DBConfig {
     private void createEntityManagerFactory(String schemaName) {
         Map<String, Object> props = new HashMap<>();
         props.put("hibernate.default_schema", schemaName);
-        props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
 
         emfBean = builder

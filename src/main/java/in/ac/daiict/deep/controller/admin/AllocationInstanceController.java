@@ -17,13 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
-@AllArgsConstructor
 public class AllocationInstanceController {
     private StudentService studentService;
     private CourseService courseService;
@@ -33,10 +31,22 @@ public class AllocationInstanceController {
     private DBConfig schemaSetupService;
     private JdbcTemplate jdbcTemplate;
 
+    public AllocationInstanceController(StudentService studentService, CourseService courseService, InstituteReqService instituteReqService, CourseOfferingService courseOfferingService, UploadService uploadService, DBConfig schemaSetupService, JdbcTemplate jdbcTemplate) {
+        this.studentService = studentService;
+        this.courseService = courseService;
+        this.instituteReqService = instituteReqService;
+        this.courseOfferingService = courseOfferingService;
+        this.uploadService = uploadService;
+        this.schemaSetupService = schemaSetupService;
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     private Map<String, Upload> uploads=null;
+    private boolean offersUploadedOnce;
     @PostMapping("/create-instance")
     public String initiateSetup(@RequestParam String season, @RequestParam String Year, Model model){
         uploads=new HashMap<>();
+        offersUploadedOnce=false;
         if(DBConstants.SAVE_SCHEMA_NAME !=null) {
             String sql = String.format("ALTER SCHEMA %s RENAME TO %s", DBConstants.WORKING_SCHEMA_NAME, DBConstants.SAVE_SCHEMA_NAME);
             jdbcTemplate.execute(sql);
@@ -86,12 +96,15 @@ public class AllocationInstanceController {
         */
 
         AtomicReference<Response> errorStatus=new AtomicReference<>(null);
+        AtomicReference<Response> warningStatus=new AtomicReference<>(null);
+        AtomicInteger cnt=new AtomicInteger(0);
         Thread u1=new Thread(new Runnable() {
             @Override
             public void run() {
                 if(uploads.containsKey(UploadConstants.studentData)){
                     Response status=studentService.insertAll(uploads.get(UploadConstants.studentData).getFile());
                     if(status.getStatus()!= ResponseConstants.OK) errorStatus.set(status);
+                    else cnt.set(cnt.get()+1);
                 }
                 System.out.println("\n\nFinished uploading .......\n\n");
             }
@@ -99,14 +112,26 @@ public class AllocationInstanceController {
         Thread u2=new Thread(new Runnable() {
             @Override
             public void run() {
+                boolean isCoursesUploaded=false;
+                boolean isOffersUploaded=false;
                 if(uploads.containsKey(UploadConstants.courseData)){
                     Response status=courseService.insertAll(uploads.get(UploadConstants.courseData).getFile());
                     if(status.getStatus()!= ResponseConstants.OK) errorStatus.set(status);
+                    else {
+                        cnt.set(cnt.get() + 1);
+                        isCoursesUploaded = true;
+                    }
                 }
                 if(uploads.containsKey(UploadConstants.offeringData)){
                     Response status=courseOfferingService.insertAll(uploads.get(UploadConstants.offeringData).getFile());
                     if(status.getStatus()!= ResponseConstants.OK) errorStatus.set(status);
+                    else {
+                        cnt.set(cnt.get() + 1);
+                        offersUploadedOnce = true;
+                        isOffersUploaded = true;
+                    }
                 }
+                if(isCoursesUploaded && !isOffersUploaded && offersUploadedOnce) warningStatus.set(new Response(ResponseConstants.WARNING, List.of("Warning: The uploaded file was saved successfully, but a connected file is missing. Associated data may be deleted or incomplete. Please ensure all related files are uploaded to avoid data loss.")));
             }
         });
         Thread u3=new Thread(new Runnable() {
@@ -115,6 +140,7 @@ public class AllocationInstanceController {
                 if(uploads.containsKey(UploadConstants.instReqData)){
                     Response status=instituteReqService.insertAll(uploads.get(UploadConstants.instReqData).getFile());
                     if(status.getStatus()!= ResponseConstants.OK) errorStatus.set(status);
+                    else cnt.set(cnt.get()+1);
                 }
             }
         });
@@ -133,12 +159,21 @@ public class AllocationInstanceController {
             u3.join();
             u4.join();
             u1.join();
+            uploads.clear();
         } catch (InterruptedException e) {
             // handle error
             throw new RuntimeException(e);
         }
-        if(errorStatus.get()!=null) redirectAttributes.addFlashAttribute("uploadResponse",errorStatus.get());
-        else redirectAttributes.addFlashAttribute("uploadResponse",new Response(ResponseConstants.OK,"You're all set! Your records have been successfully uploaded and saved."));
+        if(cnt.get()==0){
+            Response warnings=warningStatus.get();
+            if(warnings==null) warnings=new Response(ResponseConstants.WARNING,new ArrayList<>());
+            warnings.addWarning("No files were uploaded. Please make sure to select and upload files before submitting.");
+            warningStatus.set(warnings);
+        }
+        if(errorStatus.get()!=null) redirectAttributes.addFlashAttribute("uploadError",errorStatus.get());
+        else if(warningStatus.get()!=null) redirectAttributes.addFlashAttribute("uploadWarning",warningStatus.get());
+        if(cnt.get()>0) redirectAttributes.addFlashAttribute("uploadSuccess",new Response(ResponseConstants.OK,"You're all set! "+cnt.get()+" file(s) have been successfully uploaded and saved."));
+
         return "redirect:/update-instance";
     }
 

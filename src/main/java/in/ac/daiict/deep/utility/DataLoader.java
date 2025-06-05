@@ -145,7 +145,7 @@ public class DataLoader {
 
             if(!courseService.isPresent(courseID)){
                 courseOfferingDtos.clear();
-                return new Response(ResponseConstants.BAD_REQUEST,"Some entries refer to non-existing course in course-offerings. Please verify your data.");
+                return new Response(ResponseConstants.BAD_REQUEST,"Error: Some entries refer to non-existing course in course-offerings. Please verify your data.");
             }
             courseOfferingDtos.add(new CourseOfferingDto(program, courseID, category, semester, seats));
         }
