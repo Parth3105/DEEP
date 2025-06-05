@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEEP - Registration</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+<div class="mx-auto">
+  <!-- Header -->
+   <div th:replace="~{common/student-registration-navbar::student-registration-navbar}"></div>
+</div>
+
+<main class="backdrop-blur-lg flex flex-col justify-center items-center px-7 py-6">
+  <!-- Heading -->
+  <span class="text-3xl font-bold text-gray-800 mb-10">Enrollment Form</span>
+
+  <!-- Progress Steps -->
+  <div class="w-full max-w-xl px-6 mb-6">
+    <div class="relative flex justify-between items-center">
+
+      <!-- Step 1 -->
+      <div class="flex flex-col items-center z-10">
+        <div id="progress-1" class="w-8 h-8 rounded-full bg-[#ACCEFF] flex items-center justify-center transition-all duration-700 ease-in-out" style="box-shadow: inset 0 0 0 5px #1321EA; transition: box-shadow 0.4s ease-in-out;"></div>
+        <span class="mt-2 text-xs sm:text-sm text-blue-700 font-medium text-center">Academic Info</span>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="flex flex-col items-center z-10">
+        <div id="progress-2" class="w-8 h-8 rounded-full bg-[#ACCEFF] flex items-center justify-center transition-all duration-700 ease-in-out" style="transition: box-shadow 0.4s ease-in-out;"></div>
+        <span class="mt-2 text-xs sm:text-sm text-blue-700 font-medium text-center">Course Preferences</span>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="flex flex-col items-center z-10">
+        <div id="progress-3" class="w-8 h-8 rounded-full bg-[#ACCEFF] flex items-center justify-center transition-all duration-700 ease-in-out" style="transition: box-shadow 0.4s ease-in-out;"></div>
+        <span class="mt-2 text-xs sm:text-sm text-blue-700 font-medium text-center">Slot Preferences</span>
+      </div>
+
+      <!-- Line between Step 1 and Step 2 -->
+      <div id="line-2" class="absolute top-4 left-[20%] sm:left-[14%] w-[20%] sm:w-[30%] h-1 bg-[#ACCEFF] z-0 transition-all duration-700 ease-in-out"></div>
+
+      <!-- Line between Step 2 and Step 3 -->
+      <div id="line-3" class="absolute top-4 left-[58%] sm:left-[55%] w-[20%] sm:w-[30%] h-1 bg-[#ACCEFF] z-0 transition-all duration-700 ease-in-out"></div>
+
+    </div>
+  </div>
+
+  <div id="toast-error"
+       class="hidden max-w-xs bg-red-500 text-sm text-white rounded-xl shadow-lg fixed top-6 right-6 z-50"
+       role="alert" tabindex="-1" aria-labelledby="hs-toast-solid-color-red-label">
+    <div id="hs-toast-solid-color-red-label" class="flex p-4 gap-2 items-start">
+      <span id="toast-message"></span>
+    </div>
+  </div>
+
+  <!-- Form-1  -->
+  <div id="step-1" class="w-full max-w-7xl">
+    <div class="bg-[#B8D7FF] w-full max-w-7xl rounded-3xl px-6 py-8 sm:py-12 shadow-lg">
+      <!-- Top Row: Semester and Program -->
+      <div class="flex flex-row flex-wrap md:justify-between gap-x-10 gap-y-4 mb-8">
+        <!-- Semester -->
+        <div class="flex flex-1 justify-center items-center" th:if="${semester != null}">
+          <label class="text-lg font-semibold text-gray-800 w-28">Semester :</label>
+          <input type="text" th:value="${semester}" readonly
+                 class="px-3 py-1 border-2 border-gray-300 rounded-lg bg-gray-200 text-center font-medium w-16 cursor-not-allowed" />
+        </div>
+
+        <!-- Program -->
+        <div class="flex flex-1 justify-center items-center" th:if="${program != null}">
+          <label class="text-lg font-semibold text-gray-800 w-28">Program :</label>
+          <input type="text" th:value="${program}" readonly
+                 class="px-3 py-1 border-2 border-gray-300 rounded-lg bg-gray-200 text-center font-medium w-24 cursor-not-allowed" />
+        </div>
+      </div>
+
+      <!-- Main Grid Section -->
+      <div class="flex flex-col md:flex-row gap-10">
+        <!-- Left Section (Semester + Institute Req) -->
+        <div class="flex flex-col space-y-10 w-full md:w-1/2">
+          <!-- Institute Requirements -->
+          <div class="flex flex-col items-center justify-center space-y-4">
+            <h2 class="text-xl font-bold text-center text-gray-800">Institute Requirements:</h2>
+            <div class="flex flex-col justify-center items-center gap-y-3">
+              <!-- ICTE -->
+              <div class="flex items-center"
+                   th:each="obj : ${instituteRequirements}"
+                   th:if="${#strings.toUpperCase(obj.category) == 'ICTE' and obj.course_cnt != null}">
+                <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
+                <input type="text" th:value="${obj.course_cnt}" readonly
+                       class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-gray-200 text-center font-medium w-16 cursor-not-allowed" />
+              </div>
+
+              <!-- TE -->
+              <div class="flex items-center"
+                   th:each="obj : ${instituteRequirements}"
+                   th:if="${#strings.toUpperCase(obj.category) == 'TE' and obj.course_cnt != null}">
+                <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
+                <input type="text" th:value="${obj.course_cnt}" readonly
+                       class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-gray-200 text-center font-medium w-16 cursor-not-allowed" />
+              </div>
+
+              <!-- SE -->
+              <div class="flex items-center"
+                   th:each="obj : ${instituteRequirements}"
+                   th:if="${#strings.toUpperCase(obj.category == 'SE') and obj.course_cnt != null}">
+                <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
+                <input type="text" th:value="${obj.course_cnt}" readonly
+                       class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-gray-200 text-center font-medium w-16 cursor-not-allowed" />
+              </div>
+
+              <div class="flex items-center"
+                   th:each="obj : ${instituteRequirements}"
+                   th:if="${#strings.toUpperCase(obj.category == 'MNCE') and obj.course_cnt != null}">
+                <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
+                <input type="text" th:value="${obj.course_cnt}" readonly
+                       class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-gray-200 text-center font-medium w-16 cursor-not-allowed" />
+              </div>
+
+              <!-- OE -->
+              <div class="flex items-center"
+                   th:each="obj : ${instituteRequirements}"
+                   th:if="${#strings.toUpperCase(obj.category == 'OE') and obj.course_cnt != null}">
+                <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
+                <input type="text" th:value="${obj.course_cnt}" readonly
+                       class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-gray-200 text-center font-medium w-16 cursor-not-allowed" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Section (Program + Academic Req) -->
+        <div class="flex flex-col space-y-10 w-full md:w-1/2">
+          <!-- Academic Requirements -->
+          <div class="flex flex-col items-center justify-center space-y-4">
+            <h2 class="text-xl font-bold text-center text-gray-800">Academic Requirements:</h2>
+            <div class="flex flex-col justify-center items-center gap-y-3">
+              <!-- ICTE -->
+              <div class="flex items-center"
+                   th:each="obj : ${instituteRequirements}"
+                   th:if="${#strings.toUpperCase(obj.category) == 'ICTE' and obj.course_cnt != null}">
+                <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
+                <input type="number" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+                  [&::-webkit-outer-spin-button]:appearance-none
+                  [&::-webkit-inner-spin-button]:appearance-none" />
+              </div>
+
+              <!-- TE -->
+              <div class="flex items-center"
+                   th:each="obj : ${instituteRequirements}"
+                   th:if="${#strings.toUpperCase(obj.category) == 'TE' and obj.course_cnt != null}">
+                <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
+                <input type="number" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+                  [&::-webkit-outer-spin-button]:appearance-none
+                  [&::-webkit-inner-spin-button]:appearance-none" />
+              </div>
+
+              <!-- SE -->
+              <div class="flex items-center"
+                   th:each="obj : ${instituteRequirements}"
+                   th:if="${#strings.toUpperCase(obj.category) == 'SE' and obj.course_cnt != null}">
+                <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
+                <input type="number" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+                  [&::-webkit-outer-spin-button]:appearance-none
+                  [&::-webkit-inner-spin-button]:appearance-none" />
+              </div>
+
+              <!-- MNCE -->
+              <div class="flex items-center"
+                   th:each="obj : ${instituteRequirements}"
+                   th:if="${#strings.toUpperCase(obj.category) == 'MNCE' and obj.course_cnt != null}">
+                <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
+                <input type="number" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+                  [&::-webkit-outer-spin-button]:appearance-none
+                  [&::-webkit-inner-spin-button]:appearance-none" />
+              </div>
+
+              <!-- OE -->
+              <div class="flex items-center"
+                   th:each="obj : ${instituteRequirements}"
+                   th:if="${#strings.toUpperCase(obj.category) == 'OE' and obj.course_cnt != null}">
+                <label th:text="${#strings.toUpperCase(obj.category) + ' :'}" class="text-lg font-semibold text-gray-800 w-16 text-right"></label>
+                <input type="number" class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+                  [&::-webkit-outer-spin-button]:appearance-none
+                  [&::-webkit-inner-spin-button]:appearance-none" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next Button -->
+    <div class="flex justify-center mt-8">
+      <button onclick="nextStep()" class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
+        <span>Proceed to Next Page</span>
+        <img src="/student/images/right-arrow.svg" alt="Right Arrow" class="w-4 h-4">
+      </button>
+    </div>
+  </div>
+
+  <!-- Form-2  -->
+  <div id="step-2" class="hidden">
+    <div class="max-w-7xl mx-auto bg-[#c4d8f5] rounded-2xl shadow-lg overflow-hidden">
+      <div class="flex flex-col lg:flex-row">
+        <!-- Left Sidebar - Slots -->
+        <div id="slotContainer" class="grid grid-cols-4 gap-y-4 md:grid-cols-7 gap-x-4 md:gap-y-0 lg:block lg:w-32 bg-blue-200 p-4 lg:p-5 lg:space-y-3">
+          <div class="slot text-xs md:text-md bg-blue-500 text-white font-semibold text-center py-3 px-4 rounded-lg shadow-md cursor-pointer">
+            Slot 1
+          </div>
+          <div class="slot text-xs md:text-md bg-cyan-300 text-gray-800 font-semibold text-center py-3 px-4 rounded-lg shadow-md cursor-pointer">
+            Slot 2
+          </div>
+          <div class="slot text-xs md:text-md bg-cyan-300 text-gray-800 font-semibold text-center py-3 px-4 rounded-lg shadow-md cursor-pointer">
+            Slot 3
+          </div>
+          <div class="slot text-xs md:text-md bg-cyan-300 text-gray-800 font-semibold text-center py-3 px-4 rounded-lg shadow-md cursor-pointer">
+            Slot 4
+          </div>
+          <div class="slot text-xs md:text-md bg-cyan-300 text-gray-800 font-semibold text-center py-3 px-4 rounded-lg shadow-md cursor-pointer">
+            Slot 5
+          </div>
+          <div class="slot text-xs md:text-md bg-cyan-300 text-gray-800 font-semibold text-center py-3 px-4 rounded-lg shadow-md cursor-pointer">
+            Slot 6
+          </div>
+          <div class="slot text-xs md:text-md bg-cyan-300 text-gray-800 font-semibold text-center py-3 px-4 rounded-lg shadow-md cursor-pointer">
+            Slot 7
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 bg-blue-300 p-4 lg:p-6">
+          <!-- Course Table -->
+          <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Table Header -->
+            <div class="bg-blue-500 text-white">
+              <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm font-semibold">
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300">ACTION</div>
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300">COURSE CODE</div>
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300 col-span-2 lg:col-span-2">COURSE NAME</div>
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300">PROGRAM</div>
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300">CATEGORY</div>
+                <div class="p-1 lg:p-3 text-center">CREDITS</div>
+              </div>
+            </div>
+
+            <!-- Table Body -->
+            <div class="bg-blue-200">
+              <!-- Selected Courses Section -->
+              <div id="selectedCourses">
+                <!-- Empty row for separation -->
+                <div class="h-4"></div>
+              </div>
+
+              <!-- Black Separator -->
+              <div class="border-b-4 border-black"></div>
+
+              <!-- Available Courses Section -->
+              <div id="availableCourses">
+                <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 course-row" data-course-id="1">
+                  <div class="p-2 lg:p-3 flex justify-center items-center">
+                    <button class="course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors">
+                      +
+                    </button>
+                  </div>
+                  <div class="p-2 lg:p-3 text-center font-medium">CS301</div>
+                  <div class="p-2 lg:p-3 col-span-2 font-medium">1 INTRODUCTION TO INFORMATION AND COMMUNICATION TECHNOLOGY</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICT</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICTE</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">4.0</div>
+                </div>
+
+                <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 course-row" data-course-id="2">
+                  <div class="p-2 lg:p-3 flex justify-center items-center">
+                    <button class="course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors">
+                      +
+                    </button>
+                  </div>
+                  <div class="p-2 lg:p-3 text-center font-medium">CS301</div>
+                  <div class="p-2 lg:p-3 col-span-2 font-medium">2 INTRODUCTION TO INFORMATION AND COMMUNICATION TECHNOLOGY</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICT</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICTE</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">4.0</div>
+                </div>
+
+                <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 course-row" data-course-id="3">
+                  <div class="p-2 lg:p-3 flex justify-center items-center">
+                    <button class="course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors">
+                      +
+                    </button>
+                  </div>
+                  <div class="p-2 lg:p-3 text-center font-medium">CS301</div>
+                  <div class="p-2 lg:p-3 col-span-2 font-medium">3 INTRODUCTION TO INFORMATION AND COMMUNICATION TECHNOLOGY</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICT</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICTE</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">4.0</div>
+                </div>
+
+                <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 course-row" data-course-id="4">
+                  <div class="p-2 lg:p-3 flex justify-center items-center">
+                    <button class="course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors">
+                      +
+                    </button>
+                  </div>
+                  <div class="p-2 lg:p-3 text-center font-medium">CS301</div>
+                  <div class="p-2 lg:p-3 col-span-2 font-medium">4 INTRODUCTION TO INFORMATION AND COMMUNICATION TECHNOLOGY</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICT</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICTE</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">4.0</div>
+                </div>
+
+                <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 course-row" data-course-id="5">
+                  <div class="p-2 lg:p-3 flex justify-center items-center">
+                    <button class="course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors">
+                      +
+                    </button>
+                  </div>
+                  <div class="p-2 lg:p-3 text-center font-medium">CS301</div>
+                  <div class="p-2 lg:p-3 col-span-2 font-medium">5 INTRODUCTION TO INFORMATION AND COMMUNICATION TECHNOLOGY</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICT</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICTE</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">4.0</div>
+                </div>
+
+                <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 course-row" data-course-id="6">
+                  <div class="p-2 lg:p-3 flex justify-center items-center">
+                    <button class="course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors">
+                      +
+                    </button>
+                  </div>
+                  <div class="p-2 lg:p-3 text-center font-medium">CS301</div>
+                  <div class="p-2 lg:p-3 col-span-2 font-medium">6 INTRODUCTION TO INFORMATION AND COMMUNICATION TECHNOLOGY</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICT</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICTE</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">4.0</div>
+                </div>
+
+                <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm course-row" data-course-id="7">
+                  <div class="p-2 lg:p-3 flex justify-center items-center">
+                    <button class="course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors">
+                      +
+                    </button>
+                  </div>
+                  <div class="p-2 lg:p-3 text-center font-medium">CS301</div>
+                  <div class="p-2 lg:p-3 col-span-2 font-medium">7 INTRODUCTION TO INFORMATION AND COMMUNICATION TECHNOLOGY</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICT</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">ICTE</div>
+                  <div class="p-2 lg:p-3 text-center font-medium">4.0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Checkbox -->
+          <div class="mt-6 flex justify-center items-center">
+            <input type="checkbox" id="noSlotCourse" class="w-4 h-4 md:w-5 md:h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+            <label for="noSlotCourse" class="ml-3 text-xs md:text-base font-medium text-gray-700">
+              I don't want to take any course from this slot.
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-center items-center gap-6">
+      <div class="flex justify-center mt-8">
+        <button onclick="prevStep()" class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
+          <img src="/student/images/left-arrow.svg" alt="Left Arrow" class="w-5 h-5 md:w-4 md:h-4">
+          <span class="text-sm md:text-md">Proceed to Previous Page</span>
+        </button>
+      </div>
+
+      <div class="flex justify-center mt-8">
+        <button onclick="nextStep()" class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
+          <span class="text-sm md:text-md">Proceed to Next Page</span>
+          <img src="/student/images/right-arrow.svg" alt="Right Arrow" class="w-5 h-5 md:w-4 md:h-4">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form-3  -->
+  <div id="step-3" class="hidden">
+    <h1 class="text-2xl font-bold text-center text-black mt-5 mb-4">Slot Preference Order</h1>
+
+    <!-- Main Container -->
+    <div class="bg-blue-300 rounded-3xl px-8 py-6 shadow-lg mb-8">
+      <div class="flex flex-col justify-center items-center space-y-5">
+        <!-- Preference 1 -->
+        <div class="flex items-center">
+          <label class="text-lg font-bold text-black w-45">Preference - 1 :</label>
+          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+        </div>
+
+        <!-- Preference 2 -->
+        <div class="flex items-center">
+          <label class="text-lg font-bold text-black w-45">Preference - 2 :</label>
+          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+        </div>
+
+        <!-- Preference 3 -->
+        <div class="flex items-center">
+          <label class="text-lg font-bold text-black w-45">Preference - 3 :</label>
+          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+        </div>
+
+        <!-- Preference 4 -->
+        <div class="flex items-center">
+          <label class="text-lg font-bold text-black w-45">Preference - 4 :</label>
+          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+        </div>
+
+        <!-- Preference 5 -->
+        <div class="flex items-center">
+          <label class="text-lg font-bold text-black w-45">Preference - 5 :</label>
+          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+        </div>
+
+        <!-- Preference 6 -->
+        <div class="flex items-center">
+          <label class="text-lg font-bold text-black w-45">Preference - 6 :</label>
+          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+        </div>
+
+        <!-- Preference 7 -->
+        <div class="flex items-center">
+          <label class="text-lg font-bold text-black w-45">Preference - 7 :</label>
+          <input type="number" min="1" max="10" class="px-3 py-1 border-2 border-purple-300 rounded-md bg-white text-center font-medium text-lg md:w-20 focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-6">
+      <div class="flex justify-center mt-2">
+        <button onclick="prevStep()" class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
+          <img src="/student/images/left-arrow.svg" alt="Left Arrow" class="w-5 h-5 md:w-4 md:h-4">
+          <span class="text-sm md:text-md">Proceed to Previous Page</span>
+        </button>
+      </div>
+
+      <div class="flex justify-center mt-2">
+        <button class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
+          <span class="text-sm md:text-md">Submit Response</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/student/js/student-registration.js"></script>
+</body>
+</html>

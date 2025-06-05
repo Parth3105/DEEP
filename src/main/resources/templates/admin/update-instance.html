@@ -43,45 +43,6 @@
                         <div class="text-3xl lg:text-[2.5rem] font-bold text-gray-800" th:text="${entry.value}"></div>
                     </div>
                 </div>
-
-                <!-- Semester 6 -->
-                <!-- <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
-                    <div class="w-20 h-20 lg:w-25 lg:h-25 bg-[#EEF12B] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
-                        <img src="/admin/images/open-book.png" alt="Checkmark" class="w-10 h-10 lg:w-12 lg:h-12">
-                    </div>
-                    <div>
-                        <div class="font-bold text-gray-800 text-lg lg:text-2xl">Semester 6</div>
-                        <div class="text-xs lg:text-md mb-4 md:mb-7">Partially Uploaded</div>
-                        <div class="text-xs lg:text-xs font-semibold text-gray-800">Available Students Data</div>
-                        <div class="text-3xl lg:text-[2.5rem] font-bold text-gray-800">0</div>
-                    </div>
-                </div> -->
-
-                <!-- Semester 7 -->
-                <!-- <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
-                    <div class="w-20 h-20 lg:w-25 lg:h-25 bg-[#D9D9D9] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
-                        <img src="/admin/images/open-book.png" alt="Checkmark" class="w-10 h-10 lg:w-12 lg:h-12">
-                    </div>
-                    <div>
-                        <div class="font-bold text-gray-800 text-lg lg:text-2xl">Semester 7</div>
-                        <div class="text-xs lg:text-md mb-4 md:mb-7">Pending</div>
-                        <div class="text-xs lg:text-xs font-semibold text-gray-800">Available Students Data</div>
-                        <div class="text-3xl lg:text-[2.5rem] font-bold text-gray-800">100</div>
-                    </div>
-                </div> -->
-
-                <!-- Semester 8 -->
-                <!-- <div class="flex flex-col items-center text-center space-y-3 lg:mb-0">
-                    <div class="w-20 h-20 lg:w-25 lg:h-25 bg-[#D9D9D9] rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
-                        <img src="/admin/images/open-book.png" alt="Checkmark" class="w-10 h-10 lg:w-12 lg:h-12">
-                    </div>
-                    <div>
-                        <div class="font-bold text-gray-800 text-lg lg:text-2xl">Semester 8</div>
-                        <div class="text-xs lg:text-md mb-4 md:mb-7">Pending</div>
-                        <div class="text-xs lg:text-xs font-semibold text-gray-800">Available Students Data</div>
-                        <div class="text-3xl lg:text-[2.5rem] font-bold text-gray-800">120</div>
-                    </div>
-                </div> -->
             </div>
         </section>
 
@@ -254,6 +215,41 @@
                 </svg>
             </button>
         </form>
+
+        <div th:if="${uploadResponse != null}" class="flex justify-center mt-6">
+            <div id="toast"
+                 class="max-w-xs lg:max-w-lg text-sm text-white rounded-xl shadow-lg fixed top-6 right-6 z-50"
+                 role="alert" tabindex="-1" aria-labelledby="hs-toast-label">
+                <div id="hs-toast-label" class="flex p-4 gap-2 items-start">
+                    <span id="toast-message"></span>
+                </div>
+            </div>
+
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                const toast = document.getElementById("toast");
+                const message = document.getElementById("toast-message");
+
+                const status = /*[[${uploadResponse.status}]]*/ 'ERROR';  // or 'OK'
+                const text = /*[[${uploadResponse.message}]]*/ 'Something went wrong';
+
+                message.textContent = text;
+
+                // Set background color based on status
+                if (status === 200) {
+                    toast.classList.add("bg-green-500");
+                } else {
+                    toast.classList.add("bg-red-500");
+                }
+
+                toast.classList.remove("hidden");
+
+                setTimeout(() => {
+                    toast.classList.add("hidden");
+                }, 3000);
+                /*]]>*/
+            </script>
+        </div>
     </main>
 </div>
 
