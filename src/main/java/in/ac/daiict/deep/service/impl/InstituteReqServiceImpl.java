@@ -5,7 +5,7 @@ import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.entity.InstituteReq;
 import in.ac.daiict.deep.repository.InstituteReqRepo;
 import in.ac.daiict.deep.service.InstituteReqService;
-import in.ac.daiict.deep.utility.DataLoader;
+import in.ac.daiict.deep.utility.dataloader.DataLoader;
 import in.ac.daiict.deep.utility.Response;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,7 +21,7 @@ import java.util.List;
 public class InstituteReqServiceImpl implements InstituteReqService {
     private InstituteReqRepo instituteReqRepo;
     private ModelMapper modelMapper;
-    DataLoader dataLoader;
+    private DataLoader dataLoader;
 
     @Override
     public Response insertAll(byte[] instituteReqData) {
@@ -36,7 +36,12 @@ public class InstituteReqServiceImpl implements InstituteReqService {
     }
 
     @Override
-    public List<InstituteReqDto> getAll() {
+    public List<InstituteReq> fetchAllInstituteReqs() {
+        return instituteReqRepo.findAll();
+    }
+
+    @Override
+    public List<InstituteReqDto> fetchAllInstituteReqDtos() {
         List<InstituteReq> InstituteReqs=instituteReqRepo.findAll();
         return modelMapper.map(InstituteReqs,new TypeToken<List<InstituteReqDto>>(){}.getType());
     }

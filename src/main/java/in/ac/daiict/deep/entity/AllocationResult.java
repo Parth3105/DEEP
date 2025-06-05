@@ -1,7 +1,7 @@
 package in.ac.daiict.deep.entity;
 
 import in.ac.daiict.deep.constant.DBConstants;
-import in.ac.daiict.deep.entity.compositekeys.StudentReqPK;
+import in.ac.daiict.deep.entity.compositekeys.AllocationResultPK;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,16 +13,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = DBConstants.STUDENT_REQUIREMENTS_TABLE)
-@IdClass(StudentReqPK.class)
-public class StudentReq {
+@Table(name = DBConstants.ALLOCATION_RESULTS_TABLE)
+@IdClass(AllocationResultPK.class)
+public class AllocationResult {
     @Id
     @Column(length = 12)
     private String sid;
     @Id
     @Column(length = 10)
-    private String category;
-    @Column(nullable = false)
-    private int course_cnt;
-
+    private String cid;
 }
