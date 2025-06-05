@@ -1,4 +1,4 @@
-package in.ac.daiict.deep.utility;
+package in.ac.daiict.deep.utility.dataloader.impl;
 
 import in.ac.daiict.deep.constant.ResponseConstants;
 import in.ac.daiict.deep.dto.CourseDto;
@@ -6,16 +6,16 @@ import in.ac.daiict.deep.dto.CourseOfferingDto;
 import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.dto.StudentDto;
 import in.ac.daiict.deep.service.CourseService;
-import in.ac.daiict.deep.utility.sheetHeaders.CourseOfferSheetHeader;
-import in.ac.daiict.deep.utility.sheetHeaders.CourseSheetHeader;
-import in.ac.daiict.deep.utility.sheetHeaders.InstituteReqSheetHeader;
-import in.ac.daiict.deep.utility.sheetHeaders.StudentSheetHeader;
-import lombok.AllArgsConstructor;
+import in.ac.daiict.deep.utility.Response;
+import in.ac.daiict.deep.utility.dataloader.DataLoader;
+import in.ac.daiict.deep.utility.dataloader.headers.CourseOfferSheetHeader;
+import in.ac.daiict.deep.utility.dataloader.headers.CourseSheetHeader;
+import in.ac.daiict.deep.utility.dataloader.headers.InstituteReqSheetHeader;
+import in.ac.daiict.deep.utility.dataloader.headers.StudentSheetHeader;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Component
-public class DataLoader {
+public class ExcelDataLoader implements DataLoader {
     @Autowired
     @Lazy
     private CourseService courseService;

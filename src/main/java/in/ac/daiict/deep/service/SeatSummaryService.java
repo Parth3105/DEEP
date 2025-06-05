@@ -1,0 +1,9 @@
+package in.ac.daiict.deep.service;
+
+import in.ac.daiict.deep.entity.SeatSummary;
+
+import java.util.List;
+
+public interface SeatSummaryService {
+    public void insertAll(List<SeatSummary> seatSummaryList);
+}

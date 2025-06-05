@@ -1,5 +1,6 @@
 package in.ac.daiict.deep.entity;
 
+import in.ac.daiict.deep.constant.DBConstants;
 import in.ac.daiict.deep.entity.compositekeys.CoursePrefPK;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-@Table(name = "course_prefs")
+@Table(name = DBConstants.COURSE_PREFERENCE_TABLE)
 @IdClass(CoursePrefPK.class)
 public class CoursePref {
     @Id
