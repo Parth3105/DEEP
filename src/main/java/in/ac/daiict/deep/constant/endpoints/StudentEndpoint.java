@@ -5,4 +5,5 @@ public class StudentEndpoint {
     public static final String ENROLL="/enroll";
     public static final String SUBMIT_PREFERENCE="/submit-preferences";
     public static final String PREFERENCE_SUMMARY="/view-preferences";
+    public static final String ALLOCATION_RESULT="/allocation-result";
 }

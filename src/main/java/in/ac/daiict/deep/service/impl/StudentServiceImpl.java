@@ -63,7 +63,14 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student findStudentData(String sid) {
+    public Student fetchStudentData(String sid) {
         return studentRepo.findById(sid).orElse(null);
+    }
+
+    @Override
+    public StudentDto fetchStudentDto(String sid) {
+        Student student=studentRepo.findById(sid).orElse(null);
+        if(student==null) return null;
+        return modelMapper.map(student, StudentDto.class);
     }
 }

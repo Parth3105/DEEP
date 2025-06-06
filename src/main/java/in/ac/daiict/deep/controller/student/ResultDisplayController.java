@@ -4,14 +4,9 @@ import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.constant.endpoints.StudentEndpoint;
 import in.ac.daiict.deep.constant.template.StudentTemplate;
-import in.ac.daiict.deep.dto.CoursePrefDto;
-import in.ac.daiict.deep.dto.SlotPrefDto;
-import in.ac.daiict.deep.dto.StudentReqDto;
+import in.ac.daiict.deep.dto.*;
 import in.ac.daiict.deep.entity.Student;
-import in.ac.daiict.deep.service.CoursePrefService;
-import in.ac.daiict.deep.service.SlotPrefService;
-import in.ac.daiict.deep.service.StudentReqService;
-import in.ac.daiict.deep.service.StudentService;
+import in.ac.daiict.deep.service.*;
 import in.ac.daiict.deep.utility.Response;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -28,14 +23,15 @@ public class ResultDisplayController {
     private StudentReqService studentReqService;
     private CoursePrefService coursePrefService;
     private SlotPrefService slotPrefService;
+    private AllocationResultService allocationResultService;
 
     @GetMapping(StudentEndpoint.PREFERENCE_SUMMARY)
-    public String displayPreferenceSummary(@CookieValue(name = "student_id", required = false, defaultValue = "202201174") String studentId, Model model){
+    public String loadPreferenceSummary(@CookieValue(name = "student_id", required = false, defaultValue = "202201174") String studentId, Model model){
         // Fetch the semester & program of the student.
-        Student student = studentService.findStudentData(studentId);
+        Student student = studentService.fetchStudentData(studentId);
         if (student == null) {
             // not found student.
-            model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.NOT_FOUND));
+            model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
             return "redirect:"+StudentEndpoint.HOME_PAGE;
         }
 
@@ -62,5 +58,28 @@ public class ResultDisplayController {
         model.addAttribute("slotPreferences",slotPrefDtoList);
 
         return StudentTemplate.PREFERENCE_SUMMARY_PAGE;
+    }
+
+    @GetMapping(StudentEndpoint.ALLOCATION_RESULT)
+    public String loadAllocationResult(@CookieValue(name = "student_id", required = false, defaultValue = "202201174") String studentId, Model model){
+        StudentDto studentDto=studentService.fetchStudentDto(studentId);
+        if (studentDto == null) {
+            // not found student.
+            model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
+            return "redirect:"+StudentEndpoint.HOME_PAGE;
+        }
+
+        List<AllocationResultDto> allocationResultDtoList=allocationResultService.fetchAllocationResult(studentId,studentDto.getProgram());
+        if(allocationResultDtoList==null){
+            // not found any results.
+            model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_FOUND));
+            return "redirect:"+StudentEndpoint.HOME_PAGE;
+        }
+
+        // send allocation result details
+        model.addAttribute("semester", studentDto.getSemester());
+        model.addAttribute("program", studentDto.getProgram());
+        model.addAttribute("allocationResult",allocationResultDtoList);
+        return StudentTemplate.ALLOCATION_RESULT_PAGE;
     }
 }

@@ -2,7 +2,6 @@ package in.ac.daiict.deep.controller.student;
 
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
-import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
 import in.ac.daiict.deep.constant.endpoints.StudentEndpoint;
 import in.ac.daiict.deep.constant.template.StudentTemplate;
 import in.ac.daiict.deep.dto.AvailableCourseDto;
@@ -37,10 +36,10 @@ public class EnrollmentController {
     @GetMapping(StudentEndpoint.ENROLL)
     public String renderEnrollmentForm(@CookieValue(name = "student_id", required = false, defaultValue = "202201174") String studentId, Model model) {
         // Send the semester & program of students and institute requirements.
-        Student student = studentService.findStudentData(studentId);
+        Student student = studentService.fetchStudentData(studentId);
         if (student == null) {
             // not found student.
-            model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.NOT_FOUND));
+            model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
             return "redirect:"+StudentEndpoint.HOME_PAGE;
         }
         model.addAttribute("semester", student.getSemester());
@@ -137,6 +136,6 @@ public class EnrollmentController {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return "redirect:"+ AdminEndpoint.DASHBOARD;
+        return "redirect:"+ StudentEndpoint.PREFERENCE_SUMMARY;
     }
 }

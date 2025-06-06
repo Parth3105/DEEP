@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface CoursePrefRepo extends JpaRepository<CoursePref, CoursePrefPK> {
 
-    @Query("SELECT new in.ac.daiict.deep.dto.CoursePrefDto(cpref.slot,cpref.pref,course.name,cpref.cid) FROM Course course JOIN CoursePref cpref ON course.cid=cpref.cid WHERE cpref.sid=sid ORDER BY cpref.slot, cpref.pref ASC")
+    @Query("SELECT new in.ac.daiict.deep.dto.CoursePrefDto(cpref.slot,cpref.pref,course.name,cpref.cid) FROM Course course JOIN CoursePref cpref ON course.cid=cpref.cid WHERE cpref.sid=:sid ORDER BY cpref.slot, cpref.pref ASC")
     List<CoursePrefDto> findStudentCoursePref(@Param("sid") String sid);
 }
