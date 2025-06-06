@@ -44,7 +44,6 @@ public class AllocationDataLoader {
             studentReqMap.put(studentReq.getSid(),reqs);
         }
 
-
         for(Map.Entry<String,Map<String,Integer>> reqEntry: studentReqMap.entrySet()){
             AllocationStudent allocationStudent=allocationStudents.get(reqEntry.getKey());
             allocationStudent.setRequirements(reqEntry.getValue());
