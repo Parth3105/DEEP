@@ -1,5 +1,6 @@
 package in.ac.daiict.deep.entity;
 
+import in.ac.daiict.deep.constant.DBConstants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "allocation_reports")
+@Table(name = DBConstants.ALLOCATION_REPORT_TABLE)
 public class AllocationReport {
     @Id
     @Column(length = 100)

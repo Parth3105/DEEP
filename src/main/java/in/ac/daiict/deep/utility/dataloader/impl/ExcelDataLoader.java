@@ -221,7 +221,7 @@ public class ExcelDataLoader implements DataLoader {
         try {
             outputWorkbook.write(byteArrayOutputStream);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return null;
         }
         return byteArrayOutputStream;
     }
@@ -275,7 +275,7 @@ public class ExcelDataLoader implements DataLoader {
         try {
             outputWorkbook.write(byteArrayOutputStream);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return null;
         }
         return byteArrayOutputStream;
     }

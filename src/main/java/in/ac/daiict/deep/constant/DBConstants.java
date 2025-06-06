@@ -12,6 +12,7 @@ public class DBConstants {
     public static final String STUDENT_REQUIREMENTS_TABLE="student_reqs";
     public static final String ALLOCATION_RESULTS_TABLE="allocation_results";
     public static final String SEAT_SUMMARY_TABLE="seat_summary";
+    public static final String ALLOCATION_REPORT_TABLE="allocation_reports";
 
     public static final String UPLOAD_TABLE="uploads";
 
