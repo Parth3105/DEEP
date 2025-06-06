@@ -2,5 +2,5 @@ package in.ac.daiict.deep.constant.template;
 
 public class StudentTemplate {
     public static final String ENROLLMENT_FORM_PAGE="student/registration";
-    public static final String PREFERENCE_SUMMARY_PAGE="student/preference-summary";
+    public static final String PREFERENCE_SUMMARY_PAGE="student/view-preferences";
 }

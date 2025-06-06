@@ -36,18 +36,50 @@ function hideToast() {
     toast.classList.add("hidden");
 }
 
-const categories = ['ICTE', 'TE', 'SE', 'MNCE', 'OE'];
-const values = {};
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('requirementsContainer');
+    const filtered = instituteRequirements.filter(obj => obj.course_cnt !== null);
+    filtered.sort((a, b) => a.category.localeCompare(b.category));
 
-categories.forEach(cat => {
-    values[cat] = '0';
+    // Render each
+    filtered.forEach(obj => {
+        const div = document.createElement('div');
+        div.className = "flex items-center";
 
-    const input = document.querySelector(`input[name="${cat}"]`);
-    if (input) {
-    input.addEventListener('input', () => {
-        values[cat] = input.value.trim() || '0';
+        div.innerHTML = `
+            <label class="text-lg font-semibold text-gray-800 w-16 text-right">${obj.category.toUpperCase()} :</label>
+            <input type="text" value="${obj.course_cnt}" readonly
+                   class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-gray-200 text-center font-medium w-16 cursor-not-allowed" />
+        `;
+        container.appendChild(div);
     });
-    }
+});
+
+const values = {};
+const container = document.getElementById("categoryInputsContainer");
+
+instituteRequirements.forEach(obj => {
+  if (obj.course_cnt != null) {
+    const category = obj.category?.toUpperCase();
+    const div = document.createElement("div");
+    div.className = "flex items-center";
+
+    div.innerHTML = `
+      <label class="text-lg font-semibold text-gray-800 w-16 text-right">${category} :</label>
+      <input type="number" name="${category}"
+        class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+        [&::-webkit-outer-spin-button]:appearance-none
+        [&::-webkit-inner-spin-button]:appearance-none" />
+    `;
+
+    container.appendChild(div);
+
+    // 🟢 Attach listener after appending so input is in the DOM
+    const input = div.querySelector(`input[name="${category}"]`);
+    input.addEventListener("input", () => {
+      values[category] = input.value.trim() || "0";
+    });
+  }
 });
 
 // Registration Form Steps
@@ -189,11 +221,13 @@ function showSlotCourses(slot) {
 
   // Update slot button style
   document.querySelectorAll("#slotContainer .slot").forEach(s => {
-    s.classList.remove("bg-blue-500", "text-white");
-    s.classList.add("bg-cyan-300", "text-gray-800");
+    s.classList.remove("bg-blue-500");
+    s.classList.add("bg-cyan-300");
   });
+
   const selectedBtn = document.querySelector(`.slot[data-slot="${slot}"]`);
-  selectedBtn?.classList.add("bg-blue-500", "text-white");
+  selectedBtn?.classList.remove("bg-cyan-300");
+  selectedBtn?.classList.add("bg-blue-500");
 
   // Restore checkbox state
   const checkbox = document.getElementById("noSlotCourseCheckbox");
@@ -359,15 +393,31 @@ function getAcadReqToString(obj) {
 }
 
 document.getElementById('submitButton').addEventListener('click', function () {
-    if(validateSlotPreferences()) {
-        const acad = getAcadReqToString(values);
-        const course = getCoursePrefsToString(selectedCoursesBySlot);
-        const slot = getSlotPrefsToString(collectPreferences());
+  if (validateSlotPreferences()) {
+      // If validation passes, show modal
+      document.getElementById('confirmModal').classList.remove('hidden');
+      document.body.classList.add('backdrop-blur-md', 'overflow-hidden'); // blur background
+  }
+});
 
-        document.getElementById('studentRequirements').value = acad;
-        document.getElementById('coursePreferences').value = course;
-        document.getElementById('slotPreferences').value = slot;
+// Confirm button
+document.getElementById('confirmSubmit').addEventListener('click', function () {
+  document.getElementById('confirmModal').classList.add('hidden');
+  document.body.classList.remove('backdrop-blur-md', 'overflow-hidden');
 
-        document.getElementById('myForm').submit();
-    }
+  const acad = getAcadReqToString(values);
+  const course = getCoursePrefsToString(selectedCoursesBySlot);
+  const slot = getSlotPrefsToString(collectPreferences());
+
+  document.getElementById('studentRequirements').value = acad;
+  document.getElementById('coursePreferences').value = course;
+  document.getElementById('slotPreferences').value = slot;
+
+  document.getElementById('myForm').submit();
+});
+
+// Cancel button
+document.getElementById('cancelConfirm').addEventListener('click', function () {
+  document.getElementById('confirmModal').classList.add('hidden');
+  document.body.classList.remove('backdrop-blur-md', 'overflow-hidden');
 });

@@ -37,14 +37,14 @@
             <!-- Academic Requirement -->
             <div class="border-b border-gray-200 pb-5">
                 <h2 class="font-bold text-base md:text-lg text-gray-800 mb-2 md:mb-3">Academic Requirement :</h2>
-                <div class="flex flex-col text-sm md:text-base" th:if="${studentPreferences != null}">
-                    <div class="flex" th:each="req : ${studentPreferences}">
+                <div class="flex flex-col text-sm md:text-base" th:if="${studentRequirements != null}">
+                    <div class="flex" th:each="req : ${studentRequirements}">
                         <div class="flex justify-between">
                             <span class="w-46" th:switch="${req.category}">
                                 <span th:case="'ICTE'">ICT Electives</span>
                                 <span th:case="'TE'">Technical Electives</span>
                                 <span th:case="'SE'">Science Electives</span>
-                                <span th:case="'MNCE'">Minor/Core Electives</span>
+                                <span th:case="'MNCE'">MNCE Electives</span>
                                 <span th:case="'OE'">Open Electives</span>
                                 <span th:case="*">Other</span>
                             </span>
@@ -59,23 +59,13 @@
             <div>
                 <h2 class="font-bold text-base md:text-lg text-gray-800 mb-2 md:mb-3">Course Preferences :</h2>
 
-                <div th:if="${coursePreferences != null}"
-                     th:with="groupedPrefs=${#lists.arrayList(coursePreferences).stream().collect(Collectors.groupingBy(cp -> cp.slot)).entrySet()}">
+                <!-- 1. Expose raw data to JavaScript -->
+                <script th:inline="javascript">
+                    let coursePreferences = /*[[${coursePreferences}]]*/ [];
+                </script>
 
-                    <div th:each="slotGroup : ${groupedPrefs}">
-                        <div class="mb-4">
-                            <div class="bg-blue-200 rounded-t-xl px-6 py-2 text-base font-bold text-gray-800 flex justify-between items-center cursor-pointer">
-                                <span th:text="'Slot-' + ${slotGroup.key}">Slot-1</span>
-                                <img src="/student/images/close.svg" alt="Toggle" class="w-4 h-4">
-                            </div>
-                            <div class="course-list bg-blue-50 px-6 py-3 text-sm md:text-base space-y-1 rounded-b-xl">
-                                <div th:each="cp : ${slotGroup.value}"
-                                     th:text="'Preference - ' + ${cp.pref} + ' : ' + ${cp.cname} + ' (' + ${cp.cid} + ')'">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- 2. Container where grouped content will be inserted -->
+                <div id="groupedCoursePrefs" class="mt-6 space-y-6"></div>
             </div>
 
             <!-- Slot Preferences -->
@@ -98,6 +88,6 @@
     </div>
 </main>
 
-<script src="/student/js/view-preference.js"></script>
+<script src="/student/js/view-preferences.js"></script>
 </body>
 </html>
