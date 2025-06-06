@@ -7,6 +7,7 @@ import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
 import in.ac.daiict.deep.utility.allocation.model.AllocationStudent;
 import in.ac.daiict.deep.utility.allocation.model.CourseOffer;
 import in.ac.daiict.deep.utility.allocation.model.InstituteRequirement;
+import in.ac.daiict.deep.utility.dataloader.DataLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,8 @@ import java.util.*;
 @Component
 public class AllocationSystem {
     private AllocationDataLoader allocationDataLoader;
+    private DataLoader dataLoader;
+
     private Map<String, AllocationStudent> students; // key=studentID,value=Student Object
     private Map<String, AllocationCourse> courses; // key=courseID,value=Course Object
     private List<CourseOffer> openFor;
@@ -32,8 +35,9 @@ public class AllocationSystem {
     private PrintWriter printWriter;
 
     @Autowired
-    public AllocationSystem(AllocationDataLoader allocationDataLoader){
+    public AllocationSystem(AllocationDataLoader allocationDataLoader, DataLoader dataLoader){
         this.allocationDataLoader=allocationDataLoader;
+        this.dataLoader=dataLoader;
     }
 
     public Response initiateAllocation(int semester, long[] unmetReqCnt){
@@ -55,6 +59,9 @@ public class AllocationSystem {
         });
         pendingRequirements=new ArrayList<>();
 
+        if(students==null) return new Response(ResponseStatus.BAD_REQUEST,ResponseMessage.STUDENT_DATA_NOT_FOUND);
+        else if(courses==null) return new Response(ResponseStatus.BAD_REQUEST,ResponseMessage.COURSE_DATA_NOT_FOUND);
+        else if(openFor==null) return new Response(ResponseStatus.BAD_REQUEST,ResponseMessage.COURSE_OFFERS_NOT_FOUND);
         Response response=allocationInPhase(unmetReqCnt);
         saveOutput();
         return response;
@@ -308,6 +315,18 @@ public class AllocationSystem {
             public void run() {
                 getAllocationFailureDetail();
                 System.out.println("\n\n Failure Log saved \n\n");
+            }
+        });
+        Thread createAllocationResultSheet=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ByteArrayOutputStream byteArrayOutputStream=dataLoader.createResultSheet(students,courses,courseCategories);
+            }
+        });
+        Thread createSeatSummarySheet=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ByteArrayOutputStream byteArrayOutputStream=dataLoader.createSeatSummary(openFor,courses,availableSeats);
             }
         });
         recordAllocationResult.start();
