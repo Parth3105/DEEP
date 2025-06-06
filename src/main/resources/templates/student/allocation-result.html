@@ -31,28 +31,28 @@
               <span class="w-46">Student Name</span>
               <span class="mr-3">:</span>
             </div>
-            <span>John Doe</span>
+            <span th:text="${studentInfo.name}"></span>
           </div>
           <div class="flex">
             <div class="flex justify-between">
               <span class="w-46">Student ID</span>
               <span class="mr-3">:</span>
             </div>
-            <span>202201111</span>
+            <span th:text="${studentInfo.sid}"></span>
           </div>
           <div class="flex">
             <div class="flex justify-between">
               <span class="w-46">Semester</span>
               <span class="mr-3">:</span>
             </div>
-            <span>7</span>
+            <span th:text="${studentInfo.semester}"></span>
           </div>
           <div class="flex">
             <div class="flex justify-between">
               <span class="w-46">Program</span>
               <span class="mr-3">:</span>
             </div>
-            <span>ICT</span>
+            <span th:text="${studentInfo.program}"></span>
           </div>
         </div>
       </div>
@@ -74,47 +74,12 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="border-b border-gray-200 hover:bg-gray-50">
-              <td class="px-4 py-3 font-medium">CS301</td>
-              <td class="px-4 py-3">Introduction to Information and Communication Technology</td>
-              <td class="px-4 py-3">ICT</td>
-              <td class="px-4 py-3">ICTE</td>
-              <td class="px-4 py-3">4.0</td>
-            </tr>
-            <tr class="border-b border-gray-200 hover:bg-gray-50">
-              <td class="px-4 py-3 font-medium">CS301</td>
-              <td class="px-4 py-3">Introduction to Information and Communication Technology</td>
-              <td class="px-4 py-3">ICT</td>
-              <td class="px-4 py-3">ICTE</td>
-              <td class="px-4 py-3">4.0</td>
-            </tr>
-            <tr class="border-b border-gray-200 hover:bg-gray-50">
-              <td class="px-4 py-3 font-medium">CS301</td>
-              <td class="px-4 py-3">Introduction to Information and Communication Technology</td>
-              <td class="px-4 py-3">ICT</td>
-              <td class="px-4 py-3">ICTE</td>
-              <td class="px-4 py-3">4.0</td>
-            </tr>
-            <tr class="border-b border-gray-200 hover:bg-gray-50">
-              <td class="px-4 py-3 font-medium">CS301</td>
-              <td class="px-4 py-3">Introduction to Information and Communication Technology</td>
-              <td class="px-4 py-3">ICT</td>
-              <td class="px-4 py-3">ICTE</td>
-              <td class="px-4 py-3">4.0</td>
-            </tr>
-            <tr class="border-b border-gray-200 hover:bg-gray-50">
-              <td class="px-4 py-3 font-medium">CS301</td>
-              <td class="px-4 py-3">Introduction to Information and Communication Technology</td>
-              <td class="px-4 py-3">ICT</td>
-              <td class="px-4 py-3">ICTE</td>
-              <td class="px-4 py-3">4.0</td>
-            </tr>
-            <tr class="border-b border-gray-200 hover:bg-gray-50">
-              <td class="px-4 py-3 font-medium">CS301</td>
-              <td class="px-4 py-3">Introduction to Information and Communication Technology</td>
-              <td class="px-4 py-3">ICT</td>
-              <td class="px-4 py-3">ICTE</td>
-              <td class="px-4 py-3">4.0</td>
+            <tr th:each="course : ${allocationResult}" class="border-b border-gray-200 hover:bg-gray-50">
+              <td class="px-4 py-3 font-medium" th:text="${course.cid}">CSXXX</td>
+              <td class="px-4 py-3" th:text="${course.cname}">Course Name</td>
+              <td class="px-4 py-3" th:text="${studentInfo.program}">Program</td>
+              <td class="px-4 py-3" th:text="${course.category}">Category</td>
+              <td class="px-4 py-3" th:text="${course.credits}">Credits</td>
             </tr>
             </tbody>
           </table>
@@ -122,75 +87,15 @@
 
         <!-- Mobile Cards -->
         <div class="md:hidden space-y-4">
-          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+          <div th:each="course : ${allocationResult}" class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-start mb-2">
-              <span class="font-medium text-blue-600 text-lg">CS301</span>
-              <span class="bg-gray-100 px-2 py-1 rounded text-sm">4.0 Credits</span>
+              <span class="font-medium text-blue-600 text-lg" th:text="${course.cid}">CSXXX</span>
+              <span class="bg-gray-100 px-2 py-1 rounded text-sm" th:text="${course.credits + ' Credits'}">4.0 Credits</span>
             </div>
-            <h3 class="font-medium mb-2">Introduction to Information and Communication Technology</h3>
+            <h3 class="font-medium mb-2" th:text="${course.cname}">Course Name</h3>
             <div class="flex justify-between text-sm text-gray-600">
-              <span>Program: ICT</span>
-              <span>Category: ICTE</span>
-            </div>
-          </div>
-
-          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-            <div class="flex justify-between items-start mb-2">
-              <span class="font-medium text-blue-600 text-lg">CS301</span>
-              <span class="bg-gray-100 px-2 py-1 rounded text-sm">4.0 Credits</span>
-            </div>
-            <h3 class="font-medium mb-2">Introduction to Information and Communication Technology</h3>
-            <div class="flex justify-between text-sm text-gray-600">
-              <span>Program: ICT</span>
-              <span>Category: ICTE</span>
-            </div>
-          </div>
-
-          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-            <div class="flex justify-between items-start mb-2">
-              <span class="font-medium text-blue-600 text-lg">CS301</span>
-              <span class="bg-gray-100 px-2 py-1 rounded text-sm">4.0 Credits</span>
-            </div>
-            <h3 class="font-medium mb-2">Introduction to Information and Communication Technology</h3>
-            <div class="flex justify-between text-sm text-gray-600">
-              <span>Program: ICT</span>
-              <span>Category: ICTE</span>
-            </div>
-          </div>
-
-          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-            <div class="flex justify-between items-start mb-2">
-              <span class="font-medium text-blue-600 text-lg">CS301</span>
-              <span class="bg-gray-100 px-2 py-1 rounded text-sm">4.0 Credits</span>
-            </div>
-            <h3 class="font-medium mb-2">Introduction to Information and Communication Technology</h3>
-            <div class="flex justify-between text-sm text-gray-600">
-              <span>Program: ICT</span>
-              <span>Category: ICTE</span>
-            </div>
-          </div>
-
-          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-            <div class="flex justify-between items-start mb-2">
-              <span class="font-medium text-blue-600 text-lg">CS301</span>
-              <span class="bg-gray-100 px-2 py-1 rounded text-sm">4.0 Credits</span>
-            </div>
-            <h3 class="font-medium mb-2">Introduction to Information and Communication Technology</h3>
-            <div class="flex justify-between text-sm text-gray-600">
-              <span>Program: ICT</span>
-              <span>Category: ICTE</span>
-            </div>
-          </div>
-
-          <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-            <div class="flex justify-between items-start mb-2">
-              <span class="font-medium text-blue-600 text-lg">CS301</span>
-              <span class="bg-gray-100 px-2 py-1 rounded text-sm">4.0 Credits</span>
-            </div>
-            <h3 class="font-medium mb-2">Introduction to Information and Communication Technology</h3>
-            <div class="flex justify-between text-sm text-gray-600">
-              <span>Program: ICT</span>
-              <span>Category: ICTE</span>
+              <span th:text="'Program: ' + ${studentInfo.program}">Program: ICT</span>
+              <span th:text="'Category: ' + ${course.category}">Category: ICTE</span>
             </div>
           </div>
         </div>
