@@ -31,6 +31,4 @@ public class AllocationResultServiceImpl implements AllocationResultService {
     public void deleteAll() {
         allocationResultRepo.deleteAll();
     }
-
-
 }
