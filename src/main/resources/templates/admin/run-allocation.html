@@ -101,17 +101,6 @@
                             </div>
                         </div>
 
-                        <script th:inline="javascript">
-                            /*<![CDATA[*/
-                            const statusCode = [[${allocationResponse.status}]] | 1;
-                            const message = [[${allocationResponse.message}]];
-
-                            if (statusCode === 500) {
-                                showToast(message);
-                            }
-                            /*]]>*/
-                        </script>
-
                         <!-- Total Students Allocated -->
                         <div class="bg-[#AADAF9] flex-1 flex flex-col justify-center items-center rounded-2xl mx-4 sm:mx-0 px-6 text-center min-h-[170px]">
                             <div class="mb-4">
@@ -143,5 +132,15 @@
 </div>
 
 <script src="/admin/js/run-allocation.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const statusCode = [[${allocationResponse.status}]];
+    const message = [[${allocationResponse.message}]];
+
+    if (statusCode === 500) {
+        showToast("Error : " + message);
+    }
+    /*]]>*/
+</script>
 </body>
 </html>

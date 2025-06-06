@@ -27,7 +27,7 @@ function showToast(message, type = 'error') {
 
     setTimeout(() => {
         hideToast();
-    }, 3000);
+    }, 5000);
 }
 
 function hideToast() {
