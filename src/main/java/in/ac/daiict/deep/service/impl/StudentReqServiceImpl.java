@@ -4,6 +4,8 @@ import in.ac.daiict.deep.entity.StudentReq;
 import in.ac.daiict.deep.repository.StudentReqRepo;
 import in.ac.daiict.deep.service.StudentReqService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

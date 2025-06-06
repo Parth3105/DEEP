@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DEEP - Admin Dashboard</title>
+  <link rel="icon" href="/admin/images/DEEP Logo.png" type="image/png">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 </head>
@@ -114,7 +115,7 @@
           <p class="text-sm text-gray-600 text-center mb-6">Fill in the details to create a new Instance</p>
 
           <form th:action="@{/create-instance}" method="post" id="createForm" class="space-y-4">
-            <!-- Season -->
+          <!-- Season -->
             <div>
               <label class="block text-sm font-medium text-[#1E3C72] mb-1">Season</label>
               <select name="season" required class="w-full border border-blue-200 focus:ring-2 focus:ring-blue-400 focus:outline-none p-2 rounded-lg bg-white text-[#1E3C72]">
@@ -129,8 +130,16 @@
             <div class="flex gap-3">
               <div class="flex-1">
                 <label class="block text-sm font-medium text-[#1E3C72] mb-1">Year</label>
-                <input type="text" name="Year" placeholder="e.g. 2023" maxlength="4" required
-                       class="w-full border border-blue-200 focus:ring-2 focus:ring-blue-400 focus:outline-none p-2 rounded-lg text-[#1E3C72]" />
+                <input
+                        type="number"
+                        name="Year"
+                        placeholder="e.g. 2023"
+                        required
+                        maxlength="4"
+                oninput="this.value = this.value.slice(0, 4)"
+                class="no-spinner w-full border border-blue-200 focus:ring-2 focus:ring-blue-400 focus:outline-none p-2 rounded-lg text-[#1E3C72] appearance-none
+                  [&::-webkit-outer-spin-button]:appearance-none
+                  [&::-webkit-inner-spin-button]:appearance-none"/>
               </div>
             </div>
 
@@ -168,7 +177,8 @@
       </div>
 
       <!-- Update Instance -->
-      <button onclick="HandleRoute('/update-instance')" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+      <button id="updateInstanceBtn" onclick="HandleRoute('/update-instance')"
+              class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg transition-all duration-300 transform cursor-pointer group hover:shadow-xl hover:scale-101">
         <img src="/admin/images/update-instance.svg" alt="update icon" class="w-10 h-10 mb-4 mx-auto transition-transform duration-300">
         <h3 class="text-lg font-bold text-[#1E3C72]">Update Instance</h3>
         <p class="text-xs text-gray-600">Permanently removes current instance and associated data</p>

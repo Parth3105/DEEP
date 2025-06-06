@@ -22,7 +22,8 @@ public class StudentReqDto {
     @PositiveOrZero
     private int course_cnt;
 
-    public StudentReqDto(String sid) {
+    public StudentReqDto(String sid, String category) {
         this.sid = sid;
+        this.category=category;
     }
 }
