@@ -1,7 +1,10 @@
 package in.ac.daiict.deep.utility.allocation;
 
+import in.ac.daiict.deep.constant.AllocationReportNames;
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
+import in.ac.daiict.deep.entity.AllocationReport;
+import in.ac.daiict.deep.service.AllocationReportService;
 import in.ac.daiict.deep.utility.Response;
 import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
 import in.ac.daiict.deep.utility.allocation.model.AllocationStudent;
@@ -19,6 +22,7 @@ import java.util.*;
 public class AllocationSystem {
     private AllocationDataLoader allocationDataLoader;
     private DataLoader dataLoader;
+    private AllocationReportService allocationReportService;
 
     private Map<String, AllocationStudent> students; // key=studentID,value=Student Object
     private Map<String, AllocationCourse> courses; // key=courseID,value=Course Object
@@ -35,9 +39,10 @@ public class AllocationSystem {
     private PrintWriter printWriter;
 
     @Autowired
-    public AllocationSystem(AllocationDataLoader allocationDataLoader, DataLoader dataLoader){
+    public AllocationSystem(AllocationDataLoader allocationDataLoader, DataLoader dataLoader, AllocationReportService allocationReportService){
         this.allocationDataLoader=allocationDataLoader;
         this.dataLoader=dataLoader;
+        this.allocationReportService=allocationReportService;
     }
 
     public Response initiateAllocation(int semester, long[] unmetReqCnt){
@@ -313,7 +318,8 @@ public class AllocationSystem {
         Thread recordFailureLog=new Thread(new Runnable() {
             @Override
             public void run() {
-                getAllocationFailureDetail();
+                ByteArrayOutputStream byteArrayOutputStream=getAllocationFailureDetail();
+                allocationReportService.insertReport(new AllocationReport(AllocationReportNames.ALLOCATION_FAILURE_LOG,byteArrayOutputStream.toByteArray()));
                 System.out.println("\n\n Failure Log saved \n\n");
             }
         });
@@ -321,20 +327,30 @@ public class AllocationSystem {
             @Override
             public void run() {
                 ByteArrayOutputStream byteArrayOutputStream=dataLoader.createResultSheet(students,courses,courseCategories);
+                if(byteArrayOutputStream!=null){
+                    allocationReportService.insertReport(new AllocationReport(AllocationReportNames.ALLOCATION_RESULT,byteArrayOutputStream.toByteArray()));
+                    System.out.println("\n\n Allocation result sheet created and saved. \n\n");
+                }
             }
         });
         Thread createSeatSummarySheet=new Thread(new Runnable() {
             @Override
             public void run() {
                 ByteArrayOutputStream byteArrayOutputStream=dataLoader.createSeatSummary(openFor,courses,availableSeats);
+                if(byteArrayOutputStream!=null){
+                    allocationReportService.insertReport(new AllocationReport(AllocationReportNames.SEAT_SUMMARY,byteArrayOutputStream.toByteArray()));
+                    System.out.println("\n\n Seat Summary sheet created and saved. \n\n");
+                }
             }
         });
         recordAllocationResult.start();
         recordSeatSummary.start();
         recordFailureLog.start();
+        createAllocationResultSheet.start();
+        createSeatSummarySheet.start();
     }
 
-    private void getAllocationFailureDetail() {
+    private ByteArrayOutputStream getAllocationFailureDetail() {
         ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
         String dirPath="./src/main/java/in/ac/daiict/deep/tmp";
         File dir=new File(dirPath);
@@ -426,5 +442,6 @@ public class AllocationSystem {
             printWriter.println();
             printWriter.flush();
         }
+        return byteArrayOutputStream;
     }
 }
