@@ -175,7 +175,7 @@ public class AllocationInstanceController {
         else if(warningStatus.get()!=null) redirectAttributes.addFlashAttribute("uploadWarning",warningStatus.get());
         if(cnt.get()>0) {
             ResponseMessage.UPLOAD_COUNT=cnt.get();
-            redirectAttributes.addFlashAttribute("uploadSuccess", new Response(ResponseStatus.OK, ResponseMessage.UPLOAD_SUCCESS));
+            redirectAttributes.addFlashAttribute("uploadSuccess", new Response(ResponseStatus.OK, ResponseMessage.getUploadSuccessMessage()));
         }
 
         return "redirect:"+AdminEndpoint.UPDATE_INSTANCE;

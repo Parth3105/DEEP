@@ -23,6 +23,11 @@ public class AllocationStudent {
     private List<String> slotPreferences; // Fetch the slots ordered by pref.
     private Map<String, List<String>> coursePreferences; // Fetch the courses ordered by its pref in each slot.
 
+
+    private List<String> slotPrefAfterAllocation;
+    private Map<String, List<String>> coursePrefAfterAllocation;
+
+
     public AllocationStudent(String sid, String name, String program, int semester, Map<String, Integer> requirements, List<String> slotPreferences, Map<String, List<String>> coursePreferences) {
         this.sid = sid;
         this.name = name;

@@ -1,9 +1,11 @@
 package in.ac.daiict.deep.repository;
 
+import in.ac.daiict.deep.constant.DBConstants;
 import in.ac.daiict.deep.dto.AllocationResultDto;
 import in.ac.daiict.deep.entity.AllocationResult;
 import in.ac.daiict.deep.entity.compositekeys.AllocationResultPK;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -12,4 +14,9 @@ import java.util.List;
 public interface AllocationResultRepo extends JpaRepository<AllocationResult, AllocationResultPK> {
     @Query("SELECT new in.ac.daiict.deep.dto.AllocationResultDto(course.cid,course.name,offer.category,course.credits) FROM AllocationResult result JOIN Course course ON result.cid=course.cid JOIN CourseOffering offer ON course.cid=offer.cid WHERE result.sid=:sid and offer.program=:program")
     List<AllocationResultDto> fetchAllocationResultBySid(@Param("sid") String sid, @Param("program") String program);
+
+    @Override
+    @Modifying
+    @Query(value = "DELETE FROM "+ DBConstants.ALLOCATION_RESULTS_TABLE,nativeQuery = true)
+    void deleteAll();
 }
