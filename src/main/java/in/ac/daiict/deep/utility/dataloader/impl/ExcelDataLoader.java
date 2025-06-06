@@ -1,6 +1,6 @@
 package in.ac.daiict.deep.utility.dataloader.impl;
 
-import in.ac.daiict.deep.constant.ResponseConstants;
+import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.dto.CourseDto;
 import in.ac.daiict.deep.dto.CourseOfferingDto;
 import in.ac.daiict.deep.dto.InstituteReqDto;
@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class ExcelDataLoader implements DataLoader {
     private CourseService courseService;
 
     @Autowired
+    @Lazy
     public ExcelDataLoader(CourseService courseService) {
         this.courseService = courseService;
     }
@@ -60,7 +62,7 @@ public class ExcelDataLoader implements DataLoader {
             studentDtos.add(new StudentDto(studentID, studentName, program, semester));
         }
 
-        return new Response(ResponseConstants.OK,"Student Data Saved Successfully!");
+        return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
     }
 
     /**
@@ -89,7 +91,7 @@ public class ExcelDataLoader implements DataLoader {
             courseDtos.add(new CourseDto(courseID, courseName, credits, slot));
         }
 
-        return new Response(ResponseConstants.OK,"Course Data Saved Successfully!");
+        return new Response(ResponseStatus.OK,"Course Data Saved Successfully!");
     }
 
     /**
@@ -118,7 +120,7 @@ public class ExcelDataLoader implements DataLoader {
             instituteReqDtos.add(new InstituteReqDto(program, category, semester, count));
         }
 
-        return new Response(ResponseConstants.OK,"Requirements Saved Successfully!");
+        return new Response(ResponseStatus.OK,"Requirements Saved Successfully!");
     }
 
     /**
@@ -147,11 +149,11 @@ public class ExcelDataLoader implements DataLoader {
 
             if(!courseService.isPresent(courseID)){
                 courseOfferingDtos.clear();
-                return new Response(ResponseConstants.BAD_REQUEST,"Error: Some entries refer to non-existing course in course-offerings. Please verify your data.");
+                return new Response(ResponseStatus.BAD_REQUEST,"Error: Some entries refer to non-existing course in course-offerings. Please verify your data.");
             }
             courseOfferingDtos.add(new CourseOfferingDto(program, courseID, category, semester, seats));
         }
 
-        return new Response(ResponseConstants.OK,"Course Offerings Data Saved Successfully!");
+        return new Response(ResponseStatus.OK,"Course Offerings Data Saved Successfully!");
     }
 }

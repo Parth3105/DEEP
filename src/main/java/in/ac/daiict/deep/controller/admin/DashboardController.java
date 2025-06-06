@@ -1,5 +1,7 @@
 package in.ac.daiict.deep.controller.admin;
 
+import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
+import in.ac.daiict.deep.constant.template.AdminTemplate;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +16,10 @@ public class DashboardController {
      */
     @GetMapping("/")
     public String test(){
-        return "redirect:/admin-dashboard";
+        return "redirect:"+AdminEndpoint.DASHBOARD;
     }
-    @GetMapping("/admin-dashboard")
+    @GetMapping(AdminEndpoint.DASHBOARD)
     public String showDashboard(){
-        return "admin/dashboard";
+        return AdminTemplate.DASHBOARD_PAGE;
     }
 }

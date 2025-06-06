@@ -13,5 +13,5 @@ public interface StudentService {
     List<Student> fetchStudentsBySemester(int semester);
     void deleteAll();
     long countBySemester(int semester);
-    StudentDto findStudentData(String sid);
+    Student findStudentData(String sid);
 }

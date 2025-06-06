@@ -1,6 +1,6 @@
 package in.ac.daiict.deep.service.impl;
 
-import in.ac.daiict.deep.constant.ResponseConstants;
+import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.dto.StudentDto;
 import in.ac.daiict.deep.entity.Student;
 import in.ac.daiict.deep.repository.StudentRepo;
@@ -27,11 +27,11 @@ public class StudentServiceImpl implements StudentService {
     public Response insertAll(byte[] studentData) {
         List<StudentDto> studentDtos=new ArrayList<>();
         Response status=dataLoader.getStudentData(new ByteArrayInputStream(studentData),studentDtos);
-        if(status.getStatus()!= ResponseConstants.OK) return status;
+        if(status.getStatus()!= ResponseStatus.OK) return status;
         // TypeToken helps retain generic of list
         List<Student> students=modelMapper.map(studentDtos,new TypeToken<List<Student>>(){}.getType());
         studentRepo.saveAll(students);
-        return new Response(ResponseConstants.OK,"Data Inserted Successfully!");
+        return new Response(ResponseStatus.OK,"Data Inserted Successfully!");
     }
 
     @Override
@@ -63,9 +63,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentDto findStudentData(String sid) {
-        Student student=studentRepo.findById(sid).orElse(null);
-        if(student==null) return null;
-        return modelMapper.map(student, StudentDto.class);
+    public Student findStudentData(String sid) {
+        return studentRepo.findById(sid).orElse(null);
     }
 }

@@ -1,6 +1,6 @@
 package in.ac.daiict.deep.service.impl;
 
-import in.ac.daiict.deep.constant.ResponseConstants;
+import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.dto.CourseOfferingDto;
 import in.ac.daiict.deep.entity.CourseOffering;
 import in.ac.daiict.deep.repository.CourseOfferingRepo;
@@ -28,11 +28,11 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         deleteAll();
         List<CourseOfferingDto> courseOfferDtos=new ArrayList<>();
         Response status=dataLoader.getCourseForProgram(new ByteArrayInputStream(courseOfferData),courseOfferDtos);
-        if(status.getStatus()!= ResponseConstants.OK) return status;
+        if(status.getStatus()!= ResponseStatus.OK) return status;
         // TypeToken helps retain generic of list
         List<CourseOffering> courseOffers=modelMapper.map(courseOfferDtos,new TypeToken<List<CourseOffering>>(){}.getType());
         courseOfferingRepo.saveAll(courseOffers);
-        return new Response(ResponseConstants.OK,"Data Inserted Successfully!");
+        return new Response(ResponseStatus.OK,"Data Inserted Successfully!");
     }
 
     @Override
