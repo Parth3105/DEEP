@@ -1,0 +1,122 @@
+====================================================================================================================================================================
+ NOTE: Course allocation logs will be shown only for courses in slots which are unallocated to a student and available courses which are selected by a student
+====================================================================================================================================================================
+
+
+
+
+================================================================================
+**********************************************
+             Student Details
+**********************************************
+ Student ID: 202201406
+ Student Name: Prince Maheshbhai Makwana
+ Program: ICT
+ Semester: 6
+
+**********************************************
+            Overall Requirements
+**********************************************
+ TE : 2
+ SE : 1
+ OE : 0
+ MNCE : 0
+ ICTE : 1
+
+**********************************************
+ Fulfilled Requirements & Allocated Courses
+**********************************************
+ TE : 1
+	EL464-VLSI Testing and Validation-Slot4
+ SE : 1
+	SC475-Time Series Analysis-Slot3
+ OE : 0
+ MNCE : 0
+ ICTE : 1
+	IE301-Fundamentals of AI-Slot5
+
+**********************************************
+          Course Allocation Logs
+**********************************************
+>>> Slot Pref: [ 2 1 ]
+
+>>> Trying course: HM432 in Slot-2
+ HM432: All seats allocated
+>>> Trying course: HM467 in Slot-2
+ Reason::::: allocatedCategories for OE: 0 >= reqCourseCnt: 0
+>>> Not enough courses selected/available to fulfill the requirement
+
+================================================================================
+**********************************************
+             Student Details
+**********************************************
+ Student ID: 202203006
+ Student Name: Heet Dipesh
+ Program: MnC
+ Semester: 6
+
+**********************************************
+            Overall Requirements
+**********************************************
+ TE : 0
+ SE : 0
+ OE : 1
+ MNCE : 2
+ ICTE : 0
+
+**********************************************
+ Fulfilled Requirements & Allocated Courses
+**********************************************
+ TE : 0
+ SE : 0
+ OE : 1
+	HM432-Organisational Behaviour-Slot2
+ MNCE : 1
+	SC475-Time Series Analysis-Slot3
+ ICTE : 0
+
+**********************************************
+          Course Allocation Logs
+**********************************************
+>>> Slot Pref: [ 4 5 1 ]
+
+>>> Not enough courses selected/available to fulfill the requirement
+
+================================================================================
+**********************************************
+             Student Details
+**********************************************
+ Student ID: 202201456
+ Student Name: Manav Parekh
+ Program: ICT
+ Semester: 6
+
+**********************************************
+            Overall Requirements
+**********************************************
+ TE : 1
+ SE : 2
+ OE : 1
+ MNCE : 0
+ ICTE : 1
+
+**********************************************
+ Fulfilled Requirements & Allocated Courses
+**********************************************
+ TE : 1
+	CT548-Advanced Wireless Communication-Slot4
+ SE : 1
+	SC421-Introduction to Modern Algebra-Slot3
+ OE : 1
+	HM432-Organisational Behaviour-Slot2
+ MNCE : 0
+ ICTE : 1
+	IE418-UX Design for Mobile Applications-Slot5
+
+**********************************************
+          Course Allocation Logs
+**********************************************
+>>> Slot Pref: [ 1 ]
+
+>>> Not enough courses selected/available to fulfill the requirement
+

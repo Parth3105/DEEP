@@ -1,0 +1,70 @@
+// Mobile Navbar Menu Toggle
+const toggle = document.getElementById('menuToggle');
+const menu = document.getElementById('menu');
+toggle.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+});
+
+// Add interactivity for collapsible slots
+document.addEventListener('DOMContentLoaded', function() {
+    const slots = document.querySelectorAll('[class*="bg-blue-200"]');
+
+    slots.forEach(slot => {
+        slot.addEventListener('click', function() {
+            const arrow = this.querySelector('img');
+            const content = this.nextElementSibling;
+            if (content && content.classList.contains('course-list')) {
+                this.classList.contains('rounded-b-xl') ? this.classList.remove('rounded-b-xl') : this.classList.add('rounded-b-xl');
+                content.style.display = content.style.display === 'none' ? 'block' : 'none';
+                arrow.src = arrow.src.includes('close.svg') ? '/student/images/open.svg' : '/student/images/close.svg';
+            }
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const groupedContainer = document.getElementById('groupedCoursePrefs');
+
+    // Group by slot
+    const grouped = {};
+    coursePreferences.forEach(cp => {
+        if (!grouped[cp.slot]) grouped[cp.slot] = [];
+        grouped[cp.slot].push(cp);
+    });
+
+    // Sort slot keys (if numeric)
+    const sortedSlots = Object.keys(grouped).sort((a, b) => parseInt(a) - parseInt(b));
+
+    // Render each slot group
+    sortedSlots.forEach(slot => {
+        const slotGroup = grouped[slot];
+
+        const wrapper = document.createElement('div');
+
+        wrapper.innerHTML = `
+            <div class="mb-4">
+                <div class="bg-blue-200 rounded-t-xl px-6 py-2 text-base font-bold text-gray-800 flex justify-between items-center cursor-pointer toggle-header">
+                    <span>Slot-${slot}</span>
+                    <img src="/student/images/close.svg" alt="Toggle" class="w-4 h-4 rotate-icon">
+                </div>
+                <div class="course-list bg-blue-50 px-6 py-3 text-sm md:text-base space-y-1 rounded-b-xl">
+                    ${slotGroup.map(cp => `
+                        <div>Preference - ${cp.pref} : ${cp.cname} (${cp.cid})</div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        groupedContainer.appendChild(wrapper);
+    });
+
+    // Toggle functionality
+    document.querySelectorAll('.toggle-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const courseList = header.nextElementSibling;
+            const icon = header.querySelector('.rotate-icon');
+            courseList.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        });
+    });
+});
