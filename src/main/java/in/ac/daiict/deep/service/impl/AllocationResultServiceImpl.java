@@ -16,6 +16,7 @@ public class AllocationResultServiceImpl implements AllocationResultService {
 
     @Override
     public void insertAll(List<AllocationResult> allocationResultList) {
+        deleteAll();
         allocationResultRepo.saveAll(allocationResultList);
     }
 
@@ -25,4 +26,11 @@ public class AllocationResultServiceImpl implements AllocationResultService {
         if(allocationResultDtoList==null || allocationResultDtoList.isEmpty()) return null;
         return allocationResultDtoList;
     }
+
+    @Override
+    public void deleteAll() {
+        allocationResultRepo.deleteAll();
+    }
+
+
 }

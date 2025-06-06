@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface SeatSummaryService {
     void insertAll(List<SeatSummary> seatSummaryList);
+    void deleteAll();
 }

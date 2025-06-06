@@ -63,6 +63,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public long countAllStudents() {
+        return studentRepo.count();
+    }
+
+    @Override
     public Student fetchStudentData(String sid) {
         return studentRepo.findById(sid).orElse(null);
     }

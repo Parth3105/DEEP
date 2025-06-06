@@ -8,4 +8,5 @@ import java.util.List;
 public interface AllocationResultService {
     void insertAll(List<AllocationResult> allocationResultList);
     List<AllocationResultDto> fetchAllocationResult(String sid, String program);
+    void deleteAll();
 }
