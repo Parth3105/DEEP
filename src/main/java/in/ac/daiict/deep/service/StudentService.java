@@ -7,10 +7,11 @@ import in.ac.daiict.deep.utility.Response;
 import java.util.List;
 
 public interface StudentService {
-    public Response insertAll(byte[] studentData);
-    public List<StudentDto> fetchAllStudentDtos();
-    public List<Student> fetchAllStudents();
-    public void deleteAll();
-    public long countBySemester(int semester);
-    public StudentDto findStudentData(String sid);
+    Response insertAll(byte[] studentData);
+    List<StudentDto> fetchAllStudentDtos();
+    List<Student> fetchAllStudents();
+    List<Student> fetchStudentsBySemester(int semester);
+    void deleteAll();
+    long countBySemester(int semester);
+    StudentDto findStudentData(String sid);
 }

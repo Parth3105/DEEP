@@ -47,6 +47,13 @@ public class InstituteReqServiceImpl implements InstituteReqService {
     }
 
     @Override
+    public List<InstituteReq> fetchInstituteReqBySemester(int semester) {
+        List<InstituteReq> instituteReqList=instituteReqRepo.findBySemester(semester);
+        if(instituteReqList==null || instituteReqList.isEmpty()) return null;
+        return instituteReqList;
+    }
+
+    @Override
     public void deleteAll() {
         instituteReqRepo.deleteAll();
     }

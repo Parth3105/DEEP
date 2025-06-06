@@ -1,7 +1,5 @@
 package in.ac.daiict.deep.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;

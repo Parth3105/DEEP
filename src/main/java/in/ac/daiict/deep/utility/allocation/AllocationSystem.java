@@ -1,5 +1,7 @@
 package in.ac.daiict.deep.utility.allocation;
 
+import in.ac.daiict.deep.constant.ResponseConstants;
+import in.ac.daiict.deep.utility.Response;
 import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
 import in.ac.daiict.deep.utility.allocation.model.AllocationStudent;
 import in.ac.daiict.deep.utility.allocation.model.CourseOffer;
@@ -19,26 +21,31 @@ public class AllocationSystem {
     private Map<Integer, List<AllocationStudent>> priorityGroups; // key=priority(integer),Student list.
     private Map<String, Map<String, Integer>> availableSeats; // key=program, value= map with key=courseID,value=seats
     private Map<String, Map<String, String>> courseCategories; // key=courseID,value=map with key=program,value=category
-    private int[] loopSize;
+    private int[] maxRequirement;
+    private int semester;
 
     @Autowired
     public AllocationSystem(AllocationDataLoader allocationDataLoader){
         this.allocationDataLoader=allocationDataLoader;
-        students=allocationDataLoader.getStudentData();
+    }
+
+    public void initializeSetup(int semester){
+        this.semester=semester;
+        students=allocationDataLoader.getStudentData(semester,maxRequirement);
         courses=allocationDataLoader.getCourseData();
 
         courseCategories = new HashMap<>();
         availableSeats = new HashMap<>();
-        openFor=allocationDataLoader.getCourseOffers(courseCategories,availableSeats);
+        openFor=allocationDataLoader.getCourseOffers(semester,courseCategories,availableSeats);
 
-        instituteRequirements=allocationDataLoader.getInstituteRequirements();
+        instituteRequirements=allocationDataLoader.getInstituteRequirements(semester);
         priorityGroups = new TreeMap<>(new Comparator<Integer>() {
             @Override
             public int compare(Integer i1, Integer i2) {
                 return i2 - i1;
             }
         });
-        loopSize = new int[1];
+        maxRequirement = new int[1];
     }
 
     /**
@@ -56,7 +63,11 @@ public class AllocationSystem {
      * First phase: where no courses are allocated to students. This phase takes care of allocation of courses according to the institute requirements.
      * Second phase: where institute requirements are fulfilled and extra/overload courses are allocated according to the student requirements, if any.
      */
-    public void allocationInPhase() {
+    public Response allocationInPhase(int semester) {
+        // Initialize the setup to load data
+        initializeSetup(semester);
+        if(students==null || openFor==null || instituteRequirements==null) new Response(ResponseConstants.BAD_REQUEST,"Error: No Student Found");
+
         int[] unmetReqCnt = new int[1];
         allocationPhase(true);
         System.out.println("--------------------------------------------------------------------------------");
@@ -73,18 +84,21 @@ public class AllocationSystem {
 //        System.out.println("All Students allocated? " + isStudentReqFulfilled(false, unmetReqCnt));
         System.out.println("Not allocated in phase-2: " + unmetReqCnt[0]);
         System.out.println("--------------------------------------------------------------------------------");
+
+        saveOutput();
+        return new Response(ResponseConstants.OK,"Successfully allocated");
     }
 
     /**
      * Allocate Courses to students in the descending order of their priority.
      *
-     * @param isPhaseOne
+     * @param isPhaseOne - if Phase to fulfill institute-requirement or extra-requirements.
      */
     private void allocationPhase(boolean isPhaseOne) {
         List<AllocationStudent> studentList = new ArrayList<>(students.values());
         Collections.shuffle(studentList);
 
-        for (int i = 0; i < loopSize[0]; i++) {
+        for (int i = 0; i < maxRequirement[0]; i++) {
             updatePriorityGroups();
 
             Set<Integer> priorities = priorityGroups.keySet();
@@ -116,7 +130,7 @@ public class AllocationSystem {
         Set<Integer> priorities = priorityGroups.keySet();
         for (int priority : priorities) {
             List<AllocationStudent> studentsByPriority = priorityGroups.getOrDefault(priority, new ArrayList<>());
-            Collections.sort(studentsByPriority, new Comparator<AllocationStudent>() {
+            studentsByPriority.sort(new Comparator<AllocationStudent>() {
                 @Override
                 public int compare(AllocationStudent s1, AllocationStudent s2) {
                     return s2.getCumulativePriority() - s1.getCumulativePriority();
@@ -166,7 +180,7 @@ public class AllocationSystem {
      *
      * @param student:    information of student
      * @param courseID:   id of the course for which availability needs to be checked
-     * @param isPhaseOne: phase-1 or 2. which becomes a deciding factor whether it comes under institute requirement or extra during phase-1
+     * @param isPhaseOne - phase-1 or 2. which becomes a deciding factor whether it comes under institute requirement or extra during phase-1
      * @return whether given course can be allocated to the student or not
      */
     private boolean canAllocateCourse(AllocationStudent student, String courseID, boolean isPhaseOne, boolean isErrorPhase) {
@@ -213,8 +227,8 @@ public class AllocationSystem {
      */
     private void allocateCourse(AllocationStudent student, String courseID) {
         AllocationCourse course = courses.get(courseID);
-        student.getAllocatedCourses().add(courseID);
-        student.getAllocatedSlots().add(course.getSlot());
+        student.addAllocatedCourse(courseID);
+        student.addAllocatedSlot(course.getSlot());
 
         int allocatedCategoryCnt = student.getAllocatedCategories().getOrDefault(courseCategories.get(courseID).get(student.getProgram()), 0);
         student.addAllocatedCategory(courseCategories.get(courseID).get(student.getProgram()), allocatedCategoryCnt + 1);
@@ -230,7 +244,7 @@ public class AllocationSystem {
         for (AllocationStudent student : students.values()) {
             for (Map.Entry<String, Integer> requirement : student.getRequirements().entrySet()) {
                 String category = String.valueOf(requirement.getKey());
-                int studentReq = (int) requirement.getValue();
+                int studentReq = requirement.getValue();
                 int instituteReq = getInstituteRequirement(student.getProgram(), student.getSemester(), category);
 
                 int reqCourseCnt;
@@ -257,10 +271,10 @@ public class AllocationSystem {
         Thread recordSeatSummary=new Thread(new Runnable() {
             @Override
             public void run() {
-                allocationDataLoader.saveSeatSummary(availableSeats);
+                allocationDataLoader.saveSeatSummary(semester, availableSeats);
             }
         });
         recordAllocationResult.start();
-        recordAllocationResult.start();
+        recordSeatSummary.start();
     }
 }

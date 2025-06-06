@@ -7,18 +7,17 @@ import in.ac.daiict.deep.entity.Course;
 import in.ac.daiict.deep.utility.Response;
 
 import java.util.List;
-import java.util.Map;
 
 public interface CourseService {
-    public Response insertAll(byte[] courseData);
+    Response insertAll(byte[] courseData);
 
-    public List<Course> fetchAllCourses();
+    List<Course> fetchAllCourses();
 
-    public List<CourseDto> fetchAllCourseDtos();
+    List<CourseDto> fetchAllCourseDtos();
 
-    public void deleteAll();
+    void deleteAll();
 
-    public boolean isPresent(String cid);
+    boolean isPresent(String cid);
 
-    public List<AvailableCourseDto> fetchAvailableCourses(String program, int semester);
+    List<AvailableCourseDto> fetchAvailableCourses(String program, int semester);
 }

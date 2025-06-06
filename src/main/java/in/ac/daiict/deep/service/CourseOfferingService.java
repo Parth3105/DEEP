@@ -7,8 +7,9 @@ import in.ac.daiict.deep.utility.Response;
 import java.util.List;
 
 public interface CourseOfferingService {
-    public Response insertAll(byte[] courseOfferData);
-    public List<CourseOffering> fetchAllCourseOfferings();
-    public List<CourseOfferingDto> fetchAllCourseOfferingDtos();
-    public void deleteAll();
+    Response insertAll(byte[] courseOfferData);
+    List<CourseOffering> fetchAllCourseOfferings();
+    List<CourseOfferingDto> fetchAllCourseOfferingDtos();
+    List<CourseOffering> fetchCourseOfferingBySemester(int semester);
+    void deleteAll();
 }

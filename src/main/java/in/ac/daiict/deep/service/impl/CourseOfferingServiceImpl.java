@@ -47,6 +47,13 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     }
 
     @Override
+    public List<CourseOffering> fetchCourseOfferingBySemester(int semester) {
+        List<CourseOffering> courseOfferingList=courseOfferingRepo.findBySemester(semester);
+        if(courseOfferingList==null || courseOfferingList.isEmpty()) return null;
+        return courseOfferingList;
+    }
+
+    @Override
     public void deleteAll() {
         courseOfferingRepo.deleteAll();
     }
