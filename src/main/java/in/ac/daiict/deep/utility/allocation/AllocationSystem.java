@@ -1,5 +1,6 @@
 package in.ac.daiict.deep.utility.allocation;
 
+import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.utility.Response;
 import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.io.*;
 import java.util.*;
 
 @Component
@@ -25,12 +27,16 @@ public class AllocationSystem {
     private int[] maxRequirement;
     private int semester;
 
+    // failure detection purpose variables
+    private List<String> pendingRequirements;
+    private PrintWriter printWriter;
+
     @Autowired
     public AllocationSystem(AllocationDataLoader allocationDataLoader){
         this.allocationDataLoader=allocationDataLoader;
     }
 
-    public Response initiateAllocation(int semester){
+    public Response initiateAllocation(int semester, long[] unmetReqCnt){
         this.semester=semester;
         maxRequirement = new int[1];
         students=allocationDataLoader.getStudentData(semester,maxRequirement);
@@ -47,8 +53,9 @@ public class AllocationSystem {
                 return i2 - i1;
             }
         });
+        pendingRequirements=new ArrayList<>();
 
-        Response response=allocationInPhase();
+        Response response=allocationInPhase(unmetReqCnt);
         saveOutput();
         return response;
     }
@@ -68,11 +75,9 @@ public class AllocationSystem {
      * First phase: where no courses are allocated to students. This phase takes care of allocation of courses according to the institute requirements.
      * Second phase: where institute requirements are fulfilled and extra/overload courses are allocated according to the student requirements, if any.
      */
-    private Response allocationInPhase() {
+    private Response allocationInPhase(long[] unmetReqCnt) {
         // Initialize the setup to load data
         if(students==null || openFor==null || instituteRequirements==null) new Response(ResponseStatus.BAD_REQUEST,"Error: No Student Found");
-
-        int[] unmetReqCnt = new int[1];
         allocationPhase(true);
         System.out.println("--------------------------------------------------------------------------------");
         System.out.println("Phase-1 finished");
@@ -88,7 +93,7 @@ public class AllocationSystem {
         System.out.println("All Students allocated? " + isStudentReqFulfilled(false, unmetReqCnt));
         System.out.println("Not allocated in phase-2: " + unmetReqCnt[0]);
         System.out.println("--------------------------------------------------------------------------------");
-        return new Response(ResponseStatus.OK,"Successfully allocated");
+        return new Response(ResponseStatus.OK, ResponseMessage.RUN_ALLOCATION_SUCCESS_STATUS);
     }
 
     /**
@@ -155,6 +160,15 @@ public class AllocationSystem {
      * @param isPhaseOne: whether phase-1 or 2.
      */
     private void courseAllocation(AllocationStudent student, boolean isPhaseOne, boolean isErrorPhase) {
+        List<String> slotPrefs = isErrorPhase? student.getSlotPrefAfterAllocation() : student.getSlotPreferences();
+        if(isErrorPhase){
+            printWriter.print(">>> Slot Pref: [ ");
+            for(String slot: slotPrefs){
+                printWriter.print(slot+" ");
+            }
+            printWriter.println("]\n");
+        }
+
         int maxPrefIndex = -1;
         if(student.getCoursePreferences()!=null){
             for (List<String> coursePrefBySlot : student.getCoursePreferences().values()) {
@@ -172,7 +186,7 @@ public class AllocationSystem {
                 if (coursePref == null) continue;
                 String courseID = coursePref;
 
-//                if(isErrorPhase) System.out.println(">>> Trying course: "+courseID+" in Slot-"+slot);
+                if(isErrorPhase) printWriter.println(">>> Trying course: "+courseID+" in Slot-"+slot);
 
                 if (canAllocateCourse(student, courseID, isPhaseOne, isErrorPhase)) {
 //                    debug if(student.getSid().equals("202201174")) System.out.println("AllocatingCourse: "+courseID);
@@ -201,15 +215,15 @@ public class AllocationSystem {
             }
         }
         if (!flag) {
-//            if (isErrorPhase) System.out.println(" " + courseID + ": Course is not available to student"); //Debug
+            if (isErrorPhase) printWriter.println(" " + courseID + ": Course is not available to student"); //Debug
             return false;
         }
 
         if (!availableSeats.containsKey(student.getProgram())) {
-//            if (isErrorPhase) System.out.println("Reason: No seats for the program: " + student.program); //Debug
+            if (isErrorPhase) printWriter.println("Reason: No seats for the program: " + student.getProgram()); //Debug
             return false;
         } else if (availableSeats.get(student.getProgram()).getOrDefault(courseID, 0) <= 0) {
-//            if (isErrorPhase) System.out.println(" " + courseID + ": All seats allocated"); //Debug
+            if (isErrorPhase) printWriter.println(" " + courseID + ": All seats allocated"); //Debug
             return false;
         }
         String courseCategory = courseCategories.get(courseID).get(student.getProgram());
@@ -222,7 +236,7 @@ public class AllocationSystem {
         if (student.getAllocatedCategories().getOrDefault(courseCategory, 0) < reqCourseCnt) return true;
         else {
             if (isErrorPhase)
-                System.out.println(" Reason::::: allocatedCategories for " + courseCategory + ": " + student.getAllocatedCategories().getOrDefault(courseCategory, 0) + " >= " + "reqCourseCnt: " + reqCourseCnt); //Debug
+                printWriter.println(" Reason::::: allocatedCategories for " + courseCategory + ": " + student.getAllocatedCategories().getOrDefault(courseCategory, 0) + " >= " + "reqCourseCnt: " + reqCourseCnt); //Debug
             return false;
         }
     }
@@ -251,7 +265,7 @@ public class AllocationSystem {
         availableSeats.put(student.getProgram(), programSpecificSeats);
     }
 
-    private boolean isStudentReqFulfilled(boolean isPhaseOne, int[] unmetReqCnt) {
+    private boolean isStudentReqFulfilled(boolean isPhaseOne, long[] unmetReqCnt) {
         boolean flag = true;
         for (AllocationStudent student : students.values()) {
             if(student.getRequirements()==null) continue;
@@ -265,7 +279,7 @@ public class AllocationSystem {
                 else reqCourseCnt = studentReq;
 
                 if (student.getAllocatedCategories().getOrDefault(category, 0) < reqCourseCnt) {
-//                    if(!isPhaseOne) pendingRequirements.add(student.id);
+                    if(!isPhaseOne) pendingRequirements.add(student.getSid());
                     unmetReqCnt[0]++;
                     flag = false;
                 }
@@ -289,7 +303,108 @@ public class AllocationSystem {
                 System.out.println("\n\n Seat Summary saved \n\n");
             }
         });
+        Thread recordFailureLog=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getAllocationFailureDetail();
+                System.out.println("\n\n Failure Log saved \n\n");
+            }
+        });
         recordAllocationResult.start();
         recordSeatSummary.start();
+        recordFailureLog.start();
+    }
+
+    private void getAllocationFailureDetail() {
+        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+        File file=new File("./src/main/java/in/ac/daiict/deep/tmp/FailureLog.txt");
+        printWriter= null;
+        try {
+            printWriter = new PrintWriter(file);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        printWriter.println("====================================================================================================================================================================");
+        printWriter.println(" NOTE: Course allocation logs will be shown only for courses in slots which are unallocated to a student and available courses which are selected by a student");
+        printWriter.println("====================================================================================================================================================================");
+        printWriter.println("\n\n\n");
+
+        for (String studentID : pendingRequirements) {
+            AllocationStudent student = students.get(studentID);
+
+            printWriter.println("================================================================================");
+            printWriter.println("**********************************************");
+            printWriter.println("             Student Details");
+            printWriter.println("**********************************************");
+            printWriter.println(" Student ID: " + studentID);
+            printWriter.println(" Student Name: " + student.getName());
+            printWriter.println(" Program: " + student.getProgram());
+            printWriter.println(" Semester: " + student.getSemester());
+            printWriter.println();
+
+            printWriter.println("**********************************************");
+            printWriter.println("            Overall Requirements");
+            printWriter.println("**********************************************");
+            if(student.getRequirements()==null){
+                printWriter.println("No Requirements!!");
+                continue;
+            }
+            Map<String,List<String>> coursePrefAfterAllocation=new HashMap<>();
+            for (Map.Entry<String, Integer> entry : student.getRequirements().entrySet()) {
+                printWriter.println(" " + entry.getKey() + " : " + entry.getValue());
+
+                if (student.getAllocatedCategories().getOrDefault(entry.getKey(), 0) < entry.getValue()) {
+                    Map<String, List<String>> coursePreferences=student.getCoursePreferences();
+                    if(coursePreferences==null) continue;
+                    for (Map.Entry<String,List<String>> coursePrefEntry: coursePreferences.entrySet()) {
+                        if(student.getAllocatedSlots()!=null && student.getAllocatedSlots().contains(coursePrefEntry.getKey())) continue;
+                        List<String> updatedPref=coursePrefAfterAllocation.getOrDefault(coursePrefEntry.getKey(),new ArrayList<>());
+                        for(String courseId: coursePrefEntry.getValue()){
+                            if (!courseCategories.get(courseId).getOrDefault(student.getProgram(), "").equals(entry.getKey())) continue;
+                            updatedPref.add(courseId);
+                        }
+                        coursePrefAfterAllocation.put(coursePrefEntry.getKey(),updatedPref);
+                    }
+                }
+            }
+            student.setCoursePrefAfterAllocation(coursePrefAfterAllocation);
+            printWriter.println();
+
+            List<String> slotPrefAfterAllocation=new ArrayList<>();
+            if(student.getSlotPreferences()==null) continue;
+            for(String slotPref:student.getSlotPreferences()){
+                if(student.getAllocatedSlots().contains(slotPref)) continue;
+                slotPrefAfterAllocation.add(slotPref);
+            }
+            student.setSlotPrefAfterAllocation(slotPrefAfterAllocation);
+
+            Map<String, List<String>> allocatedCoursesByCategory = new HashMap<>();
+            for (String courseID : student.getAllocatedCourses()) {
+                String category = courseCategories.get(courseID).get(student.getProgram());
+                List<String> courses = allocatedCoursesByCategory.getOrDefault(category, new ArrayList<>());
+                courses.add(courseID);
+                allocatedCoursesByCategory.put(category, courses);
+            }
+
+            printWriter.println("**********************************************");
+            printWriter.println(" Fulfilled Requirements & Allocated Courses");
+            printWriter.println("**********************************************");
+            for (Map.Entry<String, Integer> entry : student.getRequirements().entrySet()) {
+                printWriter.println(" " + entry.getKey() + " : " + student.getAllocatedCategories().getOrDefault(entry.getKey(), 0));
+                for (String courseID : allocatedCoursesByCategory.getOrDefault(entry.getKey(), new ArrayList<>())) {
+                    AllocationCourse course = courses.get(courseID);
+                    printWriter.println("\t" + course.getCid() + "-" + course.getName() + "-" + "Slot" + course.getSlot());
+                }
+            }
+            printWriter.println();
+
+            printWriter.println("**********************************************");
+            printWriter.println("          Course Allocation Logs");
+            printWriter.println("**********************************************");
+            courseAllocation(student, false, true);
+            printWriter.println(">>> Not enough courses selected/available to fulfill the requirement");
+            printWriter.println();
+            printWriter.flush();
+        }
     }
 }

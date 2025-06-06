@@ -15,6 +15,12 @@ public class SeatSummaryServiceImpl implements SeatSummaryService {
 
     @Override
     public void insertAll(List<SeatSummary> seatSummaryList) {
+        deleteAll();
         seatSummaryRepo.saveAll(seatSummaryList);
+    }
+
+    @Override
+    public void deleteAll() {
+        seatSummaryRepo.deleteAll();
     }
 }
