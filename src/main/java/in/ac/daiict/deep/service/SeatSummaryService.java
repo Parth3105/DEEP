@@ -5,5 +5,5 @@ import in.ac.daiict.deep.entity.SeatSummary;
 import java.util.List;
 
 public interface SeatSummaryService {
-    public void insertAll(List<SeatSummary> seatSummaryList);
+    void insertAll(List<SeatSummary> seatSummaryList);
 }

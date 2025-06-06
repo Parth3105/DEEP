@@ -22,6 +22,8 @@ public class SeatSummary {
     @Id
     @Column(length = 10)
     private String program;
+    @Id
+    private int semester;
     @Column
     private int available_seats;
 }

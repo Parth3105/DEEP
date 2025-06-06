@@ -1,6 +1,5 @@
 package in.ac.daiict.deep.utility;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

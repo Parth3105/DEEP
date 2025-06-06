@@ -27,11 +27,12 @@ public class AllocationDataLoader {
     private SeatSummaryService seatSummaryService;
     private ModelMapper modelMapper;
 
-    public Map<String, AllocationStudent> getStudentData(){
+    public Map<String, AllocationStudent> getStudentData(int semester, int[] maxRequirement){
         Map<String, AllocationStudent> allocationStudents=new HashMap<>();
 
         // Fetch and set the student information
-        List<Student> studentData=studentService.fetchAllStudents();
+        List<Student> studentData=studentService.fetchStudentsBySemester(semester);
+        if(studentData==null) return null;
         for(Student s: studentData) allocationStudents.put(s.getSid(),new AllocationStudent(s.getSid(),s.getName(),s.getProgram(),s.getSemester()));
 
         // Fetch and set the student requirements
@@ -42,10 +43,15 @@ public class AllocationDataLoader {
             reqs.put(studentReq.getCategory(),studentReq.getCourse_cnt());
             studentReqMap.put(studentReq.getSid(),reqs);
         }
+
         for(Map.Entry<String,Map<String,Integer>> reqEntry: studentReqMap.entrySet()){
             AllocationStudent allocationStudent=allocationStudents.get(reqEntry.getKey());
             allocationStudent.setRequirements(reqEntry.getValue());
             allocationStudents.put(reqEntry.getKey(),allocationStudent);
+
+            int reqCnt=0;
+            for(int cnt: reqEntry.getValue().values()) reqCnt+=cnt;
+            maxRequirement[0]=Math.max(maxRequirement[0],reqCnt);
         }
 
         // Fetch and set the slot preferences
@@ -86,8 +92,9 @@ public class AllocationDataLoader {
         return courseData;
     }
 
-    public List<CourseOffer> getCourseOffers(Map<String,Map<String,String>> categories, Map<String,Map<String,Integer>> availableSeats){
-        List<CourseOffering> courseOfferings=courseOfferingService.fetchAllCourseOfferings();
+    public List<CourseOffer> getCourseOffers(int semester, Map<String,Map<String,String>> categories, Map<String,Map<String,Integer>> availableSeats){
+        List<CourseOffering> courseOfferings=courseOfferingService.fetchCourseOfferingBySemester(semester);
+        if(courseOfferings==null) return null;
         for(CourseOffering courseOffering: courseOfferings){
             Map<String,String> programCategoryMap=categories.getOrDefault(courseOffering.getCid(),new HashMap<>());
             programCategoryMap.put(courseOffering.getProgram(),courseOffering.getCategory());
@@ -100,8 +107,9 @@ public class AllocationDataLoader {
         return modelMapper.map(courseOfferings,new TypeToken<List<CourseOffer>>(){}.getType());
     }
 
-    public List<InstituteRequirement> getInstituteRequirements(){
-        List<InstituteReq> instituteReqs=instituteReqService.fetchAllInstituteReqs();
+    public List<InstituteRequirement> getInstituteRequirements(int semester){
+        List<InstituteReq> instituteReqs=instituteReqService.fetchInstituteReqBySemester(semester);
+        if(instituteReqs==null) return null;
         return modelMapper.map(instituteReqs,new TypeToken<List<InstituteRequirement>>(){}.getType());
     }
 
@@ -114,12 +122,12 @@ public class AllocationDataLoader {
         allocationResultService.insertAll(allocationResultList);
     }
 
-    public void saveSeatSummary(Map<String,Map<String,Integer>> availableSeats){
+    public void saveSeatSummary(int semester, Map<String,Map<String,Integer>> availableSeats){
         List<SeatSummary> seatSummaryList=new ArrayList<>();
         for(Map.Entry<String,Map<String,Integer>> seatEntry: availableSeats.entrySet()){
             String program=seatEntry.getKey();
             Map<String,Integer> courseSeatMap=seatEntry.getValue();
-            for(Map.Entry<String,Integer> courseSeatMapEntry: courseSeatMap.entrySet()) seatSummaryList.add(new SeatSummary(courseSeatMapEntry.getKey(),program,courseSeatMapEntry.getValue()));
+            for(Map.Entry<String,Integer> courseSeatMapEntry: courseSeatMap.entrySet()) seatSummaryList.add(new SeatSummary(courseSeatMapEntry.getKey(),program,semester,courseSeatMapEntry.getValue()));
         }
         seatSummaryService.insertAll(seatSummaryList);
     }

@@ -46,6 +46,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public List<Student> fetchStudentsBySemester(int semester) {
+        List<Student> studentList=studentRepo.findBySemester(semester);
+        if(studentList==null || studentList.isEmpty()) return null;
+        return studentList;
+    }
+
+    @Override
     public void deleteAll() {
         studentRepo.deleteAll();
     }

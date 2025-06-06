@@ -42,7 +42,7 @@ public class AllocationInstanceController {
     private Map<String, Upload> uploads=null;
     private boolean offersUploadedOnce;
     @PostMapping("/create-instance")
-    public String initiateSetup(@RequestParam String season, @RequestParam String Year, Model model){
+    public String initiateSetup(@RequestParam String season, @RequestParam String Year){
         uploads=new HashMap<>();
         offersUploadedOnce=false;
         if(DBConstants.SAVE_SCHEMA_NAME !=null) {
@@ -72,9 +72,9 @@ public class AllocationInstanceController {
     public void loadFile(@RequestParam("file") MultipartFile file, @PathVariable("type") String name){
         String[] names={UploadConstants.studentData,UploadConstants.courseData,UploadConstants.instReqData,UploadConstants.offeringData};
         try {
-            for(int j=0;j<names.length;j++) {
-                if (names[j].toUpperCase().contains(name.toUpperCase())) {
-                    uploads.put(names[j], new Upload(names[j], file.getBytes()));
+            for (String s : names) {
+                if (s.toUpperCase().contains(name.toUpperCase())) {
+                    uploads.put(s, new Upload(s, file.getBytes()));
                     break;
                 }
             }

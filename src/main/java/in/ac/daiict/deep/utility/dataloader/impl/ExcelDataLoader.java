@@ -16,7 +16,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -27,9 +26,12 @@ import java.util.List;
 
 @Component
 public class ExcelDataLoader implements DataLoader {
-    @Autowired
-    @Lazy
     private CourseService courseService;
+
+    @Autowired
+    public ExcelDataLoader(CourseService courseService) {
+        this.courseService = courseService;
+    }
 
     /**
      *  Load the studentData from the sheet.
@@ -43,7 +45,7 @@ public class ExcelDataLoader implements DataLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        DecimalFormat formatStudentID=formatStudentID = new DecimalFormat("#");
+        DecimalFormat formatStudentID=new DecimalFormat("#");
         Iterator<Row> studentIterator = studentSheet.rowIterator();
         StudentSheetHeader studentHeader = new StudentSheetHeader(studentSheet.getRow(studentSheet.getFirstRowNum()));
 

@@ -1,6 +1,5 @@
 package in.ac.daiict.deep.service.impl;
 
-import in.ac.daiict.deep.dto.StudentReqDto;
 import in.ac.daiict.deep.entity.StudentReq;
 import in.ac.daiict.deep.repository.StudentReqRepo;
 import in.ac.daiict.deep.service.StudentReqService;
@@ -15,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class StudentReqServiceImpl implements StudentReqService {
     private StudentReqRepo studentReqRepo;
-    private ModelMapper modelMapper;
 
     @Override
     public List<StudentReq> fetchAllStudentReqs() {
