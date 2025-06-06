@@ -11,7 +11,6 @@ public class ResponseMessage {
     public static final String RUN_ALLOCATION_DEFAULT_STATUS="Yet to run";
     public static final String RUN_ALLOCATION_SUCCESS_STATUS ="Success";
 
-
     public static String getUploadSuccessMessage() {
         return "You're all set! " + UPLOAD_COUNT + " file(s) have been successfully uploaded and saved.";
     }

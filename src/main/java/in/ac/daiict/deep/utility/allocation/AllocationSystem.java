@@ -317,10 +317,11 @@ public class AllocationSystem {
 
     private void getAllocationFailureDetail() {
         ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        File file=new File("./src/main/java/in/ac/daiict/deep/tmp/FailureLog.txt");
+        String dirPath="./src/main/java/in/ac/daiict/deep/tmp";
+        File dir=new File(dirPath);
         printWriter= null;
         try {
-            printWriter = new PrintWriter(file);
+            if(!dir.exists() && dir.mkdirs()) printWriter = new PrintWriter(dirPath+"AllocationFailureLog.txt");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

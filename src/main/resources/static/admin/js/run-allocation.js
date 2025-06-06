@@ -5,29 +5,75 @@ toggle.addEventListener('click', () => {
   menu.classList.toggle('hidden');
 });
 
-const buttons = document.querySelectorAll('.semester-btn');
-const selectedInput = document.getElementById('selectedSemester');
-const form = document.getElementById('allocationForm');
+// Toast Notification
+function showToast(message, type = 'error') {
+    const toast = document.getElementById("toast-error");
+    const text = document.getElementById("toast-message");
 
-// Handle semester button clicks and styling
-buttons.forEach(button => {
-    button.addEventListener('click', () => {
-      buttons.forEach(btn => {
-        btn.classList.remove('bg-[#2D9D5D]');
-        btn.classList.add('bg-[#1E3C72]');
-      });
+    text.innerText = message;
 
-      button.classList.remove('bg-[#1E3C72]');
-      button.classList.add('bg-[#2D9D5D]');
+    // Reset any previous background color
+    toast.classList.remove("bg-red-500", "bg-yellow-400");
 
-      selectedInput.value = button.getAttribute('data-sem');
+    // Apply based on type
+    if (type === 'error') {
+        toast.classList.add("bg-red-500");
+    } else if (type === 'warning') {
+        toast.classList.add("bg-yellow-400", "text-gray-900");
+    }
+
+    toast.classList.remove("hidden");
+    toast.classList.add("flex");
+
+    setTimeout(() => {
+        hideToast();
+    }, 3000);
+}
+
+function hideToast() {
+    const toast = document.getElementById("toast-error");
+    toast.classList.remove("flex");
+    toast.classList.add("hidden");
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.semester-btn');
+    const hiddenInput = document.getElementById('selectedSemester');
+    const form = document.getElementById('allocationForm');
+
+    const pathSegments = window.location.pathname.split('/');
+    const lastSegment = pathSegments[pathSegments.length - 1];
+    const currentSemester = parseInt(lastSegment);
+
+    // Set initial semester from URL if valid (5 to 8), else default to 5
+    let initialSemester = [5, 6, 7, 8].includes(currentSemester) ? currentSemester : 5;
+    hiddenInput.value = initialSemester;
+
+    buttons.forEach(btn => {
+        if (parseInt(btn.getAttribute('data-sem')) === initialSemester) {
+            btn.style.backgroundColor = '#2D9D5D'; // green
+        } else {
+            btn.style.backgroundColor = '#1E3C72'; // blue
+        }
     });
-});
 
-// Before form submission, set the action dynamically with the semester
-form.addEventListener('submit', (event) => {
-    const sem = selectedInput.value;
-    console.log(sem);
-//    form.action = `/execute-allocation/${sem}`;
-    // form will submit normally with POST method
+    // Handle click on semester buttons
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const selected = this.getAttribute('data-sem');
+            hiddenInput.value = selected;
+
+            // Update button styles
+            buttons.forEach(b => {
+                b.style.backgroundColor = '#1E3C72';
+            });
+            this.style.backgroundColor = '#2D9D5D';
+        });
+    });
+
+    // Set form action on submit
+    form.addEventListener('submit', function () {
+        const semester = hiddenInput.value;
+        this.setAttribute('action', `/execute-allocation/${semester}`);
+    });
 });

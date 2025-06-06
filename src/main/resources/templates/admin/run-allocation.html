@@ -10,6 +10,17 @@
 </head>
 
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+
+<div id="toast-error"
+     class="hidden fixed top-6 right-6 z-[10] max-w-xs text-sm text-white rounded-xl shadow-lg"
+     role="alert" tabindex="-1" aria-labelledby="hs-toast-solid-color-red-label"
+     style="position: fixed !important;">
+    <div id="hs-toast-solid-color-red-label"
+         class="flex p-4 gap-2 items-start bg-red-600 rounded-xl">
+        <span id="toast-message"></span>
+    </div>
+</div>
+
 <div class="mx-auto">
     <!-- Header -->
     <div th:replace="~{common/admin-navbar::admin-navbar}"></div>
@@ -37,22 +48,28 @@
                         </div>
                     </div>
 
-                    <form id="allocationForm" method="POST">
-                        <div class="mb-6 ml-8">
+                    <form id="allocationForm" method="post" th:action="@{/execute-allocation/5}" class="ml-8">
+                        <!-- Select Semester Section -->
+                        <div class="mb-6">
                             <label class="block text-lg font-bold text-[#1E3C72] mb-2">Select Semester :</label>
-                            <div class="flex flex-wrap gap-2" id="semesterButtons">
-                                <button type="button" class="semester-btn circles w-11 h-11 rounded-full text-white text-xl font-medium cursor-pointer bg-[#2D9D5D]" data-sem="5">5</button>
-                                <button type="button" class="semester-btn circles w-11 h-11 rounded-full text-white text-xl font-medium cursor-pointer bg-[#1E3C72]" data-sem="6">6</button>
-                                <button type="button" class="semester-btn circles w-11 h-11 rounded-full text-white text-xl font-medium cursor-pointer bg-[#1E3C72]" data-sem="7">7</button>
-                                <button type="button" class="semester-btn circles w-11 h-11 rounded-full text-white text-xl font-medium cursor-pointer bg-[#1E3C72]" data-sem="8">8</button>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" class="semester-btn w-11 h-11 rounded-full text-white text-xl font-medium cursor-pointer"
+                                        data-sem="5" style="background-color: #2D9D5D;">5</button>
+                                <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                        data-sem="6">6</button>
+                                <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                        data-sem="7">7</button>
+                                <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                        data-sem="8">8</button>
                             </div>
                         </div>
 
-                        <input type="hidden" id="selectedSemester" name="semester" value="5" />
+                        <!-- Hidden input to store semester -->
+                        <input type="hidden" name="semester" id="selectedSemester" value="5" />
 
-                        <button id="executeBtn"
-                                type="submit"
-                                class="w-full max-w-48 ml-8 bg-gradient-to-r from-[#27AE60] to-[#2ECC71] text-white px-2 py-2 rounded-xl font-medium flex items-center justify-center cursor-pointer">
+                        <!-- Execute Allocation Button -->
+                        <button type="submit" id="executeBtn"
+                                class="w-full max-w-48 bg-gradient-to-r from-[#27AE60] to-[#2ECC71] text-white px-2 py-2 rounded-xl font-medium flex items-center justify-center cursor-pointer">
                             <img src="/admin/images/execute-allocation.svg" alt="Execute Icon" class="w-7 h-7 mr-2">
                             Execute Allocation
                         </button>
@@ -72,19 +89,35 @@
                         <!-- Allocation Status -->
                         <div class="bg-[#AADAF9] flex-1 flex flex-col justify-center items-center rounded-2xl mx-4 sm:mx-0 px-6 text-center min-h-[170px]">
                             <div class="mb-6">
-                                <span class="text-xl font-bold text-black ">Allocation Status</span>
+                                <span class="text-xl font-bold text-black">Allocation Status</span>
                             </div>
-                            <div class="bg-gradient-to-r from-[#27AE60] to-[#2ECC71] text-white px-7 py-2 rounded-xl font-medium text-lg">
+
+                            <div th:classappend="| ${allocationResponse.status == 204 ? 'bg-yellow-400' :
+                                (allocationResponse.status == 200 ? 'bg-gradient-to-r from-[#27AE60] to-[#2ECC71]' :
+                                (allocationResponse.status == 500 ? 'bg-red-500' : ''))} |"
+                                 class="text-white px-7 py-2 rounded-xl font-medium text-lg"
+                                 th:text="${allocationResponse.status == 500 ? 'Failed' : allocationResponse.message}">
                                 Success
                             </div>
                         </div>
+
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                            const statusCode = [[${allocationResponse.status}]] | 1;
+                            const message = [[${allocationResponse.message}]];
+
+                            if (statusCode === 500) {
+                                showToast(message);
+                            }
+                            /*]]>*/
+                        </script>
 
                         <!-- Total Students Allocated -->
                         <div class="bg-[#AADAF9] flex-1 flex flex-col justify-center items-center rounded-2xl mx-4 sm:mx-0 px-6 text-center min-h-[170px]">
                             <div class="mb-4">
                                 <span class="text-xl font-bold text-black ">Students Successfully Allocated</span>
                             </div>
-                            <div class="text-5xl font-bold text-gray-800">130</div>
+                            <div class="text-5xl font-bold text-gray-800" th:text="${allocatedCount}">0</div>
                         </div>
 
                         <!-- Students Not Allocated -->
@@ -92,7 +125,7 @@
                             <div class="mb-4">
                                 <span class="text-xl font-bold text-black ">Students Unsuccessfully Allocated</span>
                             </div>
-                            <div class="text-5xl font-bold text-gray-800">8</div>
+                            <div class="text-5xl font-bold text-gray-800" th:text="${unallocatedCount}">0</div>
                         </div>
                     </div>
                 </div>
