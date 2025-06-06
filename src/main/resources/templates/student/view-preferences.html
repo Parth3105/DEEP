@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEEP - View Preferences</title>
+    <link rel="icon" href="/admin/images/DEEP Logo.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+<div class="mx-auto">
+    <!-- Header -->
+    <div th:replace="~{common/student-navbar::student-navbar}"></div>
+</div>
+
+<main class="backdrop-blur-lg flex flex-col justify-center items-center px-7 py-6">
+    <div class="max-w-3xl w-full mx-auto bg-white shadow-lg rounded-xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-[#96D6FF] px-6 py-4">
+            <h1 class="text-xl md:text-2xl font-bold text-center text-gray-800">Preference Summary</h1>
+        </div>
+
+        <!-- Content -->
+        <div class="py-6 px-6 md:px-8 space-y-6">
+            <!-- Semester and Program Info -->
+            <div class="flex justify-between gap-4 text-sm md:text-base pb-5 border-b border-gray-200">
+                <div>
+                    <span class="font-medium">Semester :</span>
+                    <span class="ml-2" th:text="${semester}"></span>
+                </div>
+                <div>
+                    <span class="font-medium">Program :</span>
+                    <span class="ml-2" th:text="${program}"></span>
+                </div>
+            </div>
+
+            <!-- Academic Requirement -->
+            <div class="border-b border-gray-200 pb-5">
+                <h2 class="font-bold text-base md:text-lg text-gray-800 mb-2 md:mb-3">Academic Requirement :</h2>
+                <div class="flex flex-col text-sm md:text-base" th:if="${studentRequirements != null}">
+                    <div class="flex" th:each="req : ${studentRequirements}">
+                        <div class="flex justify-between">
+                            <span class="w-46" th:switch="${req.category}">
+                                <span th:case="'ICTE'">ICT Electives</span>
+                                <span th:case="'TE'">Technical Electives</span>
+                                <span th:case="'SE'">Science Electives</span>
+                                <span th:case="'MNCE'">MNCE Electives</span>
+                                <span th:case="'OE'">Open Electives</span>
+                                <span th:case="*">Other</span>
+                            </span>
+                            <span class="mr-3">:</span>
+                        </div>
+                        <span th:text="${req.course_cnt}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Preferences -->
+            <div>
+                <h2 class="font-bold text-base md:text-lg text-gray-800 mb-2 md:mb-3">Course Preferences :</h2>
+
+                <!-- 1. Expose raw data to JavaScript -->
+                <script th:inline="javascript">
+                    let coursePreferences = /*[[${coursePreferences}]]*/ [];
+                </script>
+
+                <!-- 2. Container where grouped content will be inserted -->
+                <div id="groupedCoursePrefs" class="mt-6 space-y-6"></div>
+            </div>
+
+            <!-- Slot Preferences -->
+            <div>
+                <h2 class="font-bold text-base md:text-lg text-gray-800 mb-2 md:mb-3">Slot Preferences :</h2>
+                <div class="bg-blue-50 p-4 text-sm md:text-base space-y-1 rounded-xl"
+                     th:if="${slotPreferences != null}">
+
+                    <div class="flex" th:each="sp : ${slotPreferences}">
+                        <div class="flex justify-between">
+                            <span class="w-24 md:w-28" th:text="'Preference - ' + ${sp.pref}">Preference - 1</span>
+                            <span class="mr-3">:</span>
+                        </div>
+                        <span th:text="'Slot - ' + ${sp.slot}">Slot - 1</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="/student/js/view-preferences.js"></script>
+</body>
+</html>

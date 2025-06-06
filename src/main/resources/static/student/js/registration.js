@@ -36,18 +36,50 @@ function hideToast() {
     toast.classList.add("hidden");
 }
 
-const categories = ['ICTE', 'TE', 'SE', 'MNCE', 'OE'];
-const values = {};
+document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('requirementsContainer');
+    const filtered = instituteRequirements.filter(obj => obj.course_cnt !== null);
+    filtered.sort((a, b) => a.category.localeCompare(b.category));
 
-categories.forEach(cat => {
-    values[cat] = '0';
+    // Render each
+    filtered.forEach(obj => {
+        const div = document.createElement('div');
+        div.className = "flex items-center";
 
-    const input = document.querySelector(`input[name="${cat}"]`);
-    if (input) {
-    input.addEventListener('input', () => {
-        values[cat] = input.value.trim() || '0';
+        div.innerHTML = `
+            <label class="text-lg font-semibold text-gray-800 w-16 text-right">${obj.category.toUpperCase()} :</label>
+            <input type="text" value="${obj.course_cnt}" readonly
+                   class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-gray-200 text-center font-medium w-16 cursor-not-allowed" />
+        `;
+        container.appendChild(div);
     });
-    }
+});
+
+const values = {};
+const container = document.getElementById("categoryInputsContainer");
+
+instituteRequirements.forEach(obj => {
+  if (obj.course_cnt != null) {
+    const category = obj.category?.toUpperCase();
+    const div = document.createElement("div");
+    div.className = "flex items-center";
+
+    div.innerHTML = `
+      <label class="text-lg font-semibold text-gray-800 w-16 text-right">${category} :</label>
+      <input type="number" name="${category}"
+        class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-white text-center font-medium w-16 appearance-none
+        [&::-webkit-outer-spin-button]:appearance-none
+        [&::-webkit-inner-spin-button]:appearance-none" />
+    `;
+
+    container.appendChild(div);
+
+    // 🟢 Attach listener after appending so input is in the DOM
+    const input = div.querySelector(`input[name="${category}"]`);
+    input.addEventListener("input", () => {
+      values[category] = input.value.trim() || "0";
+    });
+  }
 });
 
 // Registration Form Steps
@@ -82,9 +114,33 @@ function showStep(step) {
     }
 }
 
+function validateAllSlotsBeforeSubmit() {
+    const allSlots = new Set([
+        ...Object.keys(skippedSlots),
+        ...Object.keys(selectedCoursesBySlot)
+    ]);
+
+    for (let slot of allSlots) {
+        const isSkipped = skippedSlots[slot] === true;
+
+        if (isSkipped) continue; // user opted to skip this slot
+
+        const selected = selectedCoursesBySlot[slot] || [];
+        const total = document.querySelectorAll(`#slot-${slot} .course-row`).length;
+
+        // If user has not selected all courses and not skipped the slot => throw warning
+        if (selected.length !== total) {
+            showToast(`Please select all courses or confirm no preference for Slot ${slot}.`, "warning");
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function CheckInputs() {
     if(currentStep === 2) {
-        console.log(selectedCoursesBySlot);
+        return validateAllSlotsBeforeSubmit();
     }
     if(currentStep !== 1) {
         return true;
@@ -119,53 +175,66 @@ function prevStep() {
 
 // Registration Form 2
 let selectedCoursesBySlot = {};
+let skippedSlots = {};
 let currentSlot = '';
 
-// Show courses for a specific slot
-function showSlotCourses(slot) {
-    slot = String(slot);
-    if (slot === currentSlot) return;
+document.querySelectorAll('#slot-panel').forEach(el => {
+    const slot = el.getAttribute('data-slot');
+    skippedSlots[slot] = false;
+});
 
-    const currentSlotCourses = document.querySelectorAll(`#slot-${currentSlot} .course-row`);
-    const selectedCIDsInCurrent = selectedCoursesBySlot[currentSlot] || [];
-    const totalCoursesInCurrent = currentSlotCourses.length;
+// Called when checkbox is toggled
+function handleNoSlotCourseCheckbox(checkbox) {
+  const slot = currentSlot;
+  skippedSlots[slot] = checkbox.checked;
 
-    const noSlotCourseCheckbox = document.getElementById('noSlotCourse');
-
-    const hasAllSelected = selectedCIDsInCurrent.length === totalCoursesInCurrent;
-
-    if (currentStep === 2 && !hasAllSelected && (!noSlotCourseCheckbox || !noSlotCourseCheckbox.checked)) {
-        showToast(`Please select all courses or confirm you don't want any from Slot ${currentSlot}.`, "warning");
-        return;
-    }
-
-    // Slot switch is allowed
-    currentSlot = slot;
-
-    if (noSlotCourseCheckbox) noSlotCourseCheckbox.checked = false;
-
-    // Hide all slot courses
-    document.querySelectorAll('.slot-courses').forEach(el => el.classList.add('hidden'));
-
-    // Show selected slot
-    const slotElement = document.getElementById('slot-' + slot);
-    if (slotElement) slotElement.classList.remove('hidden');
-
-    // Update active styles
-    const slots = document.querySelectorAll("#slotContainer .slot");
-    slots.forEach(s => {
-        s.classList.remove("bg-blue-500", "text-white");
-        s.classList.add("bg-cyan-300", "text-gray-800");
-    });
-
-    const selectedSlotBtn = document.querySelector(`.slot[data-slot="${slot}"]`);
-    if (selectedSlotBtn) {
-        selectedSlotBtn.classList.remove("bg-cyan-300", "text-gray-800");
-        selectedSlotBtn.classList.add("bg-blue-500", "text-white");
-    }
-
+  // Clear selected courses if user opted for none
+  if (checkbox.checked) {
+    selectedCoursesBySlot[slot] = [];
     updateSelectedCoursesDisplay();
     updateCourseVisibility();
+  }
+}
+
+// Called when switching slots
+function showSlotCourses(slot) {
+  slot = String(slot);
+  if (slot === currentSlot) return;
+
+  const currentCourses = document.querySelectorAll(`#slot-${currentSlot} .course-row`);
+  const selectedInCurrent = selectedCoursesBySlot[currentSlot] || [];
+  const totalInCurrent = currentCourses.length;
+
+  const isCurrentSkipped = skippedSlots[currentSlot] === true;
+  if (currentStep === 2 && selectedInCurrent.length !== totalInCurrent && !isCurrentSkipped) {
+    showToast(`Please select all courses or confirm you don't want any from Slot ${currentSlot}.`, "warning");
+    return;
+  }
+
+  // Switch slot
+  currentSlot = slot;
+
+  // Show/hide slots
+  document.querySelectorAll('.slot-courses').forEach(el => el.classList.add('hidden'));
+  const slotElement = document.getElementById('slot-' + slot);
+  if (slotElement) slotElement.classList.remove('hidden');
+
+  // Update slot button style
+  document.querySelectorAll("#slotContainer .slot").forEach(s => {
+    s.classList.remove("bg-blue-500");
+    s.classList.add("bg-cyan-300");
+  });
+
+  const selectedBtn = document.querySelector(`.slot[data-slot="${slot}"]`);
+  selectedBtn?.classList.remove("bg-cyan-300");
+  selectedBtn?.classList.add("bg-blue-500");
+
+  // Restore checkbox state
+  const checkbox = document.getElementById("noSlotCourseCheckbox");
+  checkbox.checked = skippedSlots[slot] === true;
+
+  updateSelectedCoursesDisplay();
+  updateCourseVisibility();
 }
 
 // Hide already selected courses in current slot
@@ -268,8 +337,40 @@ document.addEventListener('DOMContentLoaded', function () {
 function collectPreferences() {
     const inputs = document.querySelectorAll('.slot-preference-input');
     const preferences = Array.from(inputs).map(input => input.value.trim());
-    console.log('User Preferences:', preferences);
     return preferences;
+}
+
+function validateSlotPreferences() {
+    const inputs = document.querySelectorAll('.slot-preference-input');
+    const preferences = Array.from(inputs).map(input => input.value.trim());
+
+    const maxSlot = inputs.length;
+    const seen = new Set();
+
+    for (let i = 0; i < preferences.length; i++) {
+        const pref = preferences[i];
+
+        if (pref === '') {
+            showToast(`Please fill all ${maxSlot} preferences.`, "warning");
+            return false;
+        }
+
+        const num = Number(pref);
+
+        if (isNaN(num) || num < 1 || num > maxSlot) {
+            showToast(`Preference ${i + 1} must be a number between 1 and ${maxSlot}.`, "error");
+            return false;
+        }
+
+        if (seen.has(num)) {
+            showToast(`Duplicate preference "${num}" detected. All preferences must be unique.`, "error");
+            return false;
+        }
+
+        seen.add(num);
+    }
+
+    return true;
 }
 
 function getSlotPrefsToString(slotPrefs) {
@@ -292,13 +393,31 @@ function getAcadReqToString(obj) {
 }
 
 document.getElementById('submitButton').addEventListener('click', function () {
-    const acad = getAcadReqToString(values);
-    const course = getCoursePrefsToString(selectedCoursesBySlot);
-    const slot = getSlotPrefsToString(collectPreferences());
+  if (validateSlotPreferences()) {
+      // If validation passes, show modal
+      document.getElementById('confirmModal').classList.remove('hidden');
+      document.body.classList.add('backdrop-blur-md', 'overflow-hidden'); // blur background
+  }
+});
 
-    document.getElementById('studentRequirements').value = acad;
-    document.getElementById('coursePreferences').value = course;
-    document.getElementById('slotPreferences').value = slot;
+// Confirm button
+document.getElementById('confirmSubmit').addEventListener('click', function () {
+  document.getElementById('confirmModal').classList.add('hidden');
+  document.body.classList.remove('backdrop-blur-md', 'overflow-hidden');
 
-    document.getElementById('myForm').submit();
+  const acad = getAcadReqToString(values);
+  const course = getCoursePrefsToString(selectedCoursesBySlot);
+  const slot = getSlotPrefsToString(collectPreferences());
+
+  document.getElementById('studentRequirements').value = acad;
+  document.getElementById('coursePreferences').value = course;
+  document.getElementById('slotPreferences').value = slot;
+
+  document.getElementById('myForm').submit();
+});
+
+// Cancel button
+document.getElementById('cancelConfirm').addEventListener('click', function () {
+  document.getElementById('confirmModal').classList.add('hidden');
+  document.body.classList.remove('backdrop-blur-md', 'overflow-hidden');
 });
