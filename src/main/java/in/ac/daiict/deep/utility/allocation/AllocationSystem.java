@@ -12,6 +12,7 @@ import in.ac.daiict.deep.utility.allocation.model.CourseOffer;
 import in.ac.daiict.deep.utility.allocation.model.InstituteRequirement;
 import in.ac.daiict.deep.utility.dataloader.DataLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -351,10 +352,11 @@ public class AllocationSystem {
 
     private ByteArrayOutputStream getAllocationFailureDetail() {
         ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        File file=new File("./src/main/java/in/ac/daiict/deep/tmp/FailureLog.txt");
+        String dirPath="./src/main/java/in/ac/daiict/deep/tmp";
+        File dir=new File(dirPath);
         printWriter= null;
         try {
-            printWriter = new PrintWriter(file);
+            if(!dir.exists() && dir.mkdirs()) printWriter = new PrintWriter(dirPath+"AllocationFailureLog.txt");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

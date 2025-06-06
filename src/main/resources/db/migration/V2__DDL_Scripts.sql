@@ -77,3 +77,8 @@ CREATE TABLE uploads(
     name VARCHAR(100) PRIMARY KEY,
     file BYTEA
 );
+
+CREATE TABLE allocation_reports(
+    name VARCHAR(100) PRIMARY KEY,
+    file BYTEA
+);

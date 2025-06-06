@@ -77,8 +77,7 @@ public class ResultDisplayController {
         }
 
         // send allocation result details
-        model.addAttribute("semester", studentDto.getSemester());
-        model.addAttribute("program", studentDto.getProgram());
+        model.addAttribute("studentInfo", studentDto);
         model.addAttribute("allocationResult",allocationResultDtoList);
         return StudentTemplate.ALLOCATION_RESULT_PAGE;
     }

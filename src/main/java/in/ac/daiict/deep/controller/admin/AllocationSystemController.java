@@ -50,6 +50,7 @@ public class AllocationSystemController {
         // Send the successfully allocated count.
         long totalStudents=studentService.countAllStudents();
         long allocatedCount=ResponseStatus.OK==allocationResponse.getStatus()?totalStudents-unmetReqCnt[0]:0;
+
         allocatedStudentsData.put(semester,allocatedCount);
         unallocatedStudentsData.put(semester,unmetReqCnt[0]);
         return "redirect:"+AdminEndpoint.RUN_ALLOCATION;
