@@ -69,17 +69,19 @@ public class AllocationDataLoader {
         }
 
         // Fetch and set the course preferences
-        List<CoursePref> coursePrefs=coursePrefService.fetchAllSlotSortedByPref();
+        List<CoursePref> coursePrefs=coursePrefService.fetchAllCoursePrefSortedByPref();
         Map<String,Map<String,List<String>>> studentCoursePrefMap=new HashMap<>();
         for(CoursePref coursePref:coursePrefs){
             Map<String,List<String>> slotWiseCoursePref=studentCoursePrefMap.getOrDefault(coursePref.getSid(), new HashMap<>());
             List<String> prefs=slotWiseCoursePref.getOrDefault(coursePref.getSlot(),new ArrayList<>());
+            prefs.add(coursePref.getCid());
             slotWiseCoursePref.put(coursePref.getSlot(),prefs);
             studentCoursePrefMap.put(coursePref.getSid(),slotWiseCoursePref);
         }
         for(Map.Entry<String,Map<String,List<String>>> coursePrefEntry: studentCoursePrefMap.entrySet()){
             AllocationStudent allocationStudent=allocationStudents.get(coursePrefEntry.getKey());
             allocationStudent.setCoursePreferences(coursePrefEntry.getValue());
+            if(allocationStudent.getSid().equals("202201174"));
             allocationStudents.put(coursePrefEntry.getKey(),allocationStudent);
         }
         return allocationStudents;

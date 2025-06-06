@@ -1,8 +1,11 @@
 package in.ac.daiict.deep.controller.admin;
 
 import in.ac.daiict.deep.constant.DBConstants;
-import in.ac.daiict.deep.constant.ResponseConstants;
+import in.ac.daiict.deep.constant.response.ResponseMessage;
+import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.constant.UploadConstants;
+import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
+import in.ac.daiict.deep.constant.template.AdminTemplate;
 import in.ac.daiict.deep.entity.Upload;
 import in.ac.daiict.deep.service.*;
 import in.ac.daiict.deep.config.DBConfig;
@@ -41,7 +44,7 @@ public class AllocationInstanceController {
 
     private Map<String, Upload> uploads=null;
     private boolean offersUploadedOnce;
-    @PostMapping("/create-instance")
+    @PostMapping(AdminEndpoint.CREATE_ALLOCATION_INSTANCE)
     public String initiateSetup(@RequestParam String season, @RequestParam String Year){
         uploads=new HashMap<>();
         offersUploadedOnce=false;
@@ -51,10 +54,10 @@ public class AllocationInstanceController {
             schemaSetupService.createSchemaAndSwitch(DBConstants.WORKING_SCHEMA_NAME);
         }
         DBConstants.SAVE_SCHEMA_NAME= season+"_"+Year;
-        return "redirect:/update-instance";
+        return "redirect:"+AdminEndpoint.UPDATE_INSTANCE;
     }
 
-    @GetMapping("/update-instance")
+    @GetMapping(AdminEndpoint.UPDATE_INSTANCE)
     public String renderUploadPage(Model model){
         if(DBConstants.SAVE_SCHEMA_NAME == null) return "redirect:/admin-dashboard";
 
@@ -64,7 +67,7 @@ public class AllocationInstanceController {
         uploadStatus.put("Semester 7",studentService.countBySemester(7));
         uploadStatus.put("Semester 8",studentService.countBySemester(8));
         model.addAttribute("uploadStatus",uploadStatus);
-        return "admin/update-instance";
+        return AdminTemplate.UPDATE_INSTANCE_PAGE;
     }
 
     @PostMapping("/upload/{type}")
@@ -82,7 +85,7 @@ public class AllocationInstanceController {
             // error handling.
         }
     }
-    @PostMapping("/submit-data")
+    @PostMapping(AdminEndpoint.SUBMIT_DATA)
     public String saveUploadedFiles(RedirectAttributes redirectAttributes){
         /* debug
         for (String name : names) {
@@ -101,7 +104,7 @@ public class AllocationInstanceController {
             public void run() {
                 if(uploads.containsKey(UploadConstants.studentData)){
                     Response status=studentService.insertAll(uploads.get(UploadConstants.studentData).getFile());
-                    if(status.getStatus()!= ResponseConstants.OK) errorStatus.set(status);
+                    if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else cnt.set(cnt.get()+1);
                 }
                 System.out.println("\n\nFinished uploading .......\n\n");
@@ -114,7 +117,7 @@ public class AllocationInstanceController {
                 boolean isOffersUploaded=false;
                 if(uploads.containsKey(UploadConstants.courseData)){
                     Response status=courseService.insertAll(uploads.get(UploadConstants.courseData).getFile());
-                    if(status.getStatus()!= ResponseConstants.OK) errorStatus.set(status);
+                    if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else {
                         cnt.set(cnt.get() + 1);
                         isCoursesUploaded = true;
@@ -122,14 +125,14 @@ public class AllocationInstanceController {
                 }
                 if(uploads.containsKey(UploadConstants.offeringData)){
                     Response status=courseOfferingService.insertAll(uploads.get(UploadConstants.offeringData).getFile());
-                    if(status.getStatus()!= ResponseConstants.OK) errorStatus.set(status);
+                    if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else {
                         cnt.set(cnt.get() + 1);
                         offersUploadedOnce = true;
                         isOffersUploaded = true;
                     }
                 }
-                if(isCoursesUploaded && !isOffersUploaded && offersUploadedOnce) warningStatus.set(new Response(ResponseConstants.WARNING, List.of("Warning: Course Data has been updated. Please re-upload Course Offering file to avoid data loss.")));
+                if(isCoursesUploaded && !isOffersUploaded && offersUploadedOnce) warningStatus.set(new Response(ResponseStatus.WARNING, List.of(ResponseMessage.UPLOAD_OFFERS)));
             }
         });
         Thread u3=new Thread(new Runnable() {
@@ -137,7 +140,7 @@ public class AllocationInstanceController {
             public void run() {
                 if(uploads.containsKey(UploadConstants.instReqData)){
                     Response status=instituteReqService.insertAll(uploads.get(UploadConstants.instReqData).getFile());
-                    if(status.getStatus()!= ResponseConstants.OK) errorStatus.set(status);
+                    if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else cnt.set(cnt.get()+1);
                 }
             }
@@ -164,15 +167,18 @@ public class AllocationInstanceController {
         }
         if(cnt.get()==0){
             Response warnings=warningStatus.get();
-            if(warnings==null) warnings=new Response(ResponseConstants.WARNING,new ArrayList<>());
-            warnings.addWarning("Warning: No files were uploaded. Please make sure to select and upload files before submitting.");
+            if(warnings==null) warnings=new Response(ResponseStatus.WARNING,new ArrayList<>());
+            warnings.addWarning(ResponseMessage.NO_FILES_UPLOADED);
             warningStatus.set(warnings);
         }
         if(errorStatus.get()!=null) redirectAttributes.addFlashAttribute("uploadError",errorStatus.get());
         else if(warningStatus.get()!=null) redirectAttributes.addFlashAttribute("uploadWarning",warningStatus.get());
-        if(cnt.get()>0) redirectAttributes.addFlashAttribute("uploadSuccess",new Response(ResponseConstants.OK,"You're all set! "+cnt.get()+" file(s) have been successfully uploaded and saved."));
+        if(cnt.get()>0) {
+            ResponseMessage.UPLOAD_COUNT=cnt.get();
+            redirectAttributes.addFlashAttribute("uploadSuccess", new Response(ResponseStatus.OK, ResponseMessage.UPLOAD_SUCCESS));
+        }
 
-        return "redirect:/update-instance";
+        return "redirect:"+AdminEndpoint.UPDATE_INSTANCE;
     }
 
 }
