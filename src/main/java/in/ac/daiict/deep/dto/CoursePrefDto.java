@@ -15,12 +15,11 @@ import lombok.Setter;
 @Setter
 public class CoursePrefDto {
     @NotBlank
-    @Pattern(regexp = "^\\d+$", message = "Must contain only digits")
-    private String sid;
-    @NotBlank
     private String slot;
     @Positive
     private int pref;
+    @NotBlank
+    private String cname;
     @NotBlank
     private String cid;
 }

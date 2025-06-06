@@ -1,6 +1,6 @@
 package in.ac.daiict.deep.service.impl;
 
-import in.ac.daiict.deep.constant.ResponseConstants;
+import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.entity.InstituteReq;
 import in.ac.daiict.deep.repository.InstituteReqRepo;
@@ -28,11 +28,11 @@ public class InstituteReqServiceImpl implements InstituteReqService {
         deleteAll();
         List<InstituteReqDto> instituteReqDtos=new ArrayList<>();
         Response status=dataLoader.getInstituteRequirements(new ByteArrayInputStream(instituteReqData),instituteReqDtos);
-        if(status.getStatus()!= ResponseConstants.OK) return status;
+        if(status.getStatus()!= ResponseStatus.OK) return status;
         // TypeToken helps retain generic of list
         List<InstituteReq> instituteReqs=modelMapper.map(instituteReqDtos,new TypeToken<List<InstituteReq>>(){}.getType());
         instituteReqRepo.saveAll(instituteReqs);
-        return new Response(ResponseConstants.OK,"Data Inserted Successfully!");
+        return new Response(ResponseStatus.OK,"Data Inserted Successfully!");
     }
 
     @Override

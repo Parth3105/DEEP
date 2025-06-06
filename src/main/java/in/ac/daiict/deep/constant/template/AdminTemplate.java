@@ -1,0 +1,6 @@
+package in.ac.daiict.deep.constant.template;
+
+public class AdminTemplate {
+    public static final String DASHBOARD_PAGE="admin/dashboard";
+    public static final String UPDATE_INSTANCE_PAGE ="admin/update-instance";
+}

@@ -10,5 +10,5 @@ import lombok.*;
 public class SeatSummaryPK {
     private String cid;
     private String program;
-    private String semester;
+    private int semester;
 }
