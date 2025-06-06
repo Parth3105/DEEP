@@ -7,6 +7,7 @@ import in.ac.daiict.deep.utility.allocation.model.AllocationStudent;
 import in.ac.daiict.deep.utility.allocation.model.CourseOffer;
 import in.ac.daiict.deep.utility.allocation.model.InstituteRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

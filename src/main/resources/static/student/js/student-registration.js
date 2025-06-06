@@ -82,9 +82,33 @@ function showStep(step) {
     }
 }
 
+function validateAllSlotsBeforeSubmit() {
+    const allSlots = new Set([
+        ...Object.keys(skippedSlots),
+        ...Object.keys(selectedCoursesBySlot)
+    ]);
+
+    for (let slot of allSlots) {
+        const isSkipped = skippedSlots[slot] === true;
+
+        if (isSkipped) continue; // user opted to skip this slot
+
+        const selected = selectedCoursesBySlot[slot] || [];
+        const total = document.querySelectorAll(`#slot-${slot} .course-row`).length;
+
+        // If user has not selected all courses and not skipped the slot => throw warning
+        if (selected.length !== total) {
+            showToast(`Please select all courses or confirm no preference for Slot ${slot}.`, "warning");
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function CheckInputs() {
     if(currentStep === 2) {
-        console.log(selectedCoursesBySlot);
+        return validateAllSlotsBeforeSubmit();
     }
     if(currentStep !== 1) {
         return true;
@@ -119,53 +143,64 @@ function prevStep() {
 
 // Registration Form 2
 let selectedCoursesBySlot = {};
+let skippedSlots = {};
 let currentSlot = '';
 
-// Show courses for a specific slot
-function showSlotCourses(slot) {
-    slot = String(slot);
-    if (slot === currentSlot) return;
+document.querySelectorAll('#slot-panel').forEach(el => {
+    const slot = el.getAttribute('data-slot');
+    skippedSlots[slot] = false;
+});
 
-    const currentSlotCourses = document.querySelectorAll(`#slot-${currentSlot} .course-row`);
-    const selectedCIDsInCurrent = selectedCoursesBySlot[currentSlot] || [];
-    const totalCoursesInCurrent = currentSlotCourses.length;
+// Called when checkbox is toggled
+function handleNoSlotCourseCheckbox(checkbox) {
+  const slot = currentSlot;
+  skippedSlots[slot] = checkbox.checked;
 
-    const noSlotCourseCheckbox = document.getElementById('noSlotCourse');
-
-    const hasAllSelected = selectedCIDsInCurrent.length === totalCoursesInCurrent;
-
-    if (currentStep === 2 && !hasAllSelected && (!noSlotCourseCheckbox || !noSlotCourseCheckbox.checked)) {
-        showToast(`Please select all courses or confirm you don't want any from Slot ${currentSlot}.`, "warning");
-        return;
-    }
-
-    // Slot switch is allowed
-    currentSlot = slot;
-
-    if (noSlotCourseCheckbox) noSlotCourseCheckbox.checked = false;
-
-    // Hide all slot courses
-    document.querySelectorAll('.slot-courses').forEach(el => el.classList.add('hidden'));
-
-    // Show selected slot
-    const slotElement = document.getElementById('slot-' + slot);
-    if (slotElement) slotElement.classList.remove('hidden');
-
-    // Update active styles
-    const slots = document.querySelectorAll("#slotContainer .slot");
-    slots.forEach(s => {
-        s.classList.remove("bg-blue-500", "text-white");
-        s.classList.add("bg-cyan-300", "text-gray-800");
-    });
-
-    const selectedSlotBtn = document.querySelector(`.slot[data-slot="${slot}"]`);
-    if (selectedSlotBtn) {
-        selectedSlotBtn.classList.remove("bg-cyan-300", "text-gray-800");
-        selectedSlotBtn.classList.add("bg-blue-500", "text-white");
-    }
-
+  // Clear selected courses if user opted for none
+  if (checkbox.checked) {
+    selectedCoursesBySlot[slot] = [];
     updateSelectedCoursesDisplay();
     updateCourseVisibility();
+  }
+}
+
+// Called when switching slots
+function showSlotCourses(slot) {
+  slot = String(slot);
+  if (slot === currentSlot) return;
+
+  const currentCourses = document.querySelectorAll(`#slot-${currentSlot} .course-row`);
+  const selectedInCurrent = selectedCoursesBySlot[currentSlot] || [];
+  const totalInCurrent = currentCourses.length;
+
+  const isCurrentSkipped = skippedSlots[currentSlot] === true;
+  if (currentStep === 2 && selectedInCurrent.length !== totalInCurrent && !isCurrentSkipped) {
+    showToast(`Please select all courses or confirm you don't want any from Slot ${currentSlot}.`, "warning");
+    return;
+  }
+
+  // Switch slot
+  currentSlot = slot;
+
+  // Show/hide slots
+  document.querySelectorAll('.slot-courses').forEach(el => el.classList.add('hidden'));
+  const slotElement = document.getElementById('slot-' + slot);
+  if (slotElement) slotElement.classList.remove('hidden');
+
+  // Update slot button style
+  document.querySelectorAll("#slotContainer .slot").forEach(s => {
+    s.classList.remove("bg-blue-500", "text-white");
+    s.classList.add("bg-cyan-300", "text-gray-800");
+  });
+  const selectedBtn = document.querySelector(`.slot[data-slot="${slot}"]`);
+  selectedBtn?.classList.add("bg-blue-500", "text-white");
+
+  // Restore checkbox state
+  const checkbox = document.getElementById("noSlotCourseCheckbox");
+  checkbox.checked = skippedSlots[slot] === true;
+
+  updateSelectedCoursesDisplay();
+  updateCourseVisibility();
 }
 
 // Hide already selected courses in current slot
@@ -268,8 +303,40 @@ document.addEventListener('DOMContentLoaded', function () {
 function collectPreferences() {
     const inputs = document.querySelectorAll('.slot-preference-input');
     const preferences = Array.from(inputs).map(input => input.value.trim());
-    console.log('User Preferences:', preferences);
     return preferences;
+}
+
+function validateSlotPreferences() {
+    const inputs = document.querySelectorAll('.slot-preference-input');
+    const preferences = Array.from(inputs).map(input => input.value.trim());
+
+    const maxSlot = inputs.length;
+    const seen = new Set();
+
+    for (let i = 0; i < preferences.length; i++) {
+        const pref = preferences[i];
+
+        if (pref === '') {
+            showToast(`Please fill all ${maxSlot} preferences.`, "warning");
+            return false;
+        }
+
+        const num = Number(pref);
+
+        if (isNaN(num) || num < 1 || num > maxSlot) {
+            showToast(`Preference ${i + 1} must be a number between 1 and ${maxSlot}.`, "error");
+            return false;
+        }
+
+        if (seen.has(num)) {
+            showToast(`Duplicate preference "${num}" detected. All preferences must be unique.`, "error");
+            return false;
+        }
+
+        seen.add(num);
+    }
+
+    return true;
 }
 
 function getSlotPrefsToString(slotPrefs) {
@@ -292,13 +359,15 @@ function getAcadReqToString(obj) {
 }
 
 document.getElementById('submitButton').addEventListener('click', function () {
-    const acad = getAcadReqToString(values);
-    const course = getCoursePrefsToString(selectedCoursesBySlot);
-    const slot = getSlotPrefsToString(collectPreferences());
+    if(validateSlotPreferences()) {
+        const acad = getAcadReqToString(values);
+        const course = getCoursePrefsToString(selectedCoursesBySlot);
+        const slot = getSlotPrefsToString(collectPreferences());
 
-    document.getElementById('studentRequirements').value = acad;
-    document.getElementById('coursePreferences').value = course;
-    document.getElementById('slotPreferences').value = slot;
+        document.getElementById('studentRequirements').value = acad;
+        document.getElementById('coursePreferences').value = course;
+        document.getElementById('slotPreferences').value = slot;
 
-    document.getElementById('myForm').submit();
+        document.getElementById('myForm').submit();
+    }
 });
