@@ -51,7 +51,7 @@ public class AllocationSystemController {
         long totalStudents=studentService.countAllStudents();
         long allocatedCount=totalStudents-unmetReqCnt[0];
         allocatedStudentsData.put(semester,allocatedCount);
-        unallocatedStudentsData.put(semester,allocatedCount);
+        unallocatedStudentsData.put(semester,unmetReqCnt[0]);
         return "redirect:"+AdminEndpoint.RUN_ALLOCATION;
     }
 }
