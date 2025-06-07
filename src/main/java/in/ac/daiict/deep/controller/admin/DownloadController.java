@@ -50,9 +50,14 @@ public class DownloadController {
                 downloadFilename = AllocationReportNames.COURSE_WISE_ALLOCATION;
             }
         }
-        if(contentType == null) response.sendError(HttpServletResponse.SC_NOT_FOUND);
+
+        if(contentType == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        }
         AllocationReport allocationReport=allocationReportService.fetchReport(downloadFilename,semester);
-        if(allocationReport==null) model.addAttribute("downloadResponse",new Response(ResponseStatus.NOT_FOUND, ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND));
+        if(allocationReport==null) {
+            model.addAttribute("downloadResponse",new Response(ResponseStatus.NOT_FOUND, ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND));
+        }
         else {
             response.setContentType(contentType);
             response.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");

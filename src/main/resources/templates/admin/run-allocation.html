@@ -37,6 +37,7 @@
 
             <!-- Main Content Grid -->
             <div class="flex flex-col lg:flex-row gap-y-6 lg:gap-x-6 mb-6">
+
                 <!-- Left Card - Allocate Courses -->
                 <div class="flex-1 bg-white rounded-2xl shadow-md px-4 py-6 md:p-6" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
                     <!-- Card Header -->
@@ -91,30 +92,25 @@
                             <div class="mb-6">
                                 <span class="text-xl font-bold text-black">Allocation Status</span>
                             </div>
-
-                            <div th:classappend="| ${allocationResponse.status == 204 ? 'bg-yellow-400' :
-                                (allocationResponse.status == 200 ? 'bg-gradient-to-r from-[#27AE60] to-[#2ECC71]' :
-                                (allocationResponse.status == 500 ? 'bg-red-500' : ''))} |"
-                                 class="text-white px-7 py-2 rounded-xl font-medium text-lg"
-                                 th:text="${allocationResponse.status == 500 ? 'Failed' : allocationResponse.message}">
-                                Success
+                            <div id="allocation-status" class="text-white px-7 py-2 rounded-xl font-medium text-lg">
+                                <span id="allocation-status-text">--</span>
                             </div>
                         </div>
 
                         <!-- Total Students Allocated -->
                         <div class="bg-[#AADAF9] flex-1 flex flex-col justify-center items-center rounded-2xl mx-4 sm:mx-0 px-6 text-center min-h-[170px]">
                             <div class="mb-4">
-                                <span class="text-xl font-bold text-black ">Students Successfully Allocated</span>
+                                <span class="text-xl font-bold text-black">Students Successfully Allocated</span>
                             </div>
-                            <div class="text-5xl font-bold text-gray-800" th:text="${allocatedCount}">0</div>
+                            <div id="allocated-count" class="text-5xl font-bold text-gray-800">0</div>
                         </div>
 
                         <!-- Students Not Allocated -->
                         <div class="bg-[#AADAF9] flex-1 flex flex-col justify-center items-center rounded-2xl mx-4 sm:mx-0 px-6 text-center min-h-[170px]">
                             <div class="mb-4">
-                                <span class="text-xl font-bold text-black ">Students Unsuccessfully Allocated</span>
+                                <span class="text-xl font-bold text-black">Students Unsuccessfully Allocated</span>
                             </div>
-                            <div class="text-5xl font-bold text-gray-800" th:text="${unallocatedCount}">0</div>
+                            <div id="unallocated-count" class="text-5xl font-bold text-gray-800">0</div>
                         </div>
                     </div>
                 </div>
@@ -131,16 +127,15 @@
     </main>
 </div>
 
-<script src="/admin/js/run-allocation.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    const statusCode = [[${allocationResponse.status}]];
-    const message = [[${allocationResponse.message}]];
-
-    if (statusCode === 500) {
-        showToast("Error : " + message);
-    }
+    var selectedSemester = [[${semester}]];
+    const allocationStatusMap = [[${allocationResponse != null ? allocationResponse : {}}]];
+    const allocatedCountMap = [[${allocatedCount != null ? allocatedCount : {}}]];
+    const unallocatedCountMap = [[${unallocatedCount != null ? unallocatedCount : {}}]];
     /*]]>*/
 </script>
+
+<script src="/admin/js/run-allocation.js"></script>
 </body>
 </html>

@@ -36,44 +36,67 @@ function hideToast() {
     toast.classList.add("hidden");
 }
 
+function updateAllocationSummary(sem) {
+    const status = allocationStatusMap?.[sem] || {};
+    const allocated = allocatedCountMap?.[sem] ?? 0;
+    const unallocated = unallocatedCountMap?.[sem] ?? 0;
+
+    const statusDiv = document.getElementById("allocation-status");
+    const statusText = document.getElementById("allocation-status-text");
+    const allocatedDiv = document.getElementById("allocated-count");
+    const unallocatedDiv = document.getElementById("unallocated-count");
+
+    if (!status || Object.keys(status).length === 0 || status.status === 204) {
+        statusDiv.className = "bg-yellow-400 text-white px-7 py-2 rounded-xl font-medium text-lg";
+        statusText.textContent = "Yet to run";
+    } else if (status.status === 200) {
+        statusDiv.className = "bg-gradient-to-r from-[#27AE60] to-[#2ECC71] text-white px-7 py-2 rounded-xl font-medium text-lg";
+        statusText.textContent = status.message;
+    } else if (status.status === 500) {
+        statusDiv.className = "bg-red-500 text-white px-7 py-2 rounded-xl font-medium text-lg";
+        statusText.textContent = "Failed";
+        showToast(status.message);
+    } else {
+        statusDiv.className = "bg-gray-500 text-white px-7 py-2 rounded-xl font-medium text-lg";
+        statusText.textContent = "Unknown";
+    }
+
+    allocatedDiv.textContent = allocated;
+    unallocatedDiv.textContent = unallocated;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const buttons = document.querySelectorAll('.semester-btn');
     const hiddenInput = document.getElementById('selectedSemester');
     const form = document.getElementById('allocationForm');
 
-    const pathSegments = window.location.pathname.split('/');
-    const lastSegment = pathSegments[pathSegments.length - 1];
-    const currentSemester = parseInt(lastSegment);
+    let initialSemester = [5, 6, 7, 8].includes(selectedSemester) ? selectedSemester : 5;
 
-    // Set initial semester from URL if valid (5 to 8), else default to 5
-    let initialSemester = [5, 6, 7, 8].includes(currentSemester) ? currentSemester : 5;
+    selectedSemester = initialSemester;
     hiddenInput.value = initialSemester;
 
+    // Style buttons
     buttons.forEach(btn => {
-        if (parseInt(btn.getAttribute('data-sem')) === initialSemester) {
-            btn.style.backgroundColor = '#2D9D5D'; // green
-        } else {
-            btn.style.backgroundColor = '#1E3C72'; // blue
-        }
-    });
+        const sem = parseInt(btn.getAttribute('data-sem'));
+        btn.style.backgroundColor = sem === initialSemester ? '#2D9D5D' : '#1E3C72';
 
-    // Handle click on semester buttons
-    buttons.forEach(btn => {
-        btn.addEventListener('click', function () {
-            const selected = this.getAttribute('data-sem');
+        btn.addEventListener('click', () => {
+            const selected = parseInt(btn.getAttribute('data-sem'));
+            selectedSemester = selected;
             hiddenInput.value = selected;
 
-            // Update button styles
-            buttons.forEach(b => {
-                b.style.backgroundColor = '#1E3C72';
-            });
-            this.style.backgroundColor = '#2D9D5D';
+            buttons.forEach(b => b.style.backgroundColor = '#1E3C72');
+            btn.style.backgroundColor = '#2D9D5D';
+
+            updateAllocationSummary(selected);
         });
     });
 
-    // Set form action on submit
     form.addEventListener('submit', function () {
         const semester = hiddenInput.value;
         this.setAttribute('action', `/execute-allocation/${semester}`);
     });
+
+    // Initial summary
+    updateAllocationSummary(initialSemester);
 });

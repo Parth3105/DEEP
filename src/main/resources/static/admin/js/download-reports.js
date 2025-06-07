@@ -5,39 +5,39 @@ toggle.addEventListener('click', () => {
   menu.classList.toggle('hidden');
 });
 
+// Toast Notification
+function showToast(message, type = 'error') {
+    const toast = document.getElementById("toast-error");
+    const text = document.getElementById("toast-message");
 
-//// Add interactivity for semester selection
-//document.addEventListener('DOMContentLoaded', function() {
-//    const semesterGroups = document.querySelectorAll('.flex.flex-wrap.gap-2');
-//
-//    semesterGroups.forEach(group => {
-//        const buttons = group.querySelectorAll('button');
-//
-//        buttons.forEach(button => {
-//            button.addEventListener('click', function() {
-//                // Remove active state from all buttons in this group
-//                buttons.forEach(btn => {
-//                    btn.classList.remove('bg-[#2D9D5D]');
-//                    btn.classList.add('bg-[#1E3C72]');
-//                });
-//
-//                // Add active state to clicked button
-//                this.classList.remove('bg-[#1E3C72]');
-//                this.classList.add('bg-[#2D9D5D]');
-//            });
-//        });
-//    });
-//});
+    text.innerText = message;
 
-document.addEventListener('DOMContentLoaded', function() {
-    let selectedSemester = null;
+    // Reset any previous background color
+    toast.classList.remove("bg-red-500", "bg-yellow-400");
 
-    // Get all semester buttons, download buttons and semester inputs
-    const semesterBtns = document.querySelectorAll('.semester-btn');
-    const downloadBtns = document.querySelectorAll('.download-btn');
-    const semesterInputs = document.querySelectorAll('.semester-input');
+    // Apply based on type
+    if (type === 'error') {
+        toast.classList.add("bg-red-500");
+    } else if (type === 'warning') {
+        toast.classList.add("bg-yellow-400", "text-gray-900");
+    }
 
-    // Handle semester selection
+    toast.classList.remove("hidden");
+    toast.classList.add("flex");
+
+    setTimeout(() => {
+        hideToast();
+    }, 3000);
+}
+
+function hideToast() {
+    const toast = document.getElementById("toast-error");
+    toast.classList.remove("flex");
+    toast.classList.add("hidden");
+}
+
+let selectedSemester = null;
+function HandleSemesterSelection(semesterBtns, downloadBtns, semesterInputs) {
     semesterBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             // Remove active state from all buttons
@@ -62,30 +62,96 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+}
 
-    // Initialize download buttons as disabled
-    downloadBtns.forEach(btn => {
-        btn.style.opacity = '0.6';
-        btn.style.cursor = 'not-allowed';
-    });
+function InitializeDownloadButtons(resultDownloadBtns) {
+    if (selectedSemester) {
+        resultDownloadBtns.forEach(btn => {
+            btn.disabled = false;
+        });
 
-    // Add click handlers for visual feedback
+        document.querySelectorAll('.result-semester-input').forEach(input => {
+            input.value = selectedSemester;
+        });
+    }
+}
+
+function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
     downloadBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            if (!selectedSemester) {
-                e.preventDefault();
-                alert('Please select a semester first!');
+        btn.addEventListener('click', async function (e) {
+            e.preventDefault();
+
+            if (checkforSemester && !selectedSemester) {
+                showToast('Please select a semester first!');
                 return;
             }
 
-            // Show loading state briefly
-            const originalText = this.innerHTML;
-            this.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>Downloading...';
+            const form = this.closest('form');
+            const name = form.querySelector('input[name="name"]').value;
+            const semester = checkforSemester ? selectedSemester : '';
+            const downloadUrl = checkforSemester
+                ? `/download-reports/${semester}/${name}`
+                : `/download-reports/${name}`;
 
-            // Reset button state after a short delay
+            // Show loading state
+            const originalText = this.innerHTML;
+            this.innerHTML = `
+                <span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+                Downloading...`;
+            this.disabled = true;
+
+            fetch(downloadUrl)
+              .then(res => {
+                console.log(res);
+                if (!res.ok) {
+                  // Handle error response
+                  return res.text().then(text => {
+                    console.error("Download failed:", text);
+                    showToast("Download failed: " + (text || "Unknown error"));
+                  });
+                }
+
+                // If response is OK, we must trigger a file download separately
+                return res.blob().then(blob => {
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+
+                  // Extract filename from URL or fallback
+                  const filename = downloadUrl.split('/').pop() || 'downloaded_file';
+                  a.download = filename;
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  window.URL.revokeObjectURL(url);
+                });
+              })
+              .catch(err => {
+                console.error("Fetch error:", err);
+                showToast("Network or server error occurred.");
+              });
+
+            // Restore button
             setTimeout(() => {
                 this.innerHTML = originalText;
-            }, 1500);
+                this.disabled = false;
+            }, 2000);
         });
     });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle Input Data
+    const inputDownloadBtns = document.querySelectorAll('.input-download-btn');
+    HandleDownloadButtonClick(inputDownloadBtns, false);
+
+    // Handle result files
+    const resultSemesterBtns = document.querySelectorAll('.result-semester-btn');
+    const resultDownloadBtns = document.querySelectorAll('.result-download-btn');
+    const resultSemesterInputs = document.querySelectorAll('.result-semester-input');
+
+    HandleSemesterSelection(resultSemesterBtns, resultDownloadBtns, resultSemesterInputs);
+    InitializeDownloadButtons(resultDownloadBtns);
+    HandleDownloadButtonClick(resultDownloadBtns);
 });
