@@ -34,9 +34,9 @@ public class AllocationSystemController {
 
     @GetMapping(AdminEndpoint.RUN_ALLOCATION)
     public String renderRunAllocationPage(@PathVariable("semester") int semester, Model model){
-        model.addAttribute("allocationResponse",allocationStatus.getOrDefault(semester,new Response(ResponseStatus.NO_CONTENT, ResponseMessage.RUN_ALLOCATION_DEFAULT_STATUS)));
-        model.addAttribute("allocatedCount",allocatedStudentsData.getOrDefault(semester,0L));
-        model.addAttribute("unallocatedCount",unallocatedStudentsData.getOrDefault(semester,0L));
+        model.addAttribute("allocationResponse",allocationStatus);
+        model.addAttribute("allocatedCount",allocatedStudentsData);
+        model.addAttribute("unallocatedCount",unallocatedStudentsData);
         return AdminTemplate.RUN_ALLOCATION_PAGE;
     }
 

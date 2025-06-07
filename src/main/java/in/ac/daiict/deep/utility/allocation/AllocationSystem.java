@@ -364,6 +364,8 @@ public class AllocationSystem {
         }
         createCourseWiseAllocationZip.start();
         try {
+            recordSeatSummary.join();
+            recordFailureLog.join();
             createAllocationResultSheet.join();
             createSeatSummarySheet.join();
             createCourseWiseAllocationZip.join();

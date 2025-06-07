@@ -18,8 +18,5 @@ public class DashboardController {
     public String test(){
         return "redirect:"+AdminEndpoint.DASHBOARD;
     }
-    @GetMapping(AdminEndpoint.DASHBOARD)
-    public String showDashboard(){
-        return AdminTemplate.DASHBOARD_PAGE;
-    }
+
 }

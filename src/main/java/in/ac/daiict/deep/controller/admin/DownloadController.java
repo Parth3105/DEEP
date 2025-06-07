@@ -28,11 +28,6 @@ public class DownloadController {
     private AllocationReportService allocationReportService;
     private UploadService uploadService;
 
-    @GetMapping(AdminEndpoint.DOWNLOAD_REPORTS)
-    public String renderDownloadReportsPage(){
-        return AdminTemplate.DOWNLOAD_REPORTS_PAGE;
-    }
-
     @GetMapping(AdminEndpoint.DOWNLOAD_REPORT_SUBMIT)
     public void downloadFile(HttpServletResponse response, @PathVariable("semester") int semester, @PathVariable("name") String name, Model model) throws IOException {
         String contentType=null;
