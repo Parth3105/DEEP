@@ -7,8 +7,12 @@ import in.ac.daiict.deep.constant.endpoints.StudentEndpoint;
 import in.ac.daiict.deep.constant.template.AdminTemplate;
 import in.ac.daiict.deep.constant.template.StudentTemplate;
 import in.ac.daiict.deep.dto.*;
+import in.ac.daiict.deep.entity.CoursePref;
+import in.ac.daiict.deep.entity.SlotPref;
 import in.ac.daiict.deep.service.*;
 import in.ac.daiict.deep.utility.Response;
+import in.ac.daiict.deep.utility.dataloader.DataLoader;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,16 +20,19 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
 @AllArgsConstructor
-public class ResultDisplayController {
+public class PreferenceAndResultController {
     private StudentService studentService;
     private StudentReqService studentReqService;
     private CoursePrefService coursePrefService;
     private SlotPrefService slotPrefService;
     private AllocationResultService allocationResultService;
+    private DataLoader dataLoader;
 
     @GetMapping(StudentEndpoint.PREFERENCE_SUMMARY)
     public String loadMyPreferenceSummary(@CookieValue(name = "student_id", required = false, defaultValue = "202201406") String studentId, Model model){
@@ -40,6 +47,27 @@ public class ResultDisplayController {
     @GetMapping(AdminEndpoint.STUDENT_PREFERENCE_FILTER)
     public String loadSubmittedPreferences(@PathVariable("sid") String studentId, Model model){
         return fetchPreferenceSummary(studentId,model,'A');
+    }
+    @GetMapping(AdminEndpoint.DOWNLOAD_STUDENT_PREFERENCES)
+    public void downloadStudentPreferences(HttpServletResponse httpServletResponse, Model model){
+        List<CoursePref> coursePrefList=coursePrefService.fetchAllCoursePrefSortedBySlotAndPref();
+        List<SlotPref> slotPrefList=slotPrefService.fetchAllSlotSortedByPref();
+
+        if(coursePrefList.isEmpty() || slotPrefList.isEmpty()){
+            model.addAttribute("downloadResponse",new Response(ResponseStatus.NOT_FOUND,ResponseMessage.STUDENT_PREFERENCES_NOT_FOUND));
+        }
+
+        ByteArrayOutputStream byteArrayOutputStream=dataLoader.createStudentPrefSheet(coursePrefList,slotPrefList);
+        String downloadFilename="Student Preferences.xlsx";
+
+        httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
+        try {
+            httpServletResponse.getOutputStream().write(byteArrayOutputStream.toByteArray());
+            httpServletResponse.getOutputStream().flush();
+        } catch (IOException e) {
+            model.addAttribute("downloadResponse",new Response(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+        }
     }
     @GetMapping(AdminEndpoint.ALLOCATION_RESULTS_FILTER)
     public String loadAllocationResult(@PathVariable("sid") String studentId, Model model){

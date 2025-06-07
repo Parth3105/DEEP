@@ -18,6 +18,6 @@ public class Upload {
     @Column(length = 100)
     private String name;
     @Lob
-    @Column(name = "data", columnDefinition="bytea")
+    @Column(columnDefinition="bytea")
     private byte[] file;
 }

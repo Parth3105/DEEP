@@ -4,6 +4,8 @@ import in.ac.daiict.deep.dto.CourseDto;
 import in.ac.daiict.deep.dto.CourseOfferingDto;
 import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.dto.StudentDto;
+import in.ac.daiict.deep.entity.CoursePref;
+import in.ac.daiict.deep.entity.SlotPref;
 import in.ac.daiict.deep.utility.Response;
 import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
 import in.ac.daiict.deep.utility.allocation.model.AllocationStudent;
@@ -19,6 +21,7 @@ public interface DataLoader {
     Response getCourseData(InputStream courseData, List<CourseDto> courseDtos);
     Response getInstituteRequirements(InputStream instReqData, List<InstituteReqDto> instituteReqDtos);
     Response getCourseForProgram(InputStream offerData, List<CourseOfferingDto> courseOfferingDtos);
+    ByteArrayOutputStream createStudentPrefSheet(List<CoursePref> coursePrefList, List<SlotPref> slotPrefList);
     ByteArrayOutputStream createResultSheet(Map<String, AllocationStudent> students, Map<String, AllocationCourse> courses, Map<String, Map<String, String>> courseCategories);
     ByteArrayOutputStream createSeatSummary(List<CourseOffer> openFor, Map<String, AllocationCourse> courses, Map<String, Map<String, Integer>> availableSeats);
     ByteArrayOutputStream createCourseWiseAllocation(Map<String,AllocationCourse> courses, Map<String,AllocationStudent> students);

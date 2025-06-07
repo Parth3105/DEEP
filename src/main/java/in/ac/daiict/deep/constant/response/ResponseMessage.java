@@ -15,6 +15,8 @@ public class ResponseMessage {
     public static final String COURSE_OFFERS_NOT_FOUND="Course offerings is not available";
     public static final String RUN_ALLOCATION_SUCCESS_STATUS ="Success";
     public static final String DOWNLOAD_RESULTS_NOT_FOUND="Allocation process is not completed yet. Please run the allocation to generate results.";
+    public static final String DOWNLOADING_ERROR="Download failed due to a server error. Please check system logs for more details.";
+    public static final String STUDENT_PREFERENCES_NOT_FOUND="Student Preferences Not found";
     public static final String UPLOAD_DATA_NOT_FOUND="Required data files are missing. Please upload all necessary data before running the allocation.";
 
     public static String getUploadSuccessMessage() {

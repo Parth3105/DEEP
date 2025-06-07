@@ -7,7 +7,6 @@ import in.ac.daiict.deep.constant.uploads.UploadFileNames;
 import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
-import in.ac.daiict.deep.constant.template.AdminTemplate;
 import in.ac.daiict.deep.entity.AllocationReport;
 import in.ac.daiict.deep.entity.Upload;
 import in.ac.daiict.deep.service.AllocationReportService;
@@ -29,7 +28,7 @@ public class DownloadController {
     private UploadService uploadService;
 
     @GetMapping(AdminEndpoint.DOWNLOAD_REPORT_SUBMIT)
-    public void downloadFile(HttpServletResponse response, @PathVariable("semester") int semester, @PathVariable("name") String name, Model model) throws IOException {
+    public void downloadReport(HttpServletResponse httpServletResponse, @PathVariable("semester") int semester, @PathVariable("name") String name, Model model) {
         String contentType=null;
         String downloadFilename=null;
         switch (name) {
@@ -50,19 +49,26 @@ public class DownloadController {
                 downloadFilename = AllocationReportNames.COURSE_WISE_ALLOCATION;
             }
         }
-        if(contentType == null) response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        if(contentType == null){
+            model.addAttribute("downloadResponse",new Response(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+            return;
+        }
         AllocationReport allocationReport=allocationReportService.fetchReport(downloadFilename,semester);
         if(allocationReport==null) model.addAttribute("downloadResponse",new Response(ResponseStatus.NOT_FOUND, ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND));
         else {
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
-            response.getOutputStream().write(allocationReport.getFile());
-            response.getOutputStream().flush();
+            httpServletResponse.setContentType(contentType);
+            httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
+            try {
+                httpServletResponse.getOutputStream().write(allocationReport.getFile());
+                httpServletResponse.getOutputStream().flush();
+            } catch (IOException e) {
+                model.addAttribute("downloadResponse",new Response(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+            }
         }
     }
 
     @GetMapping(AdminEndpoint.DOWNLOAD_UPLOADED_REPORT_SUBMIT)
-    public void downloadFile(HttpServletResponse response, @PathVariable("name") String name, Model model) throws IOException {
+    public void downloadUploadedData(HttpServletResponse httpServletResponse, @PathVariable("name") String name, Model model){
         String contentType=null;
         String downloadFilename=null;
         String[] names={UploadConstants.COURSE_DATA,UploadConstants.INST_REQ_DATA,UploadConstants.OFFERS_DATA};
@@ -73,14 +79,21 @@ public class DownloadController {
                 downloadFilename=fileNames[j];
             }
         }
-        if(contentType == null) response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        if(contentType == null){
+            model.addAttribute("downloadResponse",new Response(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+            return;
+        }
         Upload uploadData=uploadService.findFile(downloadFilename);
         if(uploadData==null) model.addAttribute("downloadResponse",new Response(ResponseStatus.NOT_FOUND, ResponseMessage.UPLOAD_DATA_NOT_FOUND));
         else {
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
-            response.getOutputStream().write(uploadData.getFile());
-            response.getOutputStream().flush();
+            httpServletResponse.setContentType(contentType);
+            httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
+            try {
+                httpServletResponse.getOutputStream().write(uploadData.getFile());
+                httpServletResponse.getOutputStream().flush();
+            } catch (IOException e) {
+                model.addAttribute("downloadResponse",new Response(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+            }
         }
     }
 }

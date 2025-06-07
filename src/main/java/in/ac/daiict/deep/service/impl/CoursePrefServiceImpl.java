@@ -22,6 +22,11 @@ public class CoursePrefServiceImpl implements CoursePrefService {
     }
 
     @Override
+    public List<CoursePref> fetchAllCoursePrefSortedBySlotAndPref() {
+        return coursePrefRepo.findAll(Sort.by("sid","slot","pref").ascending());
+    }
+
+    @Override
     public List<CoursePrefDto> fetchStudentCoursePref(String sid) {
         List<CoursePrefDto> coursePrefDtoList=coursePrefRepo.findStudentCoursePref(sid);
         if(coursePrefDtoList==null || coursePrefDtoList.isEmpty()) return null;
