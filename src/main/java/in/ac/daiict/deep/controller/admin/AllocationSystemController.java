@@ -33,7 +33,7 @@ public class AllocationSystemController {
     }
 
     @GetMapping(AdminEndpoint.RUN_ALLOCATION)
-    public String renderRunAllocationPage(@PathVariable("semester") int semester, Model model){
+    public String renderRunAllocationPage(Model model){
         model.addAttribute("allocationResponse",allocationStatus);
         model.addAttribute("allocatedCount",allocatedStudentsData);
         model.addAttribute("unallocatedCount",unallocatedStudentsData);
