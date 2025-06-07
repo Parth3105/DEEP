@@ -30,7 +30,7 @@ public class AllocationResultServiceImpl implements AllocationResultService {
 
     @Override
     public List<AllocationResult> fetchCourseWiseAllocation(String cid) {
-        return allocationResultRepo.findByCidSortedBySid(cid);
+        return allocationResultRepo.findByCidOrderBySid(cid);
     }
 
     @Override

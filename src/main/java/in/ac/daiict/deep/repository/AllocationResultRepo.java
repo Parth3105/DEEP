@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface AllocationResultRepo extends JpaRepository<AllocationResult, AllocationResultPK> {
 
-    List<AllocationResult> findByCidSortedBySid(String cid);
+    List<AllocationResult> findByCidOrderBySid(String cid);
 
     @Query("SELECT new in.ac.daiict.deep.dto.AllocationResultDto(course.cid,course.name,offer.category,course.credits) FROM AllocationResult result JOIN Course course ON result.cid=course.cid JOIN CourseOffering offer ON course.cid=offer.cid WHERE result.sid=:sid and offer.program=:program")
     List<AllocationResultDto> fetchAllocationResultBySid(@Param("sid") String sid, @Param("program") String program);
