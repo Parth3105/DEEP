@@ -10,6 +10,7 @@ public class AdminEndpoint {
     public static final String DOWNLOAD_REPORTS="/download-reports";
     public static final String DOWNLOAD_REPORT_SUBMIT ="/download-reports/{semester}/{name}";
     public static final String DOWNLOAD_UPLOADED_REPORT_SUBMIT="/download-reports/{name}";
+    public static final String DOWNLOAD_STUDENT_PREFERENCES="/student-preferences/download";
     public static final String STUDENT_PREFERENCE="/student-preferences";
     public static final String STUDENT_PREFERENCE_FILTER="/student-preferences/{sid}";
     public static final String ALLOCATION_RESULTS="/allocation-results";

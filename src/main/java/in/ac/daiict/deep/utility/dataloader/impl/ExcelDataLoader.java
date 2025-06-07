@@ -6,6 +6,8 @@ import in.ac.daiict.deep.dto.CourseOfferingDto;
 import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.dto.StudentDto;
 import in.ac.daiict.deep.entity.AllocationResult;
+import in.ac.daiict.deep.entity.CoursePref;
+import in.ac.daiict.deep.entity.SlotPref;
 import in.ac.daiict.deep.service.AllocationResultService;
 import in.ac.daiict.deep.service.CourseService;
 import in.ac.daiict.deep.utility.Response;
@@ -45,18 +47,18 @@ public class ExcelDataLoader implements DataLoader {
     }
 
     /**
-     *  Load the STUDENT_DATA from the sheet.
+     * Load the STUDENT_DATA from the sheet.
      */
     public Response getStudentData(InputStream studentData, List<StudentDto> studentDtos) {
-        XSSFWorkbook studentWorkbook= null;
-        XSSFSheet studentSheet=null;
+        XSSFWorkbook studentWorkbook = null;
+        XSSFSheet studentSheet = null;
         try {
             studentWorkbook = new XSSFWorkbook(studentData);
-            studentSheet=studentWorkbook.getSheetAt(0);
+            studentSheet = studentWorkbook.getSheetAt(0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        DecimalFormat formatStudentID=new DecimalFormat("#");
+        DecimalFormat formatStudentID = new DecimalFormat("#");
         Iterator<Row> studentIterator = studentSheet.rowIterator();
         StudentSheetHeader studentHeader = new StudentSheetHeader(studentSheet.getRow(studentSheet.getFirstRowNum()));
 
@@ -73,9 +75,9 @@ public class ExcelDataLoader implements DataLoader {
         try {
             studentWorkbook.close();
         } catch (IOException e) {
-            return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
+            return new Response(ResponseStatus.OK, "Student Data Saved Successfully!");
         }
-        return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
+        return new Response(ResponseStatus.OK, "Student Data Saved Successfully!");
     }
 
     /**
@@ -86,7 +88,7 @@ public class ExcelDataLoader implements DataLoader {
         XSSFSheet courseSheet;
         try {
             courseWorkbook = new XSSFWorkbook(courseData);
-            courseSheet= courseWorkbook.getSheetAt(0);
+            courseSheet = courseWorkbook.getSheetAt(0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -106,9 +108,9 @@ public class ExcelDataLoader implements DataLoader {
         try {
             courseWorkbook.close();
         } catch (IOException e) {
-            return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
+            return new Response(ResponseStatus.OK, "Student Data Saved Successfully!");
         }
-        return new Response(ResponseStatus.OK,"Course Data Saved Successfully!");
+        return new Response(ResponseStatus.OK, "Course Data Saved Successfully!");
     }
 
     /**
@@ -118,8 +120,8 @@ public class ExcelDataLoader implements DataLoader {
         XSSFWorkbook instReqWorkbook;
         XSSFSheet instReqSheet;
         try {
-            instReqWorkbook=new XSSFWorkbook(instReqData);
-            instReqSheet=instReqWorkbook.getSheetAt(0);
+            instReqWorkbook = new XSSFWorkbook(instReqData);
+            instReqSheet = instReqWorkbook.getSheetAt(0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -139,9 +141,9 @@ public class ExcelDataLoader implements DataLoader {
         try {
             instReqWorkbook.close();
         } catch (IOException e) {
-            return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
+            return new Response(ResponseStatus.OK, "Student Data Saved Successfully!");
         }
-        return new Response(ResponseStatus.OK,"Requirements Saved Successfully!");
+        return new Response(ResponseStatus.OK, "Requirements Saved Successfully!");
     }
 
     /**
@@ -152,7 +154,7 @@ public class ExcelDataLoader implements DataLoader {
         XSSFSheet offerSheet;
         try {
             offerWorkbook = new XSSFWorkbook(offerData);
-            offerSheet= offerWorkbook.getSheetAt(0);
+            offerSheet = offerWorkbook.getSheetAt(0);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -168,22 +170,94 @@ public class ExcelDataLoader implements DataLoader {
             String category = row.getCell(offerHeader.CATEGORY).getStringCellValue();
             int seats = (int) row.getCell(offerHeader.SEATS).getNumericCellValue();
 
-            if(!courseService.isPresent(courseID)){
+            if (!courseService.isPresent(courseID)) {
                 courseOfferingDtos.clear();
-                return new Response(ResponseStatus.BAD_REQUEST,"Error: Some entries refer to non-existing course in course-offerings. Please verify your data.");
+                return new Response(ResponseStatus.BAD_REQUEST, "Error: Some entries refer to non-existing course in course-offerings. Please verify your data.");
             }
             courseOfferingDtos.add(new CourseOfferingDto(program, courseID, category, semester, seats));
         }
         try {
             offerWorkbook.close();
         } catch (IOException e) {
-            return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
+            return new Response(ResponseStatus.OK, "Student Data Saved Successfully!");
         }
-        return new Response(ResponseStatus.OK,"Course Offerings Data Saved Successfully!");
+        return new Response(ResponseStatus.OK, "Course Offerings Data Saved Successfully!");
+    }
+
+    @Override
+    public ByteArrayOutputStream createStudentPrefSheet(List<CoursePref> coursePrefList, List<SlotPref> slotPrefList) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        XSSFWorkbook outputWorkbook = new XSSFWorkbook();
+
+        Font generalFont = outputWorkbook.createFont();
+        generalFont.setFontHeightInPoints((short) 12);
+
+        CellStyle generalStyle = outputWorkbook.createCellStyle();
+        generalStyle.setFont(generalFont);
+
+        // Prepare sheet for course preferences
+        XSSFSheet coursePrefSheet = outputWorkbook.createSheet("CoursePreferences");
+        CoursePrefSheetHeader coursePrefHeader = new CoursePrefSheetHeader(outputWorkbook, coursePrefSheet);
+
+        int entryNum = 1;
+        Row row = coursePrefSheet.getRow(coursePrefSheet.getFirstRowNum());
+        for (CoursePref coursePref : coursePrefList) {
+            row = coursePrefSheet.createRow(entryNum++);
+            Cell cell = row.createCell(coursePrefHeader.STUDENT_ID, CellType.STRING);
+            cell.setCellValue(coursePref.getSid());
+            cell.setCellStyle(generalStyle);
+
+            cell = row.createCell(coursePrefHeader.SLOT, CellType.STRING);
+            cell.setCellValue(coursePref.getSlot());
+            cell.setCellStyle(generalStyle);
+
+            cell = row.createCell(coursePrefHeader.COURSE_ID, CellType.STRING);
+            cell.setCellValue(coursePref.getCid());
+            cell.setCellStyle(generalStyle);
+
+            cell = row.createCell(coursePrefHeader.PREFERENCE_INDEX, CellType.NUMERIC);
+            cell.setCellValue(coursePref.getPref());
+            cell.setCellStyle(generalStyle);
+        }
+        for (int j = 0; j <= row.getLastCellNum(); j++) coursePrefSheet.autoSizeColumn(j);
+
+        // Prepare sheet for slot preferences
+        XSSFSheet slotPrefSheet = outputWorkbook.createSheet("SlotPreferences");
+        SlotPrefSheetHeader slotPrefHeader = new SlotPrefSheetHeader(outputWorkbook, slotPrefSheet);
+
+        entryNum = 1;
+        row = slotPrefSheet.getRow(slotPrefSheet.getFirstRowNum());
+        for (SlotPref slotPref : slotPrefList) {
+            row = slotPrefSheet.createRow(entryNum++);
+            Cell cell = row.createCell(slotPrefHeader.STUDENT_ID, CellType.STRING);
+            cell.setCellValue(slotPref.getSid());
+            cell.setCellStyle(generalStyle);
+
+            cell = row.createCell(slotPrefHeader.SLOT_NO, CellType.STRING);
+            cell.setCellValue(slotPref.getSlot());
+            cell.setCellStyle(generalStyle);
+
+            cell = row.createCell(slotPrefHeader.PREFERENCE_INDEX, CellType.NUMERIC);
+            cell.setCellValue(slotPref.getPref());
+            cell.setCellStyle(generalStyle);
+        }
+        for (int j = 0; j <= row.getLastCellNum(); j++) slotPrefSheet.autoSizeColumn(j);
+
+        try {
+            outputWorkbook.write(byteArrayOutputStream);
+        } catch (IOException e) {
+            return null;
+        }
+        try {
+            outputWorkbook.close();
+        } catch (IOException e) {
+            return null;
+        }
+        return byteArrayOutputStream;
     }
 
     public ByteArrayOutputStream createResultSheet(Map<String, AllocationStudent> students, Map<String, AllocationCourse> courses, Map<String, Map<String, String>> courseCategories) {
-        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         XSSFWorkbook outputWorkbook = new XSSFWorkbook();
         XSSFSheet resultSheet = outputWorkbook.createSheet("AllocationResults");
         ResultSheetHeader resultHeader = new ResultSheetHeader(outputWorkbook, resultSheet);
@@ -249,13 +323,13 @@ public class ExcelDataLoader implements DataLoader {
         try {
             outputWorkbook.close();
         } catch (IOException e) {
-            return byteArrayOutputStream;
+            return null;
         }
         return byteArrayOutputStream;
     }
 
     public ByteArrayOutputStream createSeatSummary(List<CourseOffer> openFor, Map<String, AllocationCourse> courses, Map<String, Map<String, Integer>> availableSeats) {
-        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         XSSFWorkbook outputWorkbook = new XSSFWorkbook();
         XSSFSheet seatSummarySheet = outputWorkbook.createSheet("AvailableSeat Summary");
         SeatSummarySheetHeader seatHeader = new SeatSummarySheetHeader(outputWorkbook, seatSummarySheet);
@@ -308,19 +382,19 @@ public class ExcelDataLoader implements DataLoader {
         try {
             outputWorkbook.close();
         } catch (IOException e) {
-            return byteArrayOutputStream;
+            return null;
         }
         return byteArrayOutputStream;
     }
 
-    public ByteArrayOutputStream createCourseWiseAllocation(Map<String,AllocationCourse> courses, Map<String,AllocationStudent> students){
-        int STUDENT_ID=0,STUDENT_NAME=1;
+    public ByteArrayOutputStream createCourseWiseAllocation(Map<String, AllocationCourse> courses, Map<String, AllocationStudent> students) {
+        int STUDENT_ID = 0, STUDENT_NAME = 1;
 
-        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        ZipOutputStream zipOutputStream=new ZipOutputStream(byteArrayOutputStream);
-        Set<String> courseIds=courses.keySet();
-        for(String cid: courseIds){
-            List<AllocationResult> allocationResultList=allocationResultService.fetchCourseWiseAllocation(cid);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
+        Set<String> courseIds = courses.keySet();
+        for (String cid : courseIds) {
+            List<AllocationResult> allocationResultList = allocationResultService.fetchCourseWiseAllocation(cid);
             XSSFWorkbook outputWorkbook = new XSSFWorkbook();
             XSSFSheet sheet = outputWorkbook.createSheet("AllocatedStudents");
 
@@ -334,7 +408,7 @@ public class ExcelDataLoader implements DataLoader {
 
             int entryNum = 1;
             Row row = sheet.getRow(sheet.getFirstRowNum());
-            for (AllocationResult allocationResult: allocationResultList) {
+            for (AllocationResult allocationResult : allocationResultList) {
                 row = sheet.createRow(entryNum++);
 
                 Cell cell = row.createCell(courseWiseSheetHeader.STUDENT_ID, CellType.STRING);
@@ -350,26 +424,26 @@ public class ExcelDataLoader implements DataLoader {
             }
 
             for (int j = 0; j <= row.getLastCellNum(); j++) sheet.autoSizeColumn(j);
-            addToZip(zipOutputStream,outputWorkbook,cid+"_Students.xlsx");
+            addToZip(zipOutputStream, outputWorkbook, cid + "_Students.xlsx");
 
             try {
                 outputWorkbook.close();
             } catch (IOException e) {
-                System.out.println("Workbook closing issue...");
+                return null;
             }
         }
 
         try {
             zipOutputStream.close();
         } catch (IOException e) {
-            return byteArrayOutputStream;
+            return null;
         }
         return byteArrayOutputStream;
     }
 
-    private void addToZip(ZipOutputStream zipOutputStream, XSSFWorkbook workbook, String fileName){
+    private void addToZip(ZipOutputStream zipOutputStream, XSSFWorkbook workbook, String fileName) {
         try {
-            ZipEntry zipEntry=new ZipEntry(fileName);
+            ZipEntry zipEntry = new ZipEntry(fileName);
             zipOutputStream.putNextEntry(zipEntry);
             workbook.write(zipOutputStream);
             zipOutputStream.closeEntry();

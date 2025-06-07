@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface CoursePrefService {
     List<CoursePref> fetchAllCoursePrefSortedByPref();
+    List<CoursePref> fetchAllCoursePrefSortedBySlotAndPref();
     List<CoursePrefDto> fetchStudentCoursePref(String sid);
     void insertAll(List<CoursePref> coursePrefList);
 }
