@@ -81,7 +81,6 @@ public class AllocationDataLoader {
         for(Map.Entry<String,Map<String,List<String>>> coursePrefEntry: studentCoursePrefMap.entrySet()){
             AllocationStudent allocationStudent=allocationStudents.get(coursePrefEntry.getKey());
             allocationStudent.setCoursePreferences(coursePrefEntry.getValue());
-            if(allocationStudent.getSid().equals("202201174"));
             allocationStudents.put(coursePrefEntry.getKey(),allocationStudent);
         }
         return allocationStudents;

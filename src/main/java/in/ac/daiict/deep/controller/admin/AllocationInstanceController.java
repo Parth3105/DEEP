@@ -1,9 +1,10 @@
 package in.ac.daiict.deep.controller.admin;
 
-import in.ac.daiict.deep.constant.DBConstants;
+import in.ac.daiict.deep.constant.database.DBConstants;
+import in.ac.daiict.deep.constant.uploads.UploadFileNames;
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
-import in.ac.daiict.deep.constant.UploadConstants;
+import in.ac.daiict.deep.constant.uploads.UploadConstants;
 import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
 import in.ac.daiict.deep.constant.template.AdminTemplate;
 import in.ac.daiict.deep.entity.Upload;
@@ -73,11 +74,12 @@ public class AllocationInstanceController {
     @PostMapping("/upload/{type}")
     @ResponseBody
     public void loadFile(@RequestParam("file") MultipartFile file, @PathVariable("type") String name){
-        String[] names={UploadConstants.studentData,UploadConstants.courseData,UploadConstants.instReqData,UploadConstants.offeringData};
+        String[] names={UploadConstants.STUDENT_DATA,UploadConstants.COURSE_DATA,UploadConstants.INST_REQ_DATA,UploadConstants.OFFERS_DATA};
+        String[] fileNames={UploadFileNames.STUDENT_DATA,UploadFileNames.COURSE_DATA,UploadFileNames.INST_REQ_DATA,UploadFileNames.OFFERS_DATA};
         try {
-            for (String s : names) {
-                if (s.toUpperCase().contains(name.toUpperCase())) {
-                    uploads.put(s, new Upload(s, file.getBytes()));
+            for (int j=0;j<names.length;j++) {
+                if (names[j].equals(name)) {
+                    uploads.put(names[j], new Upload(fileNames[j], file.getBytes()));
                     break;
                 }
             }
@@ -102,8 +104,8 @@ public class AllocationInstanceController {
         Thread u1=new Thread(new Runnable() {
             @Override
             public void run() {
-                if(uploads.containsKey(UploadConstants.studentData)){
-                    Response status=studentService.insertAll(uploads.get(UploadConstants.studentData).getFile());
+                if(uploads.containsKey(UploadConstants.STUDENT_DATA)){
+                    Response status=studentService.insertAll(uploads.get(UploadConstants.STUDENT_DATA).getFile());
                     if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else cnt.set(cnt.get()+1);
                 }
@@ -115,16 +117,16 @@ public class AllocationInstanceController {
             public void run() {
                 boolean isCoursesUploaded=false;
                 boolean isOffersUploaded=false;
-                if(uploads.containsKey(UploadConstants.courseData)){
-                    Response status=courseService.insertAll(uploads.get(UploadConstants.courseData).getFile());
+                if(uploads.containsKey(UploadConstants.COURSE_DATA)){
+                    Response status=courseService.insertAll(uploads.get(UploadConstants.COURSE_DATA).getFile());
                     if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else {
                         cnt.set(cnt.get() + 1);
                         isCoursesUploaded = true;
                     }
                 }
-                if(uploads.containsKey(UploadConstants.offeringData)){
-                    Response status=courseOfferingService.insertAll(uploads.get(UploadConstants.offeringData).getFile());
+                if(uploads.containsKey(UploadConstants.OFFERS_DATA)){
+                    Response status=courseOfferingService.insertAll(uploads.get(UploadConstants.OFFERS_DATA).getFile());
                     if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else {
                         cnt.set(cnt.get() + 1);
@@ -138,8 +140,8 @@ public class AllocationInstanceController {
         Thread u3=new Thread(new Runnable() {
             @Override
             public void run() {
-                if(uploads.containsKey(UploadConstants.instReqData)){
-                    Response status=instituteReqService.insertAll(uploads.get(UploadConstants.instReqData).getFile());
+                if(uploads.containsKey(UploadConstants.INST_REQ_DATA)){
+                    Response status=instituteReqService.insertAll(uploads.get(UploadConstants.INST_REQ_DATA).getFile());
                     if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else cnt.set(cnt.get()+1);
                 }

@@ -1,6 +1,6 @@
 package in.ac.daiict.deep.config;
 
-import in.ac.daiict.deep.constant.DBConstants;
+import in.ac.daiict.deep.constant.database.DBConstants;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
 import org.flywaydb.core.Flyway;

@@ -22,8 +22,8 @@ public class UploadServiceImpl implements UploadService {
     }
 
     @Override
-    public List<Upload> getAll() {
-        return List.of();
+    public Upload findFile(String name) {
+        return uploadRepo.findById(name).orElse(null);
     }
 
     @Override

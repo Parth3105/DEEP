@@ -45,7 +45,7 @@ public class ExcelDataLoader implements DataLoader {
     }
 
     /**
-     *  Load the studentData from the sheet.
+     *  Load the STUDENT_DATA from the sheet.
      */
     public Response getStudentData(InputStream studentData, List<StudentDto> studentDtos) {
         XSSFWorkbook studentWorkbook= null;
@@ -79,7 +79,7 @@ public class ExcelDataLoader implements DataLoader {
     }
 
     /**
-     * Load the courseData from the sheet.
+     * Load the COURSE_DATA from the sheet.
      */
     public Response getCourseData(InputStream courseData, List<CourseDto> courseDtos) {
         XSSFWorkbook courseWorkbook;
@@ -324,7 +324,7 @@ public class ExcelDataLoader implements DataLoader {
             XSSFWorkbook outputWorkbook = new XSSFWorkbook();
             XSSFSheet sheet = outputWorkbook.createSheet("AllocatedStudents");
 
-            CourseWiseSheetHeader seatHeader = new CourseWiseSheetHeader(outputWorkbook, sheet);
+            CourseWiseSheetHeader courseWiseSheetHeader = new CourseWiseSheetHeader(outputWorkbook, sheet);
 
             Font generalFont = outputWorkbook.createFont();
             generalFont.setFontHeightInPoints((short) 12);
@@ -337,17 +337,20 @@ public class ExcelDataLoader implements DataLoader {
             for (AllocationResult allocationResult: allocationResultList) {
                 row = sheet.createRow(entryNum++);
 
-                Cell cell = row.createCell(STUDENT_ID, CellType.STRING);
+                Cell cell = row.createCell(courseWiseSheetHeader.STUDENT_ID, CellType.STRING);
                 cell.setCellValue(allocationResult.getSid());
                 cell.setCellStyle(generalStyle);
 
-                cell = row.createCell(STUDENT_NAME, CellType.STRING);
-                cell.setCellValue(students.get(allocationResult.getSid()).getSid());
+                cell = row.createCell(courseWiseSheetHeader.STUDENT_NAME, CellType.STRING);
+                cell.setCellValue(students.get(allocationResult.getSid()).getName());
                 cell.setCellStyle(generalStyle);
+
+                // debug
+                //System.out.println("CID: "+allocationResult.getCid()+"SID: "+allocationResult.getSid());
             }
 
             for (int j = 0; j <= row.getLastCellNum(); j++) sheet.autoSizeColumn(j);
-            addToZip(zipOutputStream,outputWorkbook,cid+"_Students");
+            addToZip(zipOutputStream,outputWorkbook,cid+"_Students.xlsx");
 
             try {
                 outputWorkbook.close();

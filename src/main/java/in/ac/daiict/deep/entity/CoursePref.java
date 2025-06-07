@@ -1,6 +1,6 @@
 package in.ac.daiict.deep.entity;
 
-import in.ac.daiict.deep.constant.DBConstants;
+import in.ac.daiict.deep.constant.database.DBConstants;
 import in.ac.daiict.deep.entity.compositekeys.CoursePrefPK;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
