@@ -1,7 +1,11 @@
 package in.ac.daiict.deep.utility.allocation;
 
+import in.ac.daiict.deep.constant.AllocationReportNames;
+import in.ac.daiict.deep.constant.DBConstants;
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
+import in.ac.daiict.deep.entity.AllocationReport;
+import in.ac.daiict.deep.service.AllocationReportService;
 import in.ac.daiict.deep.utility.Response;
 import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
 import in.ac.daiict.deep.utility.allocation.model.AllocationStudent;
@@ -9,7 +13,7 @@ import in.ac.daiict.deep.utility.allocation.model.CourseOffer;
 import in.ac.daiict.deep.utility.allocation.model.InstituteRequirement;
 import in.ac.daiict.deep.utility.dataloader.DataLoader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -19,6 +23,8 @@ import java.util.*;
 public class AllocationSystem {
     private AllocationDataLoader allocationDataLoader;
     private DataLoader dataLoader;
+    private AllocationReportService allocationReportService;
+    private JdbcTemplate jdbcTemplate;
 
     private Map<String, AllocationStudent> students; // key=studentID,value=Student Object
     private Map<String, AllocationCourse> courses; // key=courseID,value=Course Object
@@ -35,9 +41,11 @@ public class AllocationSystem {
     private PrintWriter printWriter;
 
     @Autowired
-    public AllocationSystem(AllocationDataLoader allocationDataLoader, DataLoader dataLoader){
+    public AllocationSystem(AllocationDataLoader allocationDataLoader, DataLoader dataLoader, AllocationReportService allocationReportService, JdbcTemplate jdbcTemplate){
         this.allocationDataLoader=allocationDataLoader;
         this.dataLoader=dataLoader;
+        this.allocationReportService = allocationReportService;
+        this.jdbcTemplate=jdbcTemplate;
     }
 
     public Response initiateAllocation(int semester, long[] unmetReqCnt){
@@ -313,7 +321,10 @@ public class AllocationSystem {
         Thread recordFailureLog=new Thread(new Runnable() {
             @Override
             public void run() {
-                getAllocationFailureDetail();
+                ByteArrayOutputStream byteArrayOutputStream=getAllocationFailureDetail();
+                allocationReportService.insertReport(new AllocationReport(AllocationReportNames.ALLOCATION_FAILURE_LOG,semester,byteArrayOutputStream.toByteArray()));
+//                jdbcTemplate.update("DELETE FROM "+ DBConstants.ALLOCATION_REPORT_TABLE +" WHERE name=?",AllocationReportNames.ALLOCATION_FAILURE_LOG);
+//                jdbcTemplate.update("INSERT INTO "+ DBConstants.ALLOCATION_REPORT_TABLE +" (name,file) values (?,?)",AllocationReportNames.ALLOCATION_FAILURE_LOG,byteArrayOutputStream.toByteArray());
                 System.out.println("\n\n Failure Log saved \n\n");
             }
         });
@@ -321,29 +332,44 @@ public class AllocationSystem {
             @Override
             public void run() {
                 ByteArrayOutputStream byteArrayOutputStream=dataLoader.createResultSheet(students,courses,courseCategories);
+                if(byteArrayOutputStream!=null){
+//                    jdbcTemplate.update("DELETE FROM "+ DBConstants.ALLOCATION_REPORT_TABLE +" WHERE name=?",AllocationReportNames.ALLOCATION_RESULT);
+//                    jdbcTemplate.update("INSERT INTO "+ DBConstants.ALLOCATION_REPORT_TABLE +" (name,file) values (?,?)",AllocationReportNames.ALLOCATION_RESULT,byteArrayOutputStream.toByteArray());
+                    System.out.println("\n\n Allocation result sheet created and saved. \n\n");
+                }
             }
         });
         Thread createSeatSummarySheet=new Thread(new Runnable() {
             @Override
             public void run() {
                 ByteArrayOutputStream byteArrayOutputStream=dataLoader.createSeatSummary(openFor,courses,availableSeats);
+                if(byteArrayOutputStream!=null){
+//                    jdbcTemplate.update("DELETE FROM "+ DBConstants.ALLOCATION_REPORT_TABLE +" WHERE name=?",AllocationReportNames.SEAT_SUMMARY);
+//                    jdbcTemplate.update("INSERT INTO "+ DBConstants.ALLOCATION_REPORT_TABLE +" (name,file) values (?,?)",AllocationReportNames.SEAT_SUMMARY,byteArrayOutputStream.toByteArray());
+                    System.out.println("\n\n Seat Summary sheet created and saved. \n\n");
+                }
+            }
+        });
+        Thread createCourseWiseAllocationZip=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ByteArrayOutputStream byteArrayOutputStream=dataLoader.createCourseWiseAllocation(courses,students);
+                if(byteArrayOutputStream!=null){
+
+                }
             }
         });
         recordAllocationResult.start();
         recordSeatSummary.start();
         recordFailureLog.start();
+        createAllocationResultSheet.start();
+        createSeatSummarySheet.start();
+        createCourseWiseAllocationZip.start();
     }
 
-    private void getAllocationFailureDetail() {
+    private ByteArrayOutputStream getAllocationFailureDetail() {
         ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        String dirPath="./src/main/java/in/ac/daiict/deep/tmp";
-        File dir=new File(dirPath);
-        printWriter= null;
-        try {
-            if(!dir.exists() && dir.mkdirs()) printWriter = new PrintWriter(dirPath+"AllocationFailureLog.txt");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        printWriter=new PrintWriter(byteArrayOutputStream);
         printWriter.println("====================================================================================================================================================================");
         printWriter.println(" NOTE: Course allocation logs will be shown only for courses in slots which are unallocated to a student and available courses which are selected by a student");
         printWriter.println("====================================================================================================================================================================");
@@ -426,5 +452,6 @@ public class AllocationSystem {
             printWriter.println();
             printWriter.flush();
         }
+        return byteArrayOutputStream;
     }
 }
