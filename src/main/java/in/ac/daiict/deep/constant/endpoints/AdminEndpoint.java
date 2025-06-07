@@ -7,4 +7,5 @@ public class AdminEndpoint {
     public static final String SUBMIT_DATA="/submit-data";
     public static final String RUN_ALLOCATION="/run-allocation/{semester}";
     public static final String EXECUTE_ALLOCATION="/execute-allocation/{semester}";
+    public static final String DOWNLOAD_REPORTS="/download-reports/{semester}/{filename}";
 }

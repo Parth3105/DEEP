@@ -5,6 +5,8 @@ import in.ac.daiict.deep.dto.CourseDto;
 import in.ac.daiict.deep.dto.CourseOfferingDto;
 import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.dto.StudentDto;
+import in.ac.daiict.deep.entity.AllocationResult;
+import in.ac.daiict.deep.service.AllocationResultService;
 import in.ac.daiict.deep.service.CourseService;
 import in.ac.daiict.deep.utility.Response;
 import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
@@ -26,15 +28,20 @@ import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Component
 public class ExcelDataLoader implements DataLoader {
     private CourseService courseService;
+    private AllocationResultService allocationResultService;
 
     @Autowired
     @Lazy
-    public ExcelDataLoader(CourseService courseService) {
+    public ExcelDataLoader(CourseService courseService, AllocationResultService allocationResultService) {
         this.courseService = courseService;
+        this.allocationResultService = allocationResultService;
     }
 
     /**
@@ -63,7 +70,11 @@ public class ExcelDataLoader implements DataLoader {
             int semester = (int) studentRow.getCell(studentHeader.SEMESTER).getNumericCellValue();
             studentDtos.add(new StudentDto(studentID, studentName, program, semester));
         }
-
+        try {
+            studentWorkbook.close();
+        } catch (IOException e) {
+            return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
+        }
         return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
     }
 
@@ -92,7 +103,11 @@ public class ExcelDataLoader implements DataLoader {
 
             courseDtos.add(new CourseDto(courseID, courseName, credits, slot));
         }
-
+        try {
+            courseWorkbook.close();
+        } catch (IOException e) {
+            return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
+        }
         return new Response(ResponseStatus.OK,"Course Data Saved Successfully!");
     }
 
@@ -121,7 +136,11 @@ public class ExcelDataLoader implements DataLoader {
 
             instituteReqDtos.add(new InstituteReqDto(program, category, semester, count));
         }
-
+        try {
+            instReqWorkbook.close();
+        } catch (IOException e) {
+            return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
+        }
         return new Response(ResponseStatus.OK,"Requirements Saved Successfully!");
     }
 
@@ -155,7 +174,11 @@ public class ExcelDataLoader implements DataLoader {
             }
             courseOfferingDtos.add(new CourseOfferingDto(program, courseID, category, semester, seats));
         }
-
+        try {
+            offerWorkbook.close();
+        } catch (IOException e) {
+            return new Response(ResponseStatus.OK,"Student Data Saved Successfully!");
+        }
         return new Response(ResponseStatus.OK,"Course Offerings Data Saved Successfully!");
     }
 
@@ -223,6 +246,11 @@ public class ExcelDataLoader implements DataLoader {
         } catch (IOException e) {
             return null;
         }
+        try {
+            outputWorkbook.close();
+        } catch (IOException e) {
+            return byteArrayOutputStream;
+        }
         return byteArrayOutputStream;
     }
 
@@ -277,6 +305,73 @@ public class ExcelDataLoader implements DataLoader {
         } catch (IOException e) {
             return null;
         }
+        try {
+            outputWorkbook.close();
+        } catch (IOException e) {
+            return byteArrayOutputStream;
+        }
         return byteArrayOutputStream;
+    }
+
+    public ByteArrayOutputStream createCourseWiseAllocation(Map<String,AllocationCourse> courses, Map<String,AllocationStudent> students){
+        int STUDENT_ID=0,STUDENT_NAME=1;
+
+        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+        ZipOutputStream zipOutputStream=new ZipOutputStream(byteArrayOutputStream);
+        Set<String> courseIds=courses.keySet();
+        for(String cid: courseIds){
+            List<AllocationResult> allocationResultList=allocationResultService.fetchCourseWiseAllocation(cid);
+            XSSFWorkbook outputWorkbook = new XSSFWorkbook();
+            XSSFSheet sheet = outputWorkbook.createSheet("AllocatedStudents");
+
+            CourseWiseSheetHeader seatHeader = new CourseWiseSheetHeader(outputWorkbook, sheet);
+
+            Font generalFont = outputWorkbook.createFont();
+            generalFont.setFontHeightInPoints((short) 12);
+
+            CellStyle generalStyle = outputWorkbook.createCellStyle();
+            generalStyle.setFont(generalFont);
+
+            int entryNum = 1;
+            Row row = sheet.getRow(sheet.getFirstRowNum());
+            for (AllocationResult allocationResult: allocationResultList) {
+                row = sheet.createRow(entryNum++);
+
+                Cell cell = row.createCell(STUDENT_ID, CellType.STRING);
+                cell.setCellValue(allocationResult.getSid());
+                cell.setCellStyle(generalStyle);
+
+                cell = row.createCell(STUDENT_NAME, CellType.STRING);
+                cell.setCellValue(students.get(allocationResult.getSid()).getSid());
+                cell.setCellStyle(generalStyle);
+            }
+
+            for (int j = 0; j <= row.getLastCellNum(); j++) sheet.autoSizeColumn(j);
+            addToZip(zipOutputStream,outputWorkbook,cid+"_Students");
+
+            try {
+                outputWorkbook.close();
+            } catch (IOException e) {
+                System.out.println("Workbook closing issue...");
+            }
+        }
+
+        try {
+            zipOutputStream.close();
+        } catch (IOException e) {
+            return byteArrayOutputStream;
+        }
+        return byteArrayOutputStream;
+    }
+
+    private void addToZip(ZipOutputStream zipOutputStream, XSSFWorkbook workbook, String fileName){
+        try {
+            ZipEntry zipEntry=new ZipEntry(fileName);
+            zipOutputStream.putNextEntry(zipEntry);
+            workbook.write(zipOutputStream);
+            zipOutputStream.closeEntry();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
