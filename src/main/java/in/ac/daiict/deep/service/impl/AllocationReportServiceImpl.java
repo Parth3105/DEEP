@@ -9,16 +9,17 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class AllocationReportServiceImpl implements AllocationReportService {
+
     private AllocationReportRepo allocationReportRepo;
 
     @Override
     public void insertReport(AllocationReport allocationReport) {
-        deleteReport(allocationReport.getName());
+        deleteReport(allocationReport);
         allocationReportRepo.save(allocationReport);
     }
 
     @Override
-    public void deleteReport(String fileName) {
-        allocationReportRepo.deleteById(fileName);
+    public void deleteReport(AllocationReport allocationReport) {
+        allocationReportRepo.delete(allocationReport);
     }
 }
