@@ -7,7 +7,6 @@ import in.ac.daiict.deep.constant.template.AdminTemplate;
 import in.ac.daiict.deep.service.StudentService;
 import in.ac.daiict.deep.utility.Response;
 import in.ac.daiict.deep.utility.allocation.AllocationSystem;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

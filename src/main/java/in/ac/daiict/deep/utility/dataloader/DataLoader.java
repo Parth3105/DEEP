@@ -8,13 +8,11 @@ import in.ac.daiict.deep.utility.Response;
 import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
 import in.ac.daiict.deep.utility.allocation.model.AllocationStudent;
 import in.ac.daiict.deep.utility.allocation.model.CourseOffer;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipOutputStream;
 
 public interface DataLoader {
     Response getStudentData(InputStream studentData, List<StudentDto> studentDtos);

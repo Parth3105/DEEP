@@ -5,7 +5,6 @@ import in.ac.daiict.deep.entity.AllocationResult;
 import in.ac.daiict.deep.repository.AllocationResultRepo;
 import in.ac.daiict.deep.service.AllocationResultService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

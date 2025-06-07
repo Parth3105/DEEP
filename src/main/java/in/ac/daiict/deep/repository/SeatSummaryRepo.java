@@ -1,6 +1,6 @@
 package in.ac.daiict.deep.repository;
 
-import in.ac.daiict.deep.constant.DBConstants;
+import in.ac.daiict.deep.constant.database.DBConstants;
 import in.ac.daiict.deep.entity.SeatSummary;
 import in.ac.daiict.deep.entity.compositekeys.SeatSummaryPK;
 import org.springframework.data.jpa.repository.JpaRepository;

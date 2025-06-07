@@ -1,6 +1,6 @@
 package in.ac.daiict.deep.repository;
 
-import in.ac.daiict.deep.constant.DBConstants;
+import in.ac.daiict.deep.constant.database.DBConstants;
 import in.ac.daiict.deep.dto.AllocationResultDto;
 import in.ac.daiict.deep.entity.AllocationResult;
 import in.ac.daiict.deep.entity.compositekeys.AllocationResultPK;
