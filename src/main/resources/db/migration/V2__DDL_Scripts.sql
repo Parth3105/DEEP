@@ -79,6 +79,8 @@ CREATE TABLE uploads(
 );
 
 CREATE TABLE allocation_reports(
-    name VARCHAR(100) PRIMARY KEY,
-    file BYTEA
+    name VARCHAR(100),
+    semester INTEGER,
+    file BYTEA,
+    PRIMARY KEY (name, semester)
 );

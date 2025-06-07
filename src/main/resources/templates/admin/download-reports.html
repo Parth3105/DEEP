@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEEP - Download Reports</title>
+    <link rel="icon" href="/admin/images/DEEP Logo.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+<div class="mx-auto">
+    <!-- Header -->
+    <div th:replace="~{common/admin-navbar::admin-navbar}"></div>
+
+    <!-- Main Content -->
+    <main class="backdrop-blur-lg rounded-3xl px-7 py-4">
+        <div class="mx-auto">
+            <div class="bg-white rounded-2xl py-2 px-7 md:px-9 mb-6"
+                 style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
+                <h1 class="text-xl lg:text-2xl font-bold text-[#1E3C72]">
+                    Download Reports
+                </h1>
+            </div>
+
+            <!-- Export Input Data Section -->
+            <div class="bg-white rounded-2xl shadow-md px-7 py-6 md:px-9 mb-6" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
+                <!-- Section Header -->
+                <div class="flex items-center mb-9">
+                    <img src="/admin/images/link-blue.svg" alt="SVG Icon" class="w-5 h-5 mr-3">
+                    <h2 class="text-xl font-bold text-[#1E3C72]">Export Input Data</h2>
+                </div>
+
+                <!-- Semester Selection -->
+                <div class="mb-6 sm:flex sm:items-center">
+                    <label class="block text-lg font-bold text-[#1E3C72] mb-2 sm:mt-1 sm:mr-5">Select Semester :</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" class="semester-btn w-11 h-11 rounded-full text-white text-xl font-medium cursor-pointer"
+                                data-sem="5" style="background-color: #2D9D5D;">5</button>
+                        <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                data-sem="6">6</button>
+                        <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                data-sem="7">7</button>
+                        <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                data-sem="8">8</button>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Student Data -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                        <div class="flex items-center mb-2 sm:mb-0">
+                            <img src="/admin/images/student-data.svg" alt="Student Icon" class="w-5 h-5 mb-4 mr-3">
+                            <div>
+                                <h3 class="font-bold text-[1.1rem] text-[#1E3C72]">Student Data</h3>
+                                <p class="text-xs text-gray-500">Export Student Data in Excel Format</p>
+                            </div>
+                        </div>
+                        <form class="download-form" th:action="@{/download}" method="get">
+                            <input type="hidden" name="semester" class="semester-input" value="">
+                            <input type="hidden" name="fileName" value="student-data">
+                            <button type="submit" class="download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center"
+                                    disabled>
+                                <img src="/admin/images/excel-file.svg" alt="Excel Icon" class="w-5 h-5 mr-2">
+                                Export to Excel
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Course Data -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                        <div class="flex items-center mb-2 sm:mb-0">
+                            <img src="/admin/images/course-data.svg" alt="Course Icon" class="w-5 h-5 mb-4 mr-3">
+                            <div>
+                                <h3 class="font-bold text-[1.1rem] text-[#1E3C72]">Course Data</h3>
+                                <p class="text-xs text-gray-500">Export Course Data in Excel Format</p>
+                            </div>
+                        </div>
+                        <form class="download-form" th:action="@{/download}" method="get">
+                            <input type="hidden" name="semester" class="semester-input" value="">
+                            <input type="hidden" name="fileName" value="course-data">
+                            <button type="submit" class="download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center"
+                                    disabled>
+                                <img src="/admin/images/excel-file.svg" alt="Excel Icon" class="w-5 h-5 mr-2">
+                                Export to Excel
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Institute Requirements -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                        <div class="flex items-center mb-2 sm:mb-0">
+                            <img src="/admin/images/instititue-requirements.svg" alt="Institute Icon" class="w-5 h-5 mb-4 mr-3">
+                            <div>
+                                <h3 class="font-bold text-[1.1rem] text-[#1E3C72]">Institute Requirements</h3>
+                                <p class="text-xs text-gray-500">Export Institute Requirements in Excel Format</p>
+                            </div>
+                        </div>
+                        <form class="download-form" th:action="@{/download}" method="get">
+                            <input type="hidden" name="semester" class="semester-input" value="">
+                            <input type="hidden" name="fileName" value="institute-requirements">
+                            <button type="submit" class="download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center"
+                                    disabled>
+                                <img src="/admin/images/excel-file.svg" alt="Excel Icon" class="w-5 h-5 mr-2">
+                                Export to Excel
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Allocation Result Section -->
+            <div class="bg-white rounded-2xl shadow-md px-7 py-6 md:px-9 mb-6" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
+                <!-- Section Header -->
+                <div class="flex items-center mb-9">
+                    <img src="/admin/images/link-blue.svg" alt="SVG Icon" class="w-5 h-5 mr-3">
+                    <h2 class="text-xl font-bold text-[#1E3C72]">Export Allocation Results</h2>
+                </div>
+
+                <!-- Semester Selection -->
+                <div class="mb-6 sm:flex sm:items-center">
+                    <label class="block text-lg font-bold text-[#1E3C72] mb-2 sm:mt-1 sm:mr-5">Select Semester :</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" class="semester-btn w-11 h-11 rounded-full text-white text-xl font-medium cursor-pointer"
+                                data-sem="5" style="background-color: #2D9D5D;">5</button>
+                        <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                data-sem="6">6</button>
+                        <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                data-sem="7">7</button>
+                        <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                data-sem="8">8</button>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Allocation Output -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                        <div class="flex items-center mb-2 sm:mb-0">
+                            <img src="/admin/images/allocation-output.svg" alt="allocation-output Icon" class="w-5 h-5 mb-4 mr-3">
+                            <div>
+                                <h3 class="font-bold text-[1.1rem] text-[#1E3C72]">Allocation Output</h3>
+                                <p class="text-xs text-gray-500">Export Student-Course mappings</p>
+                            </div>
+                        </div>
+                        <button class="bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center">
+                            <img src="/admin/images/excel-file.svg" alt="Excel Icon" class="w-5 h-5 mr-2">
+                            Export to Excel
+                        </button>
+                    </div>
+
+                    <!-- Course-wise Allotments -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                        <div class="flex items-center mb-2 sm:mb-0">
+                            <img src="/admin/images/course-wise-allotments.svg" alt="course-wise-allotments Icon" class="w-5 h-5 mb-4 mr-3">
+                            <div>
+                                <h3 class="font-bold text-[1.1rem] text-[#1E3C72]">Course-wise Allotments</h3>
+                                <p class="text-xs text-gray-500">Export Data of Students in each course</p>
+                            </div>
+                        </div>
+                        <button class="bg-gradient-to-r from-[#27AE60] to-[#2ECC71] min-w-40 max-w-44 sm:max-w-auto text-white pr-3 py-2 rounded-lg font-medium flex justify-center items-center">
+                            <img src="/admin/images/zip-file.svg" alt="Zip Icon" class="w-5 h-6 mr-2">
+                            Export to Zip
+                        </button>
+                    </div>
+
+                    <!-- allocation-failure-logs -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+                        <div class="flex items-center mb-2 sm:mb-0">
+                            <img src="/admin/images/allocation-failure-logs.svg" alt="allocation-failure-logs Icon" class="w-5 h-5 mb-4 mr-3">
+                            <div>
+                                <h3 class="font-bold text-[1.1rem] text-[#1E3C72]">Allocation Failure Logs</h3>
+                                <p class="text-xs text-gray-500">Export Allocation logs of students with unmet elective requirements</p>
+                            </div>
+                        </div>
+                        <button class="bg-gradient-to-r from-[#27AE60] to-[#2ECC71] min-w-40 max-w-44 sm:max-w-auto text-white pr-3 py-2 rounded-lg font-medium flex justify-center items-center">
+                            <img src="/admin/images/text-file.svg" alt="Text Icon" class="w-5 h-6 mr-2">
+                            Export to Text
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="/admin/js/download-reports.js.js"></script>
+</body>
+</html>
