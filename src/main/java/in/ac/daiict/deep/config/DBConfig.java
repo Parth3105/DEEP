@@ -43,6 +43,7 @@ public class DBConfig {
     public void runFlyway(String newSchemaName) {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
+                .schemas(newSchemaName)
                 .baselineOnMigrate(true)
                 .load();
 
