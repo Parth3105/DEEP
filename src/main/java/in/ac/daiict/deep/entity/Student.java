@@ -1,6 +1,6 @@
 package in.ac.daiict.deep.entity;
 
-import in.ac.daiict.deep.constant.DBConstants;
+import in.ac.daiict.deep.constant.database.DBConstants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

@@ -1,7 +1,6 @@
 package in.ac.daiict.deep.utility.allocation;
 
-import in.ac.daiict.deep.constant.AllocationReportNames;
-import in.ac.daiict.deep.constant.DBConstants;
+import in.ac.daiict.deep.constant.downloads.AllocationReportNames;
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.entity.AllocationReport;
@@ -13,7 +12,6 @@ import in.ac.daiict.deep.utility.allocation.model.CourseOffer;
 import in.ac.daiict.deep.utility.allocation.model.InstituteRequirement;
 import in.ac.daiict.deep.utility.dataloader.DataLoader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -24,7 +22,6 @@ public class AllocationSystem {
     private AllocationDataLoader allocationDataLoader;
     private DataLoader dataLoader;
     private AllocationReportService allocationReportService;
-    private JdbcTemplate jdbcTemplate;
 
     private Map<String, AllocationStudent> students; // key=studentID,value=Student Object
     private Map<String, AllocationCourse> courses; // key=courseID,value=Course Object
@@ -41,11 +38,10 @@ public class AllocationSystem {
     private PrintWriter printWriter;
 
     @Autowired
-    public AllocationSystem(AllocationDataLoader allocationDataLoader, DataLoader dataLoader, AllocationReportService allocationReportService, JdbcTemplate jdbcTemplate){
+    public AllocationSystem(AllocationDataLoader allocationDataLoader, DataLoader dataLoader, AllocationReportService allocationReportService){
         this.allocationDataLoader=allocationDataLoader;
         this.dataLoader=dataLoader;
         this.allocationReportService = allocationReportService;
-        this.jdbcTemplate=jdbcTemplate;
     }
 
     public Response initiateAllocation(int semester, long[] unmetReqCnt){
@@ -323,8 +319,6 @@ public class AllocationSystem {
             public void run() {
                 ByteArrayOutputStream byteArrayOutputStream=getAllocationFailureDetail();
                 allocationReportService.insertReport(new AllocationReport(AllocationReportNames.ALLOCATION_FAILURE_LOG,semester,byteArrayOutputStream.toByteArray()));
-//                jdbcTemplate.update("DELETE FROM "+ DBConstants.ALLOCATION_REPORT_TABLE +" WHERE name=?",AllocationReportNames.ALLOCATION_FAILURE_LOG);
-//                jdbcTemplate.update("INSERT INTO "+ DBConstants.ALLOCATION_REPORT_TABLE +" (name,file) values (?,?)",AllocationReportNames.ALLOCATION_FAILURE_LOG,byteArrayOutputStream.toByteArray());
                 System.out.println("\n\n Failure Log saved \n\n");
             }
         });
@@ -333,8 +327,7 @@ public class AllocationSystem {
             public void run() {
                 ByteArrayOutputStream byteArrayOutputStream=dataLoader.createResultSheet(students,courses,courseCategories);
                 if(byteArrayOutputStream!=null){
-//                    jdbcTemplate.update("DELETE FROM "+ DBConstants.ALLOCATION_REPORT_TABLE +" WHERE name=?",AllocationReportNames.ALLOCATION_RESULT);
-//                    jdbcTemplate.update("INSERT INTO "+ DBConstants.ALLOCATION_REPORT_TABLE +" (name,file) values (?,?)",AllocationReportNames.ALLOCATION_RESULT,byteArrayOutputStream.toByteArray());
+                    allocationReportService.insertReport(new AllocationReport(AllocationReportNames.ALLOCATION_RESULT,semester,byteArrayOutputStream.toByteArray()));
                     System.out.println("\n\n Allocation result sheet created and saved. \n\n");
                 }
             }
@@ -344,8 +337,7 @@ public class AllocationSystem {
             public void run() {
                 ByteArrayOutputStream byteArrayOutputStream=dataLoader.createSeatSummary(openFor,courses,availableSeats);
                 if(byteArrayOutputStream!=null){
-//                    jdbcTemplate.update("DELETE FROM "+ DBConstants.ALLOCATION_REPORT_TABLE +" WHERE name=?",AllocationReportNames.SEAT_SUMMARY);
-//                    jdbcTemplate.update("INSERT INTO "+ DBConstants.ALLOCATION_REPORT_TABLE +" (name,file) values (?,?)",AllocationReportNames.SEAT_SUMMARY,byteArrayOutputStream.toByteArray());
+                    allocationReportService.insertReport(new AllocationReport(AllocationReportNames.SEAT_SUMMARY,semester,byteArrayOutputStream.toByteArray()));
                     System.out.println("\n\n Seat Summary sheet created and saved. \n\n");
                 }
             }
@@ -355,7 +347,8 @@ public class AllocationSystem {
             public void run() {
                 ByteArrayOutputStream byteArrayOutputStream=dataLoader.createCourseWiseAllocation(courses,students);
                 if(byteArrayOutputStream!=null){
-
+                    allocationReportService.insertReport(new AllocationReport(AllocationReportNames.COURSE_WISE_ALLOCATION,semester, byteArrayOutputStream.toByteArray()));
+                    System.out.println("\n\n Course-wise Allocation data created and saved. \n\n");
                 }
             }
         });
@@ -364,7 +357,21 @@ public class AllocationSystem {
         recordFailureLog.start();
         createAllocationResultSheet.start();
         createSeatSummarySheet.start();
+        try {
+            recordAllocationResult.join();
+        } catch (InterruptedException e) {
+            System.out.println("Error: Saving record...");
+        }
         createCourseWiseAllocationZip.start();
+        try {
+            recordSeatSummary.join();
+            recordFailureLog.join();
+            createAllocationResultSheet.join();
+            createSeatSummarySheet.join();
+            createCourseWiseAllocationZip.join();
+        } catch (InterruptedException e) {
+            System.out.println("Error: Saving record...");
+        }
     }
 
     private ByteArrayOutputStream getAllocationFailureDetail() {

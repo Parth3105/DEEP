@@ -1,4 +1,4 @@
-package in.ac.daiict.deep.constant;
+package in.ac.daiict.deep.constant.database;
 
 public class DBConstants {
     public static String SAVE_SCHEMA_NAME=null;
