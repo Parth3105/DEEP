@@ -62,7 +62,7 @@ function showMessage(element, message, isError) {
 }
 
 // Enabling submit button only if at least one file is selected
-const fileInputIds = ['fileInput-students', 'fileInput-offerings', 'fileInput-instituteRequirements', 'fileInput-courses'];
+const fileInputIds = ['fileInput-student-data', 'fileInput-course-offerings', 'fileInput-institute-requirements', 'fileInput-course-data'];
 const submitBtn = document.getElementById('create-instance');
 
 function checkFiles() {

@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class AllocationSystemController {
     }
 
     @PostMapping(AdminEndpoint.EXECUTE_ALLOCATION)
-    public String initiateAllocation(@PathVariable("semester") int semester){
+    public String initiateAllocation(@PathVariable("semester") int semester, RedirectAttributes redirectAttributes){
         long[] unmetReqCnt=new long[1];
         ResponseDto allocationResponse=allocationSystem.initiateAllocation(semester,unmetReqCnt);
         allocationStatus.put(semester,allocationResponse);
@@ -51,6 +52,8 @@ public class AllocationSystemController {
 
         allocatedStudentsData.put(semester,allocatedCount);
         unallocatedStudentsData.put(semester,unmetReqCnt[0]);
+
+        redirectAttributes.addFlashAttribute("semester",semester);
         return "redirect:"+AdminEndpoint.RUN_ALLOCATION;
     }
 }

@@ -14,7 +14,7 @@ function closeModal() {
 }
 
 function HandleRoute(url) {
-    window.location.href = url;
+    window.location.href = `/admin/${url}`;
 }
 
 const form = document.getElementById('createForm');

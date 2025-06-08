@@ -11,7 +11,7 @@ import in.ac.daiict.deep.entity.AllocationReport;
 import in.ac.daiict.deep.entity.Upload;
 import in.ac.daiict.deep.service.AllocationReportService;
 import in.ac.daiict.deep.service.UploadService;
-import in.ac.daiict.deep.dto.ResponseDto;
+import in.ac.daiict.deep.utility.Response;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -28,7 +28,7 @@ public class DownloadController {
     private UploadService uploadService;
 
     @GetMapping(AdminEndpoint.DOWNLOAD_REPORT_SUBMIT)
-    public void downloadReport(HttpServletResponse httpServletResponse, @PathVariable("semester") int semester, @PathVariable("name") String name, Model model) {
+    public void downloadReport(HttpServletResponse httpServletResponse, @PathVariable("semester") int semester, @PathVariable("name") String name, Model model) throws IOException {
         String contentType=null;
         String downloadFilename=null;
         switch (name) {
@@ -50,11 +50,17 @@ public class DownloadController {
             }
         }
         if(contentType == null){
-            model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
-            return;
+            httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
         }
         AllocationReport allocationReport=allocationReportService.fetchReport(downloadFilename,semester);
-        if(allocationReport==null) model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND));
+        if(allocationReport==null) {
+            httpServletResponse.setStatus(ResponseStatus.NOT_FOUND);
+            httpServletResponse.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+            httpServletResponse.setHeader("Pragma", "no-cache");
+            httpServletResponse.setDateHeader("Expires", 0);
+            httpServletResponse.setContentType("application/json");
+            httpServletResponse.getOutputStream().write(ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND.getBytes());
+        }
         else {
             httpServletResponse.setContentType(contentType);
             httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
@@ -62,13 +68,13 @@ public class DownloadController {
                 httpServletResponse.getOutputStream().write(allocationReport.getFile());
                 httpServletResponse.getOutputStream().flush();
             } catch (IOException e) {
-                model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+                httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
 
     @GetMapping(AdminEndpoint.DOWNLOAD_UPLOADED_REPORT_SUBMIT)
-    public void downloadUploadedData(HttpServletResponse httpServletResponse, @PathVariable("name") String name, Model model){
+    public void downloadUploadedData(HttpServletResponse httpServletResponse, @PathVariable("name") String name, Model model) throws IOException {
         String contentType=null;
         String downloadFilename=null;
         String[] names={UploadConstants.COURSE_DATA,UploadConstants.INST_REQ_DATA,UploadConstants.OFFERS_DATA};
@@ -80,11 +86,17 @@ public class DownloadController {
             }
         }
         if(contentType == null){
-            model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
-            return;
+            httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
         }
         Upload uploadData=uploadService.findFile(downloadFilename);
-        if(uploadData==null) model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.UPLOAD_DATA_NOT_FOUND));
+        if(uploadData==null) {
+            httpServletResponse.setStatus(ResponseStatus.NOT_FOUND);
+            httpServletResponse.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+            httpServletResponse.setHeader("Pragma", "no-cache");
+            httpServletResponse.setDateHeader("Expires", 0);
+            httpServletResponse.setContentType("application/json");
+            httpServletResponse.getOutputStream().write(ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND.getBytes());
+        }
         else {
             httpServletResponse.setContentType(contentType);
             httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
@@ -92,7 +104,7 @@ public class DownloadController {
                 httpServletResponse.getOutputStream().write(uploadData.getFile());
                 httpServletResponse.getOutputStream().flush();
             } catch (IOException e) {
-                model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+                httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
