@@ -40,7 +40,7 @@ public class AllocationDataLoader {
         Map<String,Map<String,Integer>> studentReqMap=new HashMap<>();
         for(StudentReq studentReq: studentReqs) {
             Map<String, Integer> reqs=studentReqMap.getOrDefault(studentReq.getSid(),new HashMap<>());
-            reqs.put(studentReq.getCategory(),studentReq.getCourse_cnt());
+            reqs.put(studentReq.getCategory(),studentReq.getCourseCnt());
             studentReqMap.put(studentReq.getSid(),reqs);
         }
 

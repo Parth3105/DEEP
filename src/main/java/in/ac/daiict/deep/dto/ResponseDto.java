@@ -1,4 +1,4 @@
-package in.ac.daiict.deep.utility;
+package in.ac.daiict.deep.util;
 
 import lombok.Getter;
 import lombok.Setter;

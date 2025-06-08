@@ -104,7 +104,7 @@ public class AllocationSystem {
         System.out.println("All Students allocated? " + isStudentReqFulfilled(false, unmetReqCnt));
         System.out.println("Not allocated in phase-2: " + unmetReqCnt[0]);
         System.out.println("--------------------------------------------------------------------------------");
-        return new Response(ResponseStatus.OK, ResponseMessage.RUN_ALLOCATION_SUCCESS_STATUS);
+        return new Response(ResponseStatus.OK, ResponseMessage.SUCCESS_STATUS);
     }
 
     /**
