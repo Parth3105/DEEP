@@ -1,11 +1,11 @@
-package in.ac.daiict.deep.utility.allocation;
+package in.ac.daiict.deep.util.allocation;
 
 import in.ac.daiict.deep.entity.*;
 import in.ac.daiict.deep.service.*;
-import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
-import in.ac.daiict.deep.utility.allocation.model.AllocationStudent;
-import in.ac.daiict.deep.utility.allocation.model.CourseOffer;
-import in.ac.daiict.deep.utility.allocation.model.InstituteRequirement;
+import in.ac.daiict.deep.util.allocation.model.AllocationCourse;
+import in.ac.daiict.deep.util.allocation.model.AllocationStudent;
+import in.ac.daiict.deep.util.allocation.model.CourseOffer;
+import in.ac.daiict.deep.util.allocation.model.InstituteRequirement;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;

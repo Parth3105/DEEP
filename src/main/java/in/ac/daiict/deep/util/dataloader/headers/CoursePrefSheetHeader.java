@@ -1,10 +1,8 @@
-package in.ac.daiict.deep.utility.dataloader.headers;
+package in.ac.daiict.deep.util.dataloader.headers;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.util.Iterator;
 
 public class CoursePrefSheetHeader {
     public int STUDENT_ID = 0, SLOT = 1, COURSE_ID = 2, PREFERENCE_INDEX = 3;

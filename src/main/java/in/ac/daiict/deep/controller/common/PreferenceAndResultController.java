@@ -10,8 +10,8 @@ import in.ac.daiict.deep.dto.*;
 import in.ac.daiict.deep.entity.CoursePref;
 import in.ac.daiict.deep.entity.SlotPref;
 import in.ac.daiict.deep.service.*;
-import in.ac.daiict.deep.utility.Response;
-import in.ac.daiict.deep.utility.dataloader.DataLoader;
+import in.ac.daiict.deep.dto.ResponseDto;
+import in.ac.daiict.deep.util.dataloader.DataLoader;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -54,7 +54,7 @@ public class PreferenceAndResultController {
         List<SlotPref> slotPrefList=slotPrefService.fetchAllSlotSortedByPref();
 
         if(coursePrefList.isEmpty() || slotPrefList.isEmpty()){
-            model.addAttribute("downloadResponse",new Response(ResponseStatus.NOT_FOUND,ResponseMessage.STUDENT_PREFERENCES_NOT_FOUND));
+            model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.NOT_FOUND,ResponseMessage.STUDENT_PREFERENCES_NOT_FOUND));
         }
 
         ByteArrayOutputStream byteArrayOutputStream=dataLoader.createStudentPrefSheet(coursePrefList,slotPrefList);
@@ -66,7 +66,7 @@ public class PreferenceAndResultController {
             httpServletResponse.getOutputStream().write(byteArrayOutputStream.toByteArray());
             httpServletResponse.getOutputStream().flush();
         } catch (IOException e) {
-            model.addAttribute("downloadResponse",new Response(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+            model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
         }
     }
     @GetMapping(AdminEndpoint.ALLOCATION_RESULTS_FILTER)
@@ -80,8 +80,8 @@ public class PreferenceAndResultController {
         StudentDto student = studentService.fetchStudentDto(studentId);
         if (student == null) {
             // not found student.
-            if(requester=='S') model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
-            else model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.STUDENT_NOT_FOUND));
+            if(requester=='S') model.addAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
+            else model.addAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.STUDENT_NOT_FOUND));
             if(requester=='S') return "redirect:"+StudentEndpoint.HOME_PAGE;
             return "redirect:"+AdminEndpoint.STUDENT_PREFERENCE;
         }
@@ -97,8 +97,8 @@ public class PreferenceAndResultController {
 
         if(studentReqDtoList==null || coursePrefDtoList==null || slotPrefDtoList==null){
             // not found preferences.
-            if(requester=='S') model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_REGISTERED));
-            else model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.STUDENT_NOT_REGISTERED));
+            if(requester=='S') model.addAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_REGISTERED));
+            else model.addAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.STUDENT_NOT_REGISTERED));
             if(requester=='S') return "redirect:"+StudentEndpoint.HOME_PAGE;
             return "redirect:"+AdminEndpoint.STUDENT_PREFERENCE;
         }
@@ -116,8 +116,8 @@ public class PreferenceAndResultController {
         StudentDto studentDto=studentService.fetchStudentDto(studentId);
         if (studentDto == null) {
             // not found student.
-            if(requester=='S') model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
-            else model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.STUDENT_NOT_FOUND));
+            if(requester=='S') model.addAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
+            else model.addAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.STUDENT_NOT_FOUND));
             if(requester=='S') return "redirect:"+StudentEndpoint.HOME_PAGE;
             return "redirect:"+AdminEndpoint.STUDENT_PREFERENCE;
         }
@@ -125,7 +125,7 @@ public class PreferenceAndResultController {
         List<AllocationResultDto> allocationResultDtoList=allocationResultService.fetchAllocationResult(studentId,studentDto.getProgram());
         if(allocationResultDtoList==null){
             // not found any results.
-            model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_FOUND));
+            model.addAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_FOUND));
             return "redirect:"+StudentEndpoint.HOME_PAGE;
         }
 

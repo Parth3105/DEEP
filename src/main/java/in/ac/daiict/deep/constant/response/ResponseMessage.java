@@ -3,6 +3,10 @@ package in.ac.daiict.deep.constant.response;
 public class ResponseMessage {
     public static int UPLOAD_COUNT = 0;
 
+    public static final String USERNAME_NOT_FOUND="Username Not Found";
+    public static final String OTP_EXPIRED="OTP has expired!";
+    public static final String OTP_INVALID="OTP is invalid!";
+    public static final String INTERNAL_SERVER_ERROR="There's a temporary problem with the service. Please try again. If you continue to get this message, try again later.";
     public static final String USER_NOT_FOUND = "Your information is currently unavailable. Please try again later or contact support.";
     public static final String STUDENT_NOT_FOUND="Student information not found. Ensure the student is registered or data has been uploaded.";
     public static final String USER_NOT_REGISTERED = "Your enrollment status is incomplete. Submission of the preferences is necessary to proceed.";
@@ -13,7 +17,7 @@ public class ResponseMessage {
     public static final String STUDENT_DATA_NOT_FOUND="Student data is not available for this semester.";
     public static final String COURSE_DATA_NOT_FOUND="Course data is not available.";
     public static final String COURSE_OFFERS_NOT_FOUND="Course offerings is not available";
-    public static final String RUN_ALLOCATION_SUCCESS_STATUS ="Success";
+    public static final String SUCCESS_STATUS ="Success";
     public static final String DOWNLOAD_RESULTS_NOT_FOUND="Allocation process is not completed yet. Please run the allocation to generate results.";
     public static final String DOWNLOADING_ERROR="Download failed due to a server error. Please check system logs for more details.";
     public static final String STUDENT_PREFERENCES_NOT_FOUND="Student Preferences Not found";

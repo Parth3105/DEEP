@@ -5,8 +5,8 @@ import in.ac.daiict.deep.dto.StudentDto;
 import in.ac.daiict.deep.entity.Student;
 import in.ac.daiict.deep.repository.StudentRepo;
 import in.ac.daiict.deep.service.StudentService;
-import in.ac.daiict.deep.utility.dataloader.DataLoader;
-import in.ac.daiict.deep.utility.Response;
+import in.ac.daiict.deep.util.dataloader.DataLoader;
+import in.ac.daiict.deep.dto.ResponseDto;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -24,14 +24,14 @@ public class StudentServiceImpl implements StudentService {
     private DataLoader dataLoader;
 
     @Override
-    public Response insertAll(byte[] studentData) {
+    public ResponseDto insertAll(byte[] studentData) {
         List<StudentDto> studentDtos=new ArrayList<>();
-        Response status=dataLoader.getStudentData(new ByteArrayInputStream(studentData),studentDtos);
+        ResponseDto status=dataLoader.getStudentData(new ByteArrayInputStream(studentData),studentDtos);
         if(status.getStatus()!= ResponseStatus.OK) return status;
         // TypeToken helps retain generic of list
         List<Student> students=modelMapper.map(studentDtos,new TypeToken<List<Student>>(){}.getType());
         studentRepo.saveAll(students);
-        return new Response(ResponseStatus.OK,"Data Inserted Successfully!");
+        return new ResponseDto(ResponseStatus.OK,"Data Inserted Successfully!");
     }
 
     @Override

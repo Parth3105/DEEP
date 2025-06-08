@@ -5,8 +5,8 @@ import in.ac.daiict.deep.dto.CourseOfferingDto;
 import in.ac.daiict.deep.entity.CourseOffering;
 import in.ac.daiict.deep.repository.CourseOfferingRepo;
 import in.ac.daiict.deep.service.CourseOfferingService;
-import in.ac.daiict.deep.utility.dataloader.DataLoader;
-import in.ac.daiict.deep.utility.Response;
+import in.ac.daiict.deep.util.dataloader.DataLoader;
+import in.ac.daiict.deep.dto.ResponseDto;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -24,15 +24,15 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     private DataLoader dataLoader;
 
     @Override
-    public Response insertAll(byte[] courseOfferData) {
+    public ResponseDto insertAll(byte[] courseOfferData) {
         deleteAll();
         List<CourseOfferingDto> courseOfferDtos=new ArrayList<>();
-        Response status=dataLoader.getCourseForProgram(new ByteArrayInputStream(courseOfferData),courseOfferDtos);
+        ResponseDto status=dataLoader.getCourseForProgram(new ByteArrayInputStream(courseOfferData),courseOfferDtos);
         if(status.getStatus()!= ResponseStatus.OK) return status;
         // TypeToken helps retain generic of list
         List<CourseOffering> courseOffers=modelMapper.map(courseOfferDtos,new TypeToken<List<CourseOffering>>(){}.getType());
         courseOfferingRepo.saveAll(courseOffers);
-        return new Response(ResponseStatus.OK,"Data Inserted Successfully!");
+        return new ResponseDto(ResponseStatus.OK,"Data Inserted Successfully!");
     }
 
     @Override

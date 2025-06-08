@@ -4,12 +4,12 @@ package in.ac.daiict.deep.service;
 import in.ac.daiict.deep.dto.AvailableCourseDto;
 import in.ac.daiict.deep.dto.CourseDto;
 import in.ac.daiict.deep.entity.Course;
-import in.ac.daiict.deep.utility.Response;
+import in.ac.daiict.deep.dto.ResponseDto;
 
 import java.util.List;
 
 public interface CourseService {
-    Response insertAll(byte[] courseData);
+    ResponseDto insertAll(byte[] courseData);
 
     List<Course> fetchAllCourses();
 

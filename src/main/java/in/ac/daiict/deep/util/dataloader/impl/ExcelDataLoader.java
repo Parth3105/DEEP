@@ -1,4 +1,4 @@
-package in.ac.daiict.deep.utility.dataloader.impl;
+package in.ac.daiict.deep.util.dataloader.impl;
 
 import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.dto.CourseDto;
@@ -10,12 +10,12 @@ import in.ac.daiict.deep.entity.CoursePref;
 import in.ac.daiict.deep.entity.SlotPref;
 import in.ac.daiict.deep.service.AllocationResultService;
 import in.ac.daiict.deep.service.CourseService;
-import in.ac.daiict.deep.utility.Response;
-import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
-import in.ac.daiict.deep.utility.allocation.model.AllocationStudent;
-import in.ac.daiict.deep.utility.allocation.model.CourseOffer;
-import in.ac.daiict.deep.utility.dataloader.DataLoader;
-import in.ac.daiict.deep.utility.dataloader.headers.*;
+import in.ac.daiict.deep.dto.ResponseDto;
+import in.ac.daiict.deep.util.allocation.model.AllocationCourse;
+import in.ac.daiict.deep.util.allocation.model.AllocationStudent;
+import in.ac.daiict.deep.util.allocation.model.CourseOffer;
+import in.ac.daiict.deep.util.dataloader.DataLoader;
+import in.ac.daiict.deep.util.dataloader.headers.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -49,7 +49,7 @@ public class ExcelDataLoader implements DataLoader {
     /**
      * Load the STUDENT_DATA from the sheet.
      */
-    public Response getStudentData(InputStream studentData, List<StudentDto> studentDtos) {
+    public ResponseDto getStudentData(InputStream studentData, List<StudentDto> studentDtos) {
         XSSFWorkbook studentWorkbook = null;
         XSSFSheet studentSheet = null;
         try {
@@ -75,15 +75,15 @@ public class ExcelDataLoader implements DataLoader {
         try {
             studentWorkbook.close();
         } catch (IOException e) {
-            return new Response(ResponseStatus.OK, "Student Data Saved Successfully!");
+            return new ResponseDto(ResponseStatus.OK, "Student Data Saved Successfully!");
         }
-        return new Response(ResponseStatus.OK, "Student Data Saved Successfully!");
+        return new ResponseDto(ResponseStatus.OK, "Student Data Saved Successfully!");
     }
 
     /**
      * Load the COURSE_DATA from the sheet.
      */
-    public Response getCourseData(InputStream courseData, List<CourseDto> courseDtos) {
+    public ResponseDto getCourseData(InputStream courseData, List<CourseDto> courseDtos) {
         XSSFWorkbook courseWorkbook;
         XSSFSheet courseSheet;
         try {
@@ -108,15 +108,15 @@ public class ExcelDataLoader implements DataLoader {
         try {
             courseWorkbook.close();
         } catch (IOException e) {
-            return new Response(ResponseStatus.OK, "Student Data Saved Successfully!");
+            return new ResponseDto(ResponseStatus.OK, "Student Data Saved Successfully!");
         }
-        return new Response(ResponseStatus.OK, "Course Data Saved Successfully!");
+        return new ResponseDto(ResponseStatus.OK, "Course Data Saved Successfully!");
     }
 
     /**
      * Load the institute-requirements from the sheet.
      */
-    public Response getInstituteRequirements(InputStream instReqData, List<InstituteReqDto> instituteReqDtos) {
+    public ResponseDto getInstituteRequirements(InputStream instReqData, List<InstituteReqDto> instituteReqDtos) {
         XSSFWorkbook instReqWorkbook;
         XSSFSheet instReqSheet;
         try {
@@ -141,15 +141,15 @@ public class ExcelDataLoader implements DataLoader {
         try {
             instReqWorkbook.close();
         } catch (IOException e) {
-            return new Response(ResponseStatus.OK, "Student Data Saved Successfully!");
+            return new ResponseDto(ResponseStatus.OK, "Student Data Saved Successfully!");
         }
-        return new Response(ResponseStatus.OK, "Requirements Saved Successfully!");
+        return new ResponseDto(ResponseStatus.OK, "Requirements Saved Successfully!");
     }
 
     /**
      * Load the course-offering Data from the sheet.
      */
-    public Response getCourseForProgram(InputStream offerData, List<CourseOfferingDto> courseOfferingDtos) {
+    public ResponseDto getCourseForProgram(InputStream offerData, List<CourseOfferingDto> courseOfferingDtos) {
         XSSFWorkbook offerWorkbook;
         XSSFSheet offerSheet;
         try {
@@ -172,16 +172,16 @@ public class ExcelDataLoader implements DataLoader {
 
             if (!courseService.isPresent(courseID)) {
                 courseOfferingDtos.clear();
-                return new Response(ResponseStatus.BAD_REQUEST, "Error: Some entries refer to non-existing course in course-offerings. Please verify your data.");
+                return new ResponseDto(ResponseStatus.BAD_REQUEST, "Error: Some entries refer to non-existing course in course-offerings. Please verify your data.");
             }
             courseOfferingDtos.add(new CourseOfferingDto(program, courseID, category, semester, seats));
         }
         try {
             offerWorkbook.close();
         } catch (IOException e) {
-            return new Response(ResponseStatus.OK, "Student Data Saved Successfully!");
+            return new ResponseDto(ResponseStatus.OK, "Student Data Saved Successfully!");
         }
-        return new Response(ResponseStatus.OK, "Course Offerings Data Saved Successfully!");
+        return new ResponseDto(ResponseStatus.OK, "Course Offerings Data Saved Successfully!");
     }
 
     @Override

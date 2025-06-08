@@ -5,8 +5,8 @@ import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.entity.InstituteReq;
 import in.ac.daiict.deep.repository.InstituteReqRepo;
 import in.ac.daiict.deep.service.InstituteReqService;
-import in.ac.daiict.deep.utility.dataloader.DataLoader;
-import in.ac.daiict.deep.utility.Response;
+import in.ac.daiict.deep.util.dataloader.DataLoader;
+import in.ac.daiict.deep.dto.ResponseDto;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -24,15 +24,15 @@ public class InstituteReqServiceImpl implements InstituteReqService {
     private DataLoader dataLoader;
 
     @Override
-    public Response insertAll(byte[] instituteReqData) {
+    public ResponseDto insertAll(byte[] instituteReqData) {
         deleteAll();
         List<InstituteReqDto> instituteReqDtos=new ArrayList<>();
-        Response status=dataLoader.getInstituteRequirements(new ByteArrayInputStream(instituteReqData),instituteReqDtos);
+        ResponseDto status=dataLoader.getInstituteRequirements(new ByteArrayInputStream(instituteReqData),instituteReqDtos);
         if(status.getStatus()!= ResponseStatus.OK) return status;
         // TypeToken helps retain generic of list
         List<InstituteReq> instituteReqs=modelMapper.map(instituteReqDtos,new TypeToken<List<InstituteReq>>(){}.getType());
         instituteReqRepo.saveAll(instituteReqs);
-        return new Response(ResponseStatus.OK,"Data Inserted Successfully!");
+        return new ResponseDto(ResponseStatus.OK,"Data Inserted Successfully!");
     }
 
     @Override

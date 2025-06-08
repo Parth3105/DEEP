@@ -1,16 +1,16 @@
-package in.ac.daiict.deep.utility.allocation;
+package in.ac.daiict.deep.util.allocation;
 
 import in.ac.daiict.deep.constant.downloads.AllocationReportNames;
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.entity.AllocationReport;
 import in.ac.daiict.deep.service.AllocationReportService;
-import in.ac.daiict.deep.utility.Response;
-import in.ac.daiict.deep.utility.allocation.model.AllocationCourse;
-import in.ac.daiict.deep.utility.allocation.model.AllocationStudent;
-import in.ac.daiict.deep.utility.allocation.model.CourseOffer;
-import in.ac.daiict.deep.utility.allocation.model.InstituteRequirement;
-import in.ac.daiict.deep.utility.dataloader.DataLoader;
+import in.ac.daiict.deep.dto.ResponseDto;
+import in.ac.daiict.deep.util.allocation.model.AllocationCourse;
+import in.ac.daiict.deep.util.allocation.model.AllocationStudent;
+import in.ac.daiict.deep.util.allocation.model.CourseOffer;
+import in.ac.daiict.deep.util.allocation.model.InstituteRequirement;
+import in.ac.daiict.deep.util.dataloader.DataLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,7 +44,7 @@ public class AllocationSystem {
         this.allocationReportService = allocationReportService;
     }
 
-    public Response initiateAllocation(int semester, long[] unmetReqCnt){
+    public ResponseDto initiateAllocation(int semester, long[] unmetReqCnt){
         this.semester=semester;
         maxRequirement = new int[1];
         students=allocationDataLoader.getStudentData(semester,maxRequirement);
@@ -63,10 +63,10 @@ public class AllocationSystem {
         });
         pendingRequirements=new ArrayList<>();
 
-        if(students==null) return new Response(ResponseStatus.BAD_REQUEST,ResponseMessage.STUDENT_DATA_NOT_FOUND);
-        else if(courses==null) return new Response(ResponseStatus.BAD_REQUEST,ResponseMessage.COURSE_DATA_NOT_FOUND);
-        else if(openFor==null) return new Response(ResponseStatus.BAD_REQUEST,ResponseMessage.COURSE_OFFERS_NOT_FOUND);
-        Response response=allocationInPhase(unmetReqCnt);
+        if(students==null) return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.STUDENT_DATA_NOT_FOUND);
+        else if(courses==null) return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.COURSE_DATA_NOT_FOUND);
+        else if(openFor==null) return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.COURSE_OFFERS_NOT_FOUND);
+        ResponseDto response=allocationInPhase(unmetReqCnt);
         saveOutput();
         return response;
     }
@@ -86,9 +86,9 @@ public class AllocationSystem {
      * First phase: where no courses are allocated to students. This phase takes care of allocation of courses according to the institute requirements.
      * Second phase: where institute requirements are fulfilled and extra/overload courses are allocated according to the student requirements, if any.
      */
-    private Response allocationInPhase(long[] unmetReqCnt) {
+    private ResponseDto allocationInPhase(long[] unmetReqCnt) {
         // Initialize the setup to load data
-        if(students==null || openFor==null || instituteRequirements==null) new Response(ResponseStatus.BAD_REQUEST,"Error: No Student Found");
+        if(students==null || openFor==null || instituteRequirements==null) new ResponseDto(ResponseStatus.BAD_REQUEST,"Error: No Student Found");
         allocationPhase(true);
         System.out.println("--------------------------------------------------------------------------------");
         System.out.println("Phase-1 finished");
@@ -104,7 +104,7 @@ public class AllocationSystem {
         System.out.println("All Students allocated? " + isStudentReqFulfilled(false, unmetReqCnt));
         System.out.println("Not allocated in phase-2: " + unmetReqCnt[0]);
         System.out.println("--------------------------------------------------------------------------------");
-        return new Response(ResponseStatus.OK, ResponseMessage.SUCCESS_STATUS);
+        return new ResponseDto(ResponseStatus.OK, ResponseMessage.SUCCESS_STATUS);
     }
 
     /**

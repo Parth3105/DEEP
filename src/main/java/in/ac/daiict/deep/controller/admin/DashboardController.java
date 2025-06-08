@@ -10,13 +10,4 @@ import org.springframework.web.bind.annotation.GetMapping;
 @AllArgsConstructor
 public class DashboardController {
 
-    /**
-     * only for current testing purpose.
-     * @return admin dashboard
-     */
-    @GetMapping("/")
-    public String test(){
-        return "redirect:"+AdminEndpoint.DASHBOARD;
-    }
-
 }

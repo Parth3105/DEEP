@@ -11,7 +11,7 @@ import in.ac.daiict.deep.entity.SlotPref;
 import in.ac.daiict.deep.entity.Student;
 import in.ac.daiict.deep.entity.StudentReq;
 import in.ac.daiict.deep.service.*;
-import in.ac.daiict.deep.utility.Response;
+import in.ac.daiict.deep.dto.ResponseDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,7 +39,7 @@ public class EnrollmentController {
         Student student = studentService.fetchStudentData(studentId);
         if (student == null) {
             // not found student.
-            model.addAttribute("renderResponse", new Response(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
+            model.addAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
             return "redirect:"+StudentEndpoint.HOME_PAGE;
         }
         model.addAttribute("semester", student.getSemester());

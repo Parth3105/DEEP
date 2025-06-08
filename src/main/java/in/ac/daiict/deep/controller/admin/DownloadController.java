@@ -11,7 +11,7 @@ import in.ac.daiict.deep.entity.AllocationReport;
 import in.ac.daiict.deep.entity.Upload;
 import in.ac.daiict.deep.service.AllocationReportService;
 import in.ac.daiict.deep.service.UploadService;
-import in.ac.daiict.deep.utility.Response;
+import in.ac.daiict.deep.dto.ResponseDto;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -50,11 +50,11 @@ public class DownloadController {
             }
         }
         if(contentType == null){
-            model.addAttribute("downloadResponse",new Response(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+            model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
             return;
         }
         AllocationReport allocationReport=allocationReportService.fetchReport(downloadFilename,semester);
-        if(allocationReport==null) model.addAttribute("downloadResponse",new Response(ResponseStatus.NOT_FOUND, ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND));
+        if(allocationReport==null) model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND));
         else {
             httpServletResponse.setContentType(contentType);
             httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
@@ -62,7 +62,7 @@ public class DownloadController {
                 httpServletResponse.getOutputStream().write(allocationReport.getFile());
                 httpServletResponse.getOutputStream().flush();
             } catch (IOException e) {
-                model.addAttribute("downloadResponse",new Response(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+                model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
             }
         }
     }
@@ -80,11 +80,11 @@ public class DownloadController {
             }
         }
         if(contentType == null){
-            model.addAttribute("downloadResponse",new Response(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+            model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
             return;
         }
         Upload uploadData=uploadService.findFile(downloadFilename);
-        if(uploadData==null) model.addAttribute("downloadResponse",new Response(ResponseStatus.NOT_FOUND, ResponseMessage.UPLOAD_DATA_NOT_FOUND));
+        if(uploadData==null) model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.UPLOAD_DATA_NOT_FOUND));
         else {
             httpServletResponse.setContentType(contentType);
             httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
@@ -92,7 +92,7 @@ public class DownloadController {
                 httpServletResponse.getOutputStream().write(uploadData.getFile());
                 httpServletResponse.getOutputStream().flush();
             } catch (IOException e) {
-                model.addAttribute("downloadResponse",new Response(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
+                model.addAttribute("downloadResponse",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.DOWNLOADING_ERROR));
             }
         }
     }

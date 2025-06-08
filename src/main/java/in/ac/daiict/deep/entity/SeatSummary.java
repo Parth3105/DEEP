@@ -24,6 +24,6 @@ public class SeatSummary {
     private String program;
     @Id
     private int semester;
-    @Column
-    private int available_seats;
+    @Column(name = "available_seats")
+    private int availableSeats;
 }

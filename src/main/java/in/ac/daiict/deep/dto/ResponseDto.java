@@ -1,4 +1,4 @@
-package in.ac.daiict.deep.util;
+package in.ac.daiict.deep.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,17 +7,17 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Response {
+public class ResponseDto {
     private int status;
     private String message;
     private List<String> warnings;
 
-    public Response(int status, String message) {
+    public ResponseDto(int status, String message) {
         this.status = status;
         this.message = message;
     }
 
-    public Response(int status, List<String> warnings) {
+    public ResponseDto(int status, List<String> warnings) {
         this.status = status;
         this.warnings = warnings;
     }

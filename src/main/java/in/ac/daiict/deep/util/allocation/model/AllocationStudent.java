@@ -1,4 +1,4 @@
-package in.ac.daiict.deep.utility.allocation.model;
+package in.ac.daiict.deep.util.allocation.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
