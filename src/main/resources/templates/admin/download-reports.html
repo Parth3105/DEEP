@@ -15,7 +15,7 @@
      role="alert" tabindex="-1" aria-labelledby="hs-toast-solid-color-red-label"
      style="position: fixed !important;">
     <div id="hs-toast-solid-color-red-label"
-         class="flex p-4 gap-2 items-start bg-red-600 rounded-xl">
+         class="flex p-4 gap-2 items-start rounded-xl">
         <span id="toast-message"></span>
     </div>
 </div>
@@ -135,7 +135,7 @@
                         <form th:action="@{/download-reports}" method="get">
                             <input type="hidden" name="semester" class="result-semester-input" value="">
                             <input type="hidden" name="name" value="allocation-result">
-                            <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center"
+                            <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-not-allowed opacity-50"
                                     disabled>
                                 <img src="/admin/images/excel-file.svg" alt="Excel Icon" class="w-5 h-5 mr-2">
                                 Export to Excel
@@ -155,7 +155,7 @@
                         <form th:action="@{/download-reports}" method="get">
                             <input type="hidden" name="semester" class="result-semester-input" value="">
                             <input type="hidden" name="name" value="seat-summary">
-                            <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center"
+                            <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-not-allowed opacity-50"
                                     disabled>
                                 <img src="/admin/images/excel-file.svg" alt="Excel Icon" class="w-5 h-5 mr-2">
                                 Export to Excel
@@ -175,7 +175,7 @@
                         <form th:action="@{/download-reports}" method="get">
                             <input type="hidden" name="semester" class="result-semester-input" value="">
                             <input type="hidden" name="name" value="course-wise-allocation">
-                            <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] min-w-40 max-w-44 sm:max-w-auto text-white pr-3 py-2 rounded-lg font-medium flex justify-center items-center"
+                            <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] min-w-40 max-w-44 sm:max-w-auto text-white pr-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-not-allowed opacity-50"
                                     disabled>
                                 <img src="/admin/images/zip-file.svg" alt="Zip Icon" class="w-5 h-6 mr-2">
                                 Export to Zip
@@ -195,7 +195,7 @@
                         <form th:action="@{/download-reports}" method="get">
                             <input type="hidden" name="semester" class="result-semester-input" value="">
                             <input type="hidden" name="name" value="failure-log">
-                            <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] min-w-40 max-w-44 sm:max-w-auto text-white pr-3 py-2 rounded-lg font-medium flex justify-center items-center"
+                            <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] min-w-40 max-w-44 sm:max-w-auto text-white pr-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-not-allowed opacity-50"
                                     disabled>
                                 <img src="/admin/images/text-file.svg" alt="Text Icon" class="w-5 h-6 mr-2">
                                 Export to Text

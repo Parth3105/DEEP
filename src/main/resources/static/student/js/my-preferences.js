@@ -5,6 +5,54 @@ toggle.addEventListener('click', () => {
     menu.classList.toggle('hidden');
 });
 
+const categoryLabels = {
+    'ICTE': 'ICT Electives',
+    'TE': 'Technical Electives',
+    'SE': 'Science Electives',
+    'MNCE': 'MNCE Electives',
+    'OE': 'Open Electives',
+    'HSSE': 'Humanities and Social Sciences Electives'
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("requirements-container");
+
+    studentRequirements.forEach(req => {
+        const label = categoryLabels[req.category] || 'Other';
+        const courseCount = req.course_cnt;
+
+        // Outer div with class "flex"
+        const outerDiv = document.createElement("div");
+        outerDiv.className = "flex mb-1";
+
+        // Inner left div with label and colon
+        const leftDiv = document.createElement("div");
+        leftDiv.className = "flex justify-between";
+
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "w-46";
+        labelSpan.textContent = label;
+
+        const colonSpan = document.createElement("span");
+        colonSpan.className = "mr-3";
+        colonSpan.textContent = ":";
+
+        leftDiv.appendChild(labelSpan);
+        leftDiv.appendChild(colonSpan);
+
+        // Right span with course count
+        const countSpan = document.createElement("span");
+        countSpan.textContent = courseCount;
+
+        // Append both parts to outer div
+        outerDiv.appendChild(leftDiv);
+        outerDiv.appendChild(countSpan);
+
+        // Append to container
+        container.appendChild(outerDiv);
+    });
+});
+
 // Add interactivity for collapsible slots
 document.addEventListener('DOMContentLoaded', function() {
     const slots = document.querySelectorAll('[class*="bg-blue-200"]');

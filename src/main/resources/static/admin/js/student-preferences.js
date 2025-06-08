@@ -2,7 +2,7 @@
 const toggle = document.getElementById('menuToggle');
 const menu = document.getElementById('menu');
 toggle.addEventListener('click', () => {
-  menu.classList.toggle('hidden');
+    menu.classList.toggle('hidden');
 });
 
 // Toast Notification
@@ -70,7 +70,7 @@ function InitializeDownloadButtons(resultDownloadBtns) {
             btn.disabled = false;
         });
 
-        document.querySelectorAll('.result-semester-input').forEach(input => {
+        document.querySelectorAll('.semester-input').forEach(input => {
             input.value = selectedSemester;
         });
     }
@@ -153,16 +153,145 @@ function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle Input Data
-    const inputDownloadBtns = document.querySelectorAll('.input-download-btn');
-    HandleDownloadButtonClick(inputDownloadBtns, false);
-
     // Handle result files
-    const resultSemesterBtns = document.querySelectorAll('.result-semester-btn');
-    const resultDownloadBtns = document.querySelectorAll('.result-download-btn');
-    const resultSemesterInputs = document.querySelectorAll('.result-semester-input');
+    const resultSemesterBtns = document.querySelectorAll('.semester-btn');
+    const resultDownloadBtns = document.querySelectorAll('.download-btn');
+    const resultSemesterInputs = document.querySelectorAll('.semester-input');
 
     HandleSemesterSelection(resultSemesterBtns, resultDownloadBtns, resultSemesterInputs);
     InitializeDownloadButtons(resultDownloadBtns);
     HandleDownloadButtonClick(resultDownloadBtns);
+});
+
+if(renderResponse) {
+    printRenderResponse();
+}
+
+function printRenderResponse() {
+    if(renderResponse.status === 404)
+        showToast(renderResponse.message);
+    else
+        showToast("Internal Server Error! Please Contact support.")
+}
+
+function submitWithPath(event) {
+    event.preventDefault();
+    const sid = document.getElementById("studentId").value.trim();
+    if (sid) {
+        window.location.href = `/student-preferences/${encodeURIComponent(sid)}`;
+    }
+}
+
+const categoryLabels = {
+    'ICTE': 'ICT Electives',
+    'TE': 'Technical Electives',
+    'SE': 'Science Electives',
+    'MNCE': 'MNCE Electives',
+    'OE': 'Open Electives',
+    'HSSE': 'Humanities and Social Sciences Electives'
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("requirements-container");
+
+    if(!studentRequirements) return;
+    studentRequirements.forEach(req => {
+        const label = categoryLabels[req.category] || 'Other';
+        const courseCount = req.course_cnt;
+
+        // Outer div with class "flex"
+        const outerDiv = document.createElement("div");
+        outerDiv.className = "flex mb-1";
+
+        // Inner left div with label and colon
+        const leftDiv = document.createElement("div");
+        leftDiv.className = "flex justify-between";
+
+        const labelSpan = document.createElement("span");
+        labelSpan.className = "w-46";
+        labelSpan.textContent = label;
+
+        const colonSpan = document.createElement("span");
+        colonSpan.className = "mr-3";
+        colonSpan.textContent = ":";
+
+        leftDiv.appendChild(labelSpan);
+        leftDiv.appendChild(colonSpan);
+
+        // Right span with course count
+        const countSpan = document.createElement("span");
+        countSpan.textContent = courseCount;
+
+        // Append both parts to outer div
+        outerDiv.appendChild(leftDiv);
+        outerDiv.appendChild(countSpan);
+
+        // Append to container
+        container.appendChild(outerDiv);
+    });
+});
+
+// Add interactivity for collapsible slots
+document.addEventListener('DOMContentLoaded', function() {
+    const slots = document.querySelectorAll('[class*="bg-blue-200"]');
+
+    slots.forEach(slot => {
+        slot.addEventListener('click', function() {
+            const arrow = this.querySelector('img');
+            const content = this.nextElementSibling;
+            if (content && content.classList.contains('course-list')) {
+                this.classList.contains('rounded-b-xl') ? this.classList.remove('rounded-b-xl') : this.classList.add('rounded-b-xl');
+                content.style.display = content.style.display === 'none' ? 'block' : 'none';
+                arrow.src = arrow.src.includes('close.svg') ? '/student/images/open.svg' : '/student/images/close.svg';
+            }
+        });
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const groupedContainer = document.getElementById('groupedCoursePrefs');
+
+    // Group by slot
+    if(!coursePreferences) return;
+    const grouped = {};
+    coursePreferences.forEach(cp => {
+        if (!grouped[cp.slot]) grouped[cp.slot] = [];
+        grouped[cp.slot].push(cp);
+    });
+
+    // Sort slot keys (if numeric)
+    const sortedSlots = Object.keys(grouped).sort((a, b) => parseInt(a) - parseInt(b));
+
+    // Render each slot group
+    sortedSlots.forEach(slot => {
+        const slotGroup = grouped[slot];
+
+        const wrapper = document.createElement('div');
+
+        wrapper.innerHTML = `
+            <div class="mb-4">
+                <div class="bg-blue-200 rounded-t-xl px-6 py-2 text-base font-bold text-gray-800 flex justify-between items-center cursor-pointer toggle-header">
+                    <span>Slot-${slot}</span>
+                    <img src="/student/images/close.svg" alt="Toggle" class="w-4 h-4 rotate-icon">
+                </div>
+                <div class="course-list bg-blue-50 px-6 py-3 text-sm md:text-base space-y-1 rounded-b-xl">
+                    ${slotGroup.map(cp => `
+                        <div class="border-b border-gray-200 pb-2">Preference - ${cp.pref} : ${cp.cname} (${cp.cid})</div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        groupedContainer.appendChild(wrapper);
+    });
+
+    // Toggle functionality
+    document.querySelectorAll('.toggle-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const courseList = header.nextElementSibling;
+            const icon = header.querySelector('.rotate-icon');
+            courseList.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        });
+    });
 });

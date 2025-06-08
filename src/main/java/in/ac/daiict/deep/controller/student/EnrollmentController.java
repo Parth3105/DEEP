@@ -34,7 +34,7 @@ public class EnrollmentController {
     private SlotPrefService slotPrefService;
 
     @GetMapping(StudentEndpoint.ENROLL)
-    public String renderEnrollmentForm(@CookieValue(name = "student_id", required = false, defaultValue = "202201174") String studentId, Model model) {
+    public String renderEnrollmentForm(@CookieValue(name = "student_id", required = false, defaultValue = "202201406") String studentId, Model model) {
         // Send the semester & program of students and institute requirements.
         Student student = studentService.fetchStudentData(studentId);
         if (student == null) {
@@ -58,7 +58,7 @@ public class EnrollmentController {
     }
 
     @PostMapping(StudentEndpoint.SUBMIT_PREFERENCE)
-    public String loadSubmittedPreferences(@CookieValue(name = "student_id", required = false, defaultValue = "202201174") String studentId, @RequestParam String studentRequirements, @RequestParam String coursePreferences, @RequestParam String slotPreferences){
+    public String loadSubmittedPreferences(@CookieValue(name = "student_id", required = false, defaultValue = "202201406") String studentId, @RequestParam String studentRequirements, @RequestParam String coursePreferences, @RequestParam String slotPreferences){
         System.out.println("Student-Requirements: "+studentRequirements);
         System.out.println("Course-Preferences: "+coursePreferences);
         System.out.println("Slot-Preferences: "+slotPreferences);

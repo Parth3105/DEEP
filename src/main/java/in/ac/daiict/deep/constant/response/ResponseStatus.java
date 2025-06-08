@@ -1,5 +1,5 @@
 package in.ac.daiict.deep.constant.response;
 
 public class ResponseStatus {
-    public static int OK=200, BAD_REQUEST=500, NOT_FOUND=404, WARNING=299, NO_CONTENT=204, INTERNAL_SERVER_ERROR=500;
+    public static int OK=200, BAD_REQUEST=400, NOT_FOUND=404, WARNING=299, NO_CONTENT=204, INTERNAL_SERVER_ERROR=500;
 }
