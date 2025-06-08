@@ -74,11 +74,12 @@ instituteRequirements.forEach(obj => {
 
     container.appendChild(div);
 
-    // 🟢 Attach listener after appending so input is in the DOM
+    // Attach listener after appending so input is in the DOM
     const input = div.querySelector(`input[name="${category}"]`);
     input.addEventListener("input", () => {
       values[category] = input.value.trim() || "0";
     });
+    console.log(values);
   }
 });
 
@@ -405,7 +406,9 @@ document.getElementById('confirmSubmit').addEventListener('click', function () {
   document.getElementById('confirmModal').classList.add('hidden');
   document.body.classList.remove('backdrop-blur-md', 'overflow-hidden');
 
+  console.log(values);
   const acad = getAcadReqToString(values);
+  console.log(acad);
   const course = getCoursePrefsToString(selectedCoursesBySlot);
   const slot = getSlotPrefsToString(collectPreferences());
 

@@ -57,34 +57,34 @@
                 <!-- File Input -->
                 <div class="relative">
                     <label
-                            for="fileInput-students"
+                            for="fileInput-student-data"
                             class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                     >
-                            <span id="fileLabel-students">
+                            <span id="fileLabel-student-data">
                                 <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB
                             </span>
                     </label>
                     <input
-                            id="fileInput-students"
+                            id="fileInput-student-data"
                             type="file"
                             name="file"
                             accept=".xlsx"
                             required
                             class="hidden"
-                            onchange="document.getElementById('fileLabel-students').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                            onchange="document.getElementById('fileLabel-student-data').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
                     />
                 </div>
 
                 <!-- Upload Button -->
                 <button
-                        onclick="HandleUpload('students')"
+                        onclick="HandleUpload('student-data')"
                         class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition mt-4"
                 >
                     Upload .xlsx File
                 </button>
 
                 <!-- Response Message -->
-                <p id="uploadMessage-students" class="mt-4 text-center text-blue-600 font-medium"></p>
+                <p id="uploadMessage-student-data" class="mt-4 text-center text-blue-600 font-medium"></p>
             </div>
 
             <!-- Institute Requirements -->
@@ -95,34 +95,34 @@
                 <!-- File Input -->
                 <div class="relative">
                     <label
-                            for="fileInput-instituteRequirements"
+                            for="fileInput-institute-requirements"
                             class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                     >
-                            <span id="fileLabel-instituteRequirements">
+                            <span id="fileLabel-institute-requirements">
                                 <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB
                             </span>
                     </label>
                     <input
-                            id="fileInput-instituteRequirements"
+                            id="fileInput-institute-requirements"
                             type="file"
                             name="file"
                             accept=".xlsx"
                             required
                             class="hidden"
-                            onchange="document.getElementById('fileLabel-instituteRequirements').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                            onchange="document.getElementById('fileLabel-institute-requirements').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
                     />
                 </div>
 
                 <!-- Upload Button -->
                 <button
-                        onclick="HandleUpload('instituteRequirements')"
+                        onclick="HandleUpload('institute-requirements')"
                         class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition mt-4"
                 >
                     Upload .xlsx File
                 </button>
 
                 <!-- Response Message -->
-                <p id="uploadMessage-instituteRequirements" class="mt-4 text-center text-blue-600 font-medium"></p>
+                <p id="uploadMessage-institute-requirements" class="mt-4 text-center text-blue-600 font-medium"></p>
             </div>
 
             <!-- Course Data -->
@@ -133,34 +133,34 @@
                 <!-- File Input -->
                 <div class="relative">
                     <label
-                            for="fileInput-courses"
+                            for="fileInput-course-data"
                             class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                     >
-                            <span id="fileLabel-courses">
+                            <span id="fileLabel-course-data">
                                 <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB
                             </span>
                     </label>
                     <input
-                            id="fileInput-courses"
+                            id="fileInput-course-data"
                             type="file"
                             name="file"
                             accept=".xlsx"
                             required
                             class="hidden"
-                            onchange="document.getElementById('fileLabel-courses').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                            onchange="document.getElementById('fileLabel-course-data').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
                     />
                 </div>
 
                 <!-- Upload Button -->
                 <button
-                        onclick="HandleUpload('courses')"
+                        onclick="HandleUpload('course-data')"
                         class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition mt-4"
                 >
                     Upload .xlsx File
                 </button>
 
                 <!-- Response Message -->
-                <p id="uploadMessage-courses" class="mt-4 text-center text-blue-600 font-medium"></p>
+                <p id="uploadMessage-course-data" class="mt-4 text-center text-blue-600 font-medium"></p>
             </div>
 
             <!-- Course Offerings -->
@@ -171,34 +171,34 @@
                 <!-- File Input -->
                 <div class="relative">
                     <label
-                            for="fileInput-offerings"
+                            for="fileInput-course-offerings"
                             class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                     >
-                            <span id="fileLabel-offerings">
+                            <span id="fileLabel-course-offerings">
                                 <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB
                             </span>
                     </label>
                     <input
-                            id="fileInput-offerings"
+                            id="fileInput-course-offerings"
                             type="file"
                             name="file"
                             accept=".xlsx"
                             required
                             class="hidden"
-                            onchange="document.getElementById('fileLabel-offerings').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                            onchange="document.getElementById('fileLabel-course-offerings').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
                     />
                 </div>
 
                 <!-- Upload Button -->
                 <button
-                        onclick="HandleUpload('offerings')"
+                        onclick="HandleUpload('course-offerings')"
                         class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition mt-4"
                 >
                     Upload .xlsx File
                 </button>
 
                 <!-- Response Message -->
-                <p id="uploadMessage-offerings" class="mt-4 text-center text-blue-600 font-medium"></p>
+                <p id="uploadMessage-course-offerings" class="mt-4 text-center text-blue-600 font-medium"></p>
             </div>
         </div>
 
