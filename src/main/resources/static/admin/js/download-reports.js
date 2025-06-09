@@ -99,8 +99,8 @@ function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
             const name = form.querySelector('input[name="name"]').value;
             const semester = checkforSemester ? selectedSemester : '';
             const downloadUrl = checkforSemester
-                ? `/download-reports/${semester}/${name}`
-                : `/download-reports/${name}`;
+                ? `/admin/download-reports/${semester}/${name}`
+                : `/admin/download-reports/${name}`;
 
             // Show loading state
             const originalText = this.innerHTML;

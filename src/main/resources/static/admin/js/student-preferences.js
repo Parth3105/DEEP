@@ -85,22 +85,21 @@ function printErrorMessage(status, errorText) {
         showToast("Download failed due to an Unknown error! Please contact support.");
 }
 
-function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
+function HandleDownloadButtonClick(downloadBtns) {
     downloadBtns.forEach(btn => {
         btn.addEventListener('click', async function (e) {
             e.preventDefault();
 
-            if (checkforSemester && !selectedSemester) {
+            if (!selectedSemester) {
                 showToast('Please select a semester first!');
                 return;
             }
 
             const form = this.closest('form');
             const name = form.querySelector('input[name="name"]').value;
-            const semester = checkforSemester ? selectedSemester : '';
-            const downloadUrl = checkforSemester
-                ? `/download-reports/${semester}/${name}`
-                : `/download-reports/${name}`;
+            const semester = selectedSemester;
+            const downloadUrl = `/admin/student-preferences/download/${semester}`;
+            console.log(downloadUrl);
 
             // Show loading state
             const originalText = this.innerHTML;
@@ -178,7 +177,7 @@ function submitWithPath(event) {
     event.preventDefault();
     const sid = document.getElementById("studentId").value.trim();
     if (sid) {
-        window.location.href = `/student-preferences/${encodeURIComponent(sid)}`;
+        window.location.href = `/admin/student-preferences/${encodeURIComponent(sid)}`;
     }
 }
 

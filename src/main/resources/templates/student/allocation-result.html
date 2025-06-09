@@ -75,11 +75,11 @@
             </thead>
             <tbody>
             <tr th:each="course : ${allocationResult}" class="border-b border-gray-200 hover:bg-gray-50">
-              <td class="px-4 py-3 font-medium" th:text="${course.cid}">CSXXX</td>
-              <td class="px-4 py-3" th:text="${course.cname}">Course Name</td>
-              <td class="px-4 py-3" th:text="${studentInfo.program}">Program</td>
-              <td class="px-4 py-3" th:text="${course.category}">Category</td>
-              <td class="px-4 py-3" th:text="${course.credits}">Credits</td>
+              <td class="px-4 py-3 font-medium" th:text="${course.cid}"></td>
+              <td class="px-4 py-3" th:text="${course.cname}"></td>
+              <td class="px-4 py-3" th:text="${studentInfo.program}"></td>
+              <td class="px-4 py-3" th:text="${course.category}"></td>
+              <td class="px-4 py-3" th:text="${course.credits}"></td>
             </tr>
             </tbody>
           </table>

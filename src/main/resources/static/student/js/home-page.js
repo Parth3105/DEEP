@@ -6,5 +6,5 @@ toggle.addEventListener('click', () => {
 });
 
 function HandleRoute(url) {
-    window.location.href = url;
+    window.location.href = `/student/${url}`;
 }

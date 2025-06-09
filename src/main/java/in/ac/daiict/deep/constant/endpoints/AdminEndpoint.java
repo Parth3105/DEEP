@@ -5,6 +5,7 @@ public class AdminEndpoint {
     public static final String DASHBOARD=ADMIN_BASE+"/admin-dashboard";
     public static final String CREATE_ALLOCATION_INSTANCE=ADMIN_BASE+"/create-instance";
     public static final String UPDATE_INSTANCE=ADMIN_BASE+"/update-instance";
+    public static final String UPLOAD_FILE=ADMIN_BASE+"/upload/{type}";
     public static final String SUBMIT_DATA=ADMIN_BASE+"/submit-data";
     public static final String RUN_ALLOCATION=ADMIN_BASE+"/run-allocation";
     public static final String EXECUTE_ALLOCATION=ADMIN_BASE+"/execute-allocation/{semester}";

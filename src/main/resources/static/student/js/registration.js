@@ -257,7 +257,7 @@ function addCourseToSelected(cid, slot, name, program, category, credits) {
     }
 
     if (selectedCoursesBySlot[slot].find(course => course.cid === cid)) {
-        alert('Course already selected in this slot!');
+        showToast('Course already selected in this slot!', 'warning');
         return;
     }
 

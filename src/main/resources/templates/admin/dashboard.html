@@ -114,7 +114,7 @@
           <h2 class="text-2xl font-bold text-[#1E3C72] mb-1 text-center">Create Allocation Instance</h2>
           <p class="text-sm text-gray-600 text-center mb-6">Fill in the details to create a new Instance</p>
 
-          <form th:action="@{/create-instance}" method="post" id="createForm" class="space-y-4">
+          <form th:action="@{/admin/create-instance}" method="post" id="createForm" class="space-y-4">
           <!-- Season -->
             <div>
               <label class="block text-sm font-medium text-[#1E3C72] mb-1">Season</label>
@@ -163,21 +163,21 @@
       </div>
 
       <!-- View Preferences -->
-      <div onclick="HandleRoute('/student-preferences')" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+      <div onclick="HandleRoute('student-preferences')" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
         <img src="/admin/images/view-preferences.svg" alt="view icon" class="w-13 h-13 mb-2 mx-auto group-hover:scale-101 transition-transform duration-300">
         <h3 class="text-lg font-bold text-[#1E3C72]">View Preferences</h3>
         <p class="text-xs text-gray-600">View submitted student preferences</p>
       </div>
 
       <!-- View Allocation Results -->
-      <div onclick="HandleRoute('/allocation-results')" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+      <div onclick="HandleRoute('allocation-results')" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
         <img src="/admin/images/view-allocation-result.svg" alt="view icon" class="w-13 h-13 mb-2 mx-auto transition-transform duration-300">
         <h3 class="text-lg font-bold text-[#1E3C72]">View Allocation Results</h3>
         <p class="text-xs text-gray-600">Review or publish results</p>
       </div>
 
       <!-- Update Instance -->
-      <button id="updateInstanceBtn" onclick="HandleRoute('/update-instance')"
+      <button id="updateInstanceBtn" onclick="HandleRoute('update-instance')"
               class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg transition-all duration-300 transform cursor-pointer group hover:shadow-xl hover:scale-101">
         <img src="/admin/images/update-instance.svg" alt="update icon" class="w-10 h-10 mb-4 mx-auto transition-transform duration-300">
         <h3 class="text-lg font-bold text-[#1E3C72]">Update Instance</h3>
@@ -185,14 +185,14 @@
       </button>
 
       <!-- Run Allocation -->
-      <button onclick="HandleRoute('/run-allocation')" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+      <button onclick="HandleRoute('run-allocation')" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
         <img src="/admin/images/run-allocation.svg" alt="run icon" class="w-11 h-11 mb-4 mx-auto transition-transform duration-300">
         <h3 class="text-lg font-bold text-[#1E3C72]">Run Allocation</h3>
         <p class="text-xs text-gray-600">Trigger the backend allocation program</p>
       </button>
 
       <!-- Download Reports -->
-      <div onclick="HandleRoute('/download-reports')" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
+      <div onclick="HandleRoute('download-reports')" class="bg-[#B8D7FF] rounded-2xl px-6 py-10 text-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-101 cursor-pointer group">
         <img src="/admin/images/download-reports.svg" alt="download icon" class="w-11 h-11 mb-4 mx-auto transition-transform duration-300">
         <h3 class="text-lg font-bold text-[#1E3C72]">Download Reports</h3>
         <p class="text-xs text-gray-600">Export Excel reports of preferences/results</p>

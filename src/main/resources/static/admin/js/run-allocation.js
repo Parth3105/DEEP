@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', function () {
         const semester = hiddenInput.value;
-        this.setAttribute('action', `/execute-allocation/${semester}`);
+        this.setAttribute('action', `/admin/execute-allocation/${semester}`);
     });
 
     // Initial summary

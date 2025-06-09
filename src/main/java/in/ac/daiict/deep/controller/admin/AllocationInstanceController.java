@@ -71,7 +71,7 @@ public class AllocationInstanceController {
         return AdminTemplate.UPDATE_INSTANCE_PAGE;
     }
 
-    @PostMapping("/upload/{type}")
+    @PostMapping(AdminEndpoint.UPLOAD_FILE)
     @ResponseBody
     public void loadFile(@RequestParam("file") MultipartFile file, @PathVariable("type") String name){
         String[] names={UploadConstants.STUDENT_DATA,UploadConstants.COURSE_DATA,UploadConstants.INST_REQ_DATA,UploadConstants.OFFERS_DATA};

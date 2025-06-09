@@ -26,7 +26,7 @@ const HandleUpload = async (type) => {
     formData.append('file', file);
 
     try {
-        const response = await fetch(`/upload/${type}`, {
+        const response = await fetch(`/admin/upload/${type}`, {
             method: 'POST',
             body: formData
         });

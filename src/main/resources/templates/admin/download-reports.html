@@ -52,7 +52,7 @@
                                 <p class="text-xs text-gray-500">Export Course Data in Excel Format</p>
                             </div>
                         </div>
-                        <form th:action="@{/download-reports}" method="get">
+                        <form th:action="@{/admin/download-reports}" method="get">
                             <input type="hidden" name="name" value="course-data">
                             <button type="submit" class="input-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-pointer">
                                 <img src="/admin/images/excel-file.svg" alt="Excel Icon" class="w-5 h-5 mr-2">
@@ -70,7 +70,7 @@
                                 <p class="text-xs text-gray-500">Export Institute Requirements in Excel Format</p>
                             </div>
                         </div>
-                        <form th:action="@{/download-reports}" method="get">
+                        <form th:action="@{/admin/download-reports}" method="get">
                             <input type="hidden" name="name" value="institute-requirements">
                             <button type="submit" class="input-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-pointer">
                                 <img src="/admin/images/excel-file.svg" alt="Excel Icon" class="w-5 h-5 mr-2">
@@ -88,7 +88,7 @@
                                 <p class="text-xs text-gray-500">Export Course Offerings Details in Excel Format</p>
                             </div>
                         </div>
-                        <form th:action="@{/download-reports}" method="get">
+                        <form th:action="@{/admin/download-reports}" method="get">
                             <input type="hidden" name="name" value="course-offerings">
                             <button type="submit" class="input-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-pointer">
                                 <img src="/admin/images/excel-file.svg" alt="Excel Icon" class="w-5 h-5 mr-2">
@@ -132,7 +132,7 @@
                                 <p class="text-xs text-gray-500">Export Student-Course allocations</p>
                             </div>
                         </div>
-                        <form th:action="@{/download-reports}" method="get">
+                        <form th:action="@{/admin/download-reports}" method="get">
                             <input type="hidden" name="semester" class="result-semester-input" value="">
                             <input type="hidden" name="name" value="allocation-result">
                             <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-not-allowed opacity-50"
@@ -152,7 +152,7 @@
                                 <p class="text-xs text-gray-500">Export available seats after allocations</p>
                             </div>
                         </div>
-                        <form th:action="@{/download-reports}" method="get">
+                        <form th:action="@{/admin/download-reports}" method="get">
                             <input type="hidden" name="semester" class="result-semester-input" value="">
                             <input type="hidden" name="name" value="seat-summary">
                             <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-not-allowed opacity-50"
@@ -172,7 +172,7 @@
                                 <p class="text-xs text-gray-500">Export Data of Students in each course</p>
                             </div>
                         </div>
-                        <form th:action="@{/download-reports}" method="get">
+                        <form th:action="@{/admin/download-reports}" method="get">
                             <input type="hidden" name="semester" class="result-semester-input" value="">
                             <input type="hidden" name="name" value="course-wise-allocation">
                             <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] min-w-40 max-w-44 sm:max-w-auto text-white pr-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-not-allowed opacity-50"
@@ -192,7 +192,7 @@
                                 <p class="text-xs text-gray-500">Export Allocation logs of students with unmet elective requirements</p>
                             </div>
                         </div>
-                        <form th:action="@{/download-reports}" method="get">
+                        <form th:action="@{/admin/download-reports}" method="get">
                             <input type="hidden" name="semester" class="result-semester-input" value="">
                             <input type="hidden" name="name" value="failure-log">
                             <button type="submit" class="result-download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] min-w-40 max-w-44 sm:max-w-auto text-white pr-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-not-allowed opacity-50"
