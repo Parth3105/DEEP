@@ -20,7 +20,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,7 +51,6 @@ public class PreferenceAndResultController {
     public String loadSubmittedPreferences(@PathVariable("sid") String studentId, Model model, RedirectAttributes redirectAttributes) {
         return fetchPreferenceSummary(studentId, model, 'A', redirectAttributes);
     }
-
     @GetMapping(AdminEndpoint.DOWNLOAD_STUDENT_PREFERENCES)
     public void downloadStudentPreferences(HttpServletResponse httpServletResponse, Model model, @PathVariable("semester") int semester) {
         List<CoursePref> coursePrefList = coursePrefService.fetchCoursePrefBySemesterSortedBySlotAndPref(semester);
