@@ -2,12 +2,12 @@ package in.ac.daiict.deep.service;
 
 import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.entity.InstituteReq;
-import in.ac.daiict.deep.utility.Response;
+import in.ac.daiict.deep.dto.ResponseDto;
 
 import java.util.List;
 
 public interface InstituteReqService {
-    Response insertAll(byte[] instituteData);
+    ResponseDto insertAll(byte[] instituteData);
     List<InstituteReq> fetchAllInstituteReqs();
     List<InstituteReqDto> fetchAllInstituteReqDtos();
     List<InstituteReq> fetchInstituteReqBySemester(int semester);

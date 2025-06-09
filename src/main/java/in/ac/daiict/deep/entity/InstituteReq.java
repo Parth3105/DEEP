@@ -24,6 +24,6 @@ public class InstituteReq {
     @Id
     @Column(length = 10)
     private String category;
-    @Column(nullable = false)
-    private int course_cnt;
+    @Column(name = "course_cnt", nullable = false)
+    private int courseCnt;
 }

@@ -10,7 +10,7 @@ import in.ac.daiict.deep.constant.template.AdminTemplate;
 import in.ac.daiict.deep.entity.Upload;
 import in.ac.daiict.deep.service.*;
 import in.ac.daiict.deep.config.DBConfig;
-import in.ac.daiict.deep.utility.Response;
+import in.ac.daiict.deep.dto.ResponseDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -98,14 +98,14 @@ public class AllocationInstanceController {
         }
         */
 
-        AtomicReference<Response> errorStatus=new AtomicReference<>(null);
-        AtomicReference<Response> warningStatus=new AtomicReference<>(null);
+        AtomicReference<ResponseDto> errorStatus=new AtomicReference<>(null);
+        AtomicReference<ResponseDto> warningStatus=new AtomicReference<>(null);
         AtomicInteger cnt=new AtomicInteger(0);
         Thread u1=new Thread(new Runnable() {
             @Override
             public void run() {
                 if(uploads.containsKey(UploadConstants.STUDENT_DATA)){
-                    Response status=studentService.insertAll(uploads.get(UploadConstants.STUDENT_DATA).getFile());
+                    ResponseDto status=studentService.insertAll(uploads.get(UploadConstants.STUDENT_DATA).getFile());
                     if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else cnt.set(cnt.get()+1);
                 }
@@ -118,7 +118,7 @@ public class AllocationInstanceController {
                 boolean isCoursesUploaded=false;
                 boolean isOffersUploaded=false;
                 if(uploads.containsKey(UploadConstants.COURSE_DATA)){
-                    Response status=courseService.insertAll(uploads.get(UploadConstants.COURSE_DATA).getFile());
+                    ResponseDto status=courseService.insertAll(uploads.get(UploadConstants.COURSE_DATA).getFile());
                     if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else {
                         cnt.set(cnt.get() + 1);
@@ -126,7 +126,7 @@ public class AllocationInstanceController {
                     }
                 }
                 if(uploads.containsKey(UploadConstants.OFFERS_DATA)){
-                    Response status=courseOfferingService.insertAll(uploads.get(UploadConstants.OFFERS_DATA).getFile());
+                    ResponseDto status=courseOfferingService.insertAll(uploads.get(UploadConstants.OFFERS_DATA).getFile());
                     if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else {
                         cnt.set(cnt.get() + 1);
@@ -134,14 +134,14 @@ public class AllocationInstanceController {
                         isOffersUploaded = true;
                     }
                 }
-                if(isCoursesUploaded && !isOffersUploaded && offersUploadedOnce) warningStatus.set(new Response(ResponseStatus.WARNING, List.of(ResponseMessage.UPLOAD_OFFERS)));
+                if(isCoursesUploaded && !isOffersUploaded && offersUploadedOnce) warningStatus.set(new ResponseDto(ResponseStatus.WARNING, List.of(ResponseMessage.UPLOAD_OFFERS)));
             }
         });
         Thread u3=new Thread(new Runnable() {
             @Override
             public void run() {
                 if(uploads.containsKey(UploadConstants.INST_REQ_DATA)){
-                    Response status=instituteReqService.insertAll(uploads.get(UploadConstants.INST_REQ_DATA).getFile());
+                    ResponseDto status=instituteReqService.insertAll(uploads.get(UploadConstants.INST_REQ_DATA).getFile());
                     if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else cnt.set(cnt.get()+1);
                 }
@@ -168,8 +168,8 @@ public class AllocationInstanceController {
             throw new RuntimeException(e);
         }
         if(cnt.get()==0){
-            Response warnings=warningStatus.get();
-            if(warnings==null) warnings=new Response(ResponseStatus.WARNING,new ArrayList<>());
+            ResponseDto warnings=warningStatus.get();
+            if(warnings==null) warnings=new ResponseDto(ResponseStatus.WARNING,new ArrayList<>());
             warnings.addWarning(ResponseMessage.NO_FILES_UPLOADED);
             warningStatus.set(warnings);
         }
@@ -177,7 +177,7 @@ public class AllocationInstanceController {
         else if(warningStatus.get()!=null) redirectAttributes.addFlashAttribute("uploadWarning",warningStatus.get());
         if(cnt.get()>0) {
             ResponseMessage.UPLOAD_COUNT=cnt.get();
-            redirectAttributes.addFlashAttribute("uploadSuccess", new Response(ResponseStatus.OK, ResponseMessage.getUploadSuccessMessage()));
+            redirectAttributes.addFlashAttribute("uploadSuccess", new ResponseDto(ResponseStatus.OK, ResponseMessage.getUploadSuccessMessage()));
         }
 
         return "redirect:"+AdminEndpoint.UPDATE_INSTANCE;
