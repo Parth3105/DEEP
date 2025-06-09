@@ -6,6 +6,7 @@ public class ResponseMessage {
     public static final String USERNAME_NOT_FOUND="Username Not Found";
     public static final String OTP_EXPIRED="OTP has expired!";
     public static final String OTP_INVALID="OTP is invalid!";
+    public static final String SESSION_EXPIRED="Session Expired!";
     public static final String INTERNAL_SERVER_ERROR="There's a temporary problem with the service. Please try again. If you continue to get this message, try again later.";
     public static final String USER_NOT_FOUND = "Your information is currently unavailable. Please try again later or contact support.";
     public static final String STUDENT_NOT_FOUND="Student information not found. Ensure the student is registered or data has been uploaded.";
