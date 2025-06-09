@@ -6,6 +6,7 @@ import in.ac.daiict.deep.entity.User;
 import in.ac.daiict.deep.repository.UserRepo;
 import in.ac.daiict.deep.service.UserService;
 import in.ac.daiict.deep.dto.ResponseDto;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
         return userRepo.findById(username).orElse(null);
     }
 
+    @Transactional
     @Override
     public ResponseDto resetPassword(String username, String password) {
         int status= userRepo.updatePassword(username,passwordEncoder.encode(password));

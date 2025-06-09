@@ -29,7 +29,7 @@ public class LoginController {
     }
 
     @PostMapping(CommonEndPoint.AUTHENTICATE)
-    public String authenticate(){
+    public String authenticate(){;
         return "";
     }
 
