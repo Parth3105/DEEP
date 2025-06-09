@@ -11,7 +11,7 @@ public class AdminEndpoint {
     public static final String DOWNLOAD_REPORTS=ADMIN_BASE+"/download-reports";
     public static final String DOWNLOAD_REPORT_SUBMIT =ADMIN_BASE+"/download-reports/{semester}/{name}";
     public static final String DOWNLOAD_UPLOADED_REPORT_SUBMIT=ADMIN_BASE+"/download-reports/{name}";
-    public static final String DOWNLOAD_STUDENT_PREFERENCES=ADMIN_BASE+"/student-preferences/download";
+    public static final String DOWNLOAD_STUDENT_PREFERENCES=ADMIN_BASE+"/student-preferences/download/{semester}";
     public static final String STUDENT_PREFERENCE=ADMIN_BASE+"/student-preferences";
     public static final String STUDENT_PREFERENCE_FILTER=ADMIN_BASE+"/student-preferences/{sid}";
     public static final String ALLOCATION_RESULTS=ADMIN_BASE+"/allocation-results";

@@ -23,5 +23,5 @@ public class InstituteReqDto {
     @Max(10)
     private int semester;
     @PositiveOrZero
-    private int course_cnt;
+    private int courseCnt;
 }

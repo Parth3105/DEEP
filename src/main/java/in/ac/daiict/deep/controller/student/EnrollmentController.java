@@ -10,12 +10,13 @@ import in.ac.daiict.deep.entity.CoursePref;
 import in.ac.daiict.deep.entity.SlotPref;
 import in.ac.daiict.deep.entity.Student;
 import in.ac.daiict.deep.entity.StudentReq;
+import in.ac.daiict.deep.security.auth.CustomUserDetails;
 import in.ac.daiict.deep.service.*;
 import in.ac.daiict.deep.dto.ResponseDto;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,9 +35,10 @@ public class EnrollmentController {
     private SlotPrefService slotPrefService;
 
     @GetMapping(StudentEndpoint.ENROLL)
-    public String renderEnrollmentForm(@CookieValue(name = "student_id", required = false, defaultValue = "202201406") String studentId, Model model) {
+    public String renderEnrollmentForm(String studentId, Model model) {
+        CustomUserDetails userDetails= (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         // Send the semester & program of students and institute requirements.
-        Student student = studentService.fetchStudentData(studentId);
+        Student student = studentService.fetchStudentData(userDetails.getUsername());
         if (student == null) {
             // not found student.
             model.addAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
@@ -58,11 +60,9 @@ public class EnrollmentController {
     }
 
     @PostMapping(StudentEndpoint.SUBMIT_PREFERENCE)
-    public String loadSubmittedPreferences(@CookieValue(name = "student_id", required = false, defaultValue = "202201406") String studentId, @RequestParam String studentRequirements, @RequestParam String coursePreferences, @RequestParam String slotPreferences){
-        System.out.println("Student-Requirements: "+studentRequirements);
-        System.out.println("Course-Preferences: "+coursePreferences);
-        System.out.println("Slot-Preferences: "+slotPreferences);
-
+    public String loadSubmittedPreferences(@RequestParam String studentRequirements, @RequestParam String coursePreferences, @RequestParam String slotPreferences){
+        CustomUserDetails userDetails= (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String studentId=userDetails.getUsername();
         Thread recordStudentRequirements=new Thread(new Runnable() {
             @Override
             public void run() {

@@ -20,7 +20,7 @@ public class StudentReqDto {
     @NotBlank
     private String category;
     @PositiveOrZero
-    private int course_cnt;
+    private int courseCnt;
 
     public StudentReqDto(String sid, String category) {
         this.sid = sid;

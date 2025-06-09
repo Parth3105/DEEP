@@ -27,9 +27,9 @@ public class DownloadController {
     private UploadService uploadService;
 
     @GetMapping(AdminEndpoint.DOWNLOAD_REPORT_SUBMIT)
-    public void downloadReport(HttpServletResponse httpServletResponse, @PathVariable("semester") int semester, @PathVariable("name") String name, Model model) throws IOException {
-        String contentType=null;
-        String downloadFilename=null;
+    public void downloadReport(HttpServletResponse httpServletResponse, @PathVariable("semester") int semester, @PathVariable("name") String name, Model model) {
+        String contentType = null;
+        String downloadFilename = null;
         switch (name) {
             case DownloadConstants.ALLOCATION_RESULTS -> {
                 contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -48,63 +48,61 @@ public class DownloadController {
                 downloadFilename = AllocationReportNames.COURSE_WISE_ALLOCATION;
             }
         }
-        if(contentType == null){
+        if (contentType == null) {
             httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
         }
-        AllocationReport allocationReport=allocationReportService.fetchReport(downloadFilename,semester);
-        if(allocationReport==null) {
-            httpServletResponse.setStatus(ResponseStatus.NOT_FOUND);
-            httpServletResponse.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-            httpServletResponse.setHeader("Pragma", "no-cache");
-            httpServletResponse.setDateHeader("Expires", 0);
-            httpServletResponse.setContentType("application/json");
-            httpServletResponse.getOutputStream().write(ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND.getBytes());
-        }
-        else {
-            httpServletResponse.setContentType(contentType);
-            httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
-            try {
+        AllocationReport allocationReport = allocationReportService.fetchReport(downloadFilename, semester);
+        try {
+            if (allocationReport == null) {
+                httpServletResponse.setStatus(ResponseStatus.NOT_FOUND);
+                httpServletResponse.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+                httpServletResponse.setHeader("Pragma", "no-cache");
+                httpServletResponse.setDateHeader("Expires", 0);
+                httpServletResponse.setContentType("application/json");
+                httpServletResponse.getOutputStream().write(ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND.getBytes());
+            } else {
+                httpServletResponse.setContentType(contentType);
+                httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
                 httpServletResponse.getOutputStream().write(allocationReport.getFile());
                 httpServletResponse.getOutputStream().flush();
-            } catch (IOException e) {
-                httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
             }
+        } catch (IOException e) {
+            httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping(AdminEndpoint.DOWNLOAD_UPLOADED_REPORT_SUBMIT)
-    public void downloadUploadedData(HttpServletResponse httpServletResponse, @PathVariable("name") String name, Model model) throws IOException {
-        String contentType=null;
-        String downloadFilename=null;
-        String[] names={UploadConstants.COURSE_DATA,UploadConstants.INST_REQ_DATA,UploadConstants.OFFERS_DATA};
-        String[] fileNames={UploadFileNames.COURSE_DATA,UploadFileNames.INST_REQ_DATA,UploadFileNames.OFFERS_DATA};
-        for (int j=0;j<names.length;j++) {
+    public void downloadUploadedData(HttpServletResponse httpServletResponse, @PathVariable("name") String name, Model model) {
+        String contentType = null;
+        String downloadFilename = null;
+        String[] names = {UploadConstants.COURSE_DATA, UploadConstants.INST_REQ_DATA, UploadConstants.OFFERS_DATA};
+        String[] fileNames = {UploadFileNames.COURSE_DATA, UploadFileNames.INST_REQ_DATA, UploadFileNames.OFFERS_DATA};
+        for (int j = 0; j < names.length; j++) {
             if (names[j].equals(name)) {
-                contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                downloadFilename=fileNames[j];
+                contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                downloadFilename = fileNames[j];
             }
         }
-        if(contentType == null){
+        if (contentType == null) {
             httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
         }
-        Upload uploadData=uploadService.findFile(downloadFilename);
-        if(uploadData==null) {
-            httpServletResponse.setStatus(ResponseStatus.NOT_FOUND);
-            httpServletResponse.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-            httpServletResponse.setHeader("Pragma", "no-cache");
-            httpServletResponse.setDateHeader("Expires", 0);
-            httpServletResponse.setContentType("application/json");
-            httpServletResponse.getOutputStream().write(ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND.getBytes());
-        }
-        else {
-            httpServletResponse.setContentType(contentType);
-            httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
-            try {
+        Upload uploadData = uploadService.findFile(downloadFilename);
+        try {
+            if (uploadData == null) {
+                httpServletResponse.setStatus(ResponseStatus.NOT_FOUND);
+                httpServletResponse.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+                httpServletResponse.setHeader("Pragma", "no-cache");
+                httpServletResponse.setDateHeader("Expires", 0);
+                httpServletResponse.setContentType("application/json");
+                httpServletResponse.getOutputStream().write(ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND.getBytes());
+            } else {
+                httpServletResponse.setContentType(contentType);
+                httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
                 httpServletResponse.getOutputStream().write(uploadData.getFile());
                 httpServletResponse.getOutputStream().flush();
-            } catch (IOException e) {
-                httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
             }
+        } catch (IOException e) {
+            httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
