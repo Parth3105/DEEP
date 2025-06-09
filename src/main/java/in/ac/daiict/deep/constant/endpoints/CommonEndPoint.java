@@ -6,5 +6,6 @@ public class CommonEndPoint {
     public static final String LOGOUT="/logout";
     public static final String FORGOT_PASSWORD="/forgot-password";
     public static final String VERIFY_OTP="/verify-otp";
+    public static final String RESEND_OTP="/resend-otp/{token}";
     public static final String RESET_PASSWORD="/reset-password";
 }

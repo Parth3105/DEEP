@@ -32,6 +32,11 @@ public class SlotPrefServiceImpl implements SlotPrefService {
     }
 
     @Override
+    public List<SlotPref> fetchSlotBySemesterSortedBySidAndPref(int semester) {
+        return slotPrefRepo.findBySemesterOrderBySidAscPrefAsc(semester);
+    }
+
+    @Override
     public void insertAll(List<SlotPref> slotPrefList) {
         slotPrefRepo.saveAll(slotPrefList);
     }

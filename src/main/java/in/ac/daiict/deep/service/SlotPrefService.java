@@ -8,5 +8,6 @@ import java.util.List;
 public interface SlotPrefService {
     List<SlotPref> fetchAllSlotSortedByPref();
     List<SlotPrefDto>  fetchStudentSlotPref(String sid);
+    List<SlotPref> fetchSlotBySemesterSortedBySidAndPref(int semester);
     void insertAll(List<SlotPref> slotPrefList);
 }
