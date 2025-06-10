@@ -29,6 +29,7 @@ function hideToast() {
     toast.classList.add("hidden");
 }
 
+console.log(submitResponse);
 if(submitResponse) {
     printSubmitResponseResponse();
 }

@@ -34,29 +34,31 @@
       <!-- Registration Status -->
       <div class="col-span-2">
         <div class="flex flex-col lg:flex-row bg-[#B8D7FF] rounded-3xl px-6 py-8 xl:py-12 shadow-lg">
+
           <!-- Left Section -->
           <div class="flex flex-col items-center justify-center text-center mr-4">
             <div class="mb-8">
-              <h3 class="text-2xl text-center md:text-2xl font-bold text-[#1E3C72]">Registration Status</h3>
-              <p class="text-xs text-center text-[#666666]">Monitor student registration and allocation status</p>
+              <h3 class="text-2xl font-bold text-[#1E3C72]">Registration Status</h3>
+              <p class="text-xs text-[#666666]">Monitor student registration and allocation status</p>
             </div>
 
-            <!-- Semesters -->
-            <div class="semester-tags grid grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-y-4 gap-x-3">
-              <span class="bg-[#46A24A] text-white px-4 py-2 rounded-full text-md font-medium">Semester - 5</span>
-              <span class="bg-[#22437E] text-white px-4 py-2 rounded-full text-md font-medium">Semester - 6</span>
-              <span class="bg-[#22437E] text-white px-4 py-2 rounded-full text-md font-medium">Semester - 7</span>
-              <span class="bg-[#22437E] text-white px-4 py-2 rounded-full text-md font-medium">Semester - 8</span>
+            <!-- Fixed Semester Buttons -->
+            <div id="semesterButtons" class="semester-tags grid grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-y-4 gap-x-3">
+              <span data-semester="5" class="semester-btn px-4 py-2 rounded-full text-md font-medium cursor-pointer bg-[#46A24A] text-white">Semester - 5</span>
+              <span data-semester="6" class="semester-btn px-4 py-2 rounded-full text-md font-medium cursor-pointer bg-[#22437E] text-white">Semester - 6</span>
+              <span data-semester="7" class="semester-btn px-4 py-2 rounded-full text-md font-medium cursor-pointer bg-[#22437E] text-white">Semester - 7</span>
+              <span data-semester="8" class="semester-btn px-4 py-2 rounded-full text-md font-medium cursor-pointer bg-[#22437E] text-white">Semester - 8</span>
             </div>
           </div>
 
-          <!-- Right Section (Cards) -->
+          <!-- Right Section -->
           <div class="flex flex-col md:flex-row lg:flex-col xl:flex-row justify-center items-center gap-6 mt-6 flex-1">
+
             <!-- Card 1 -->
             <div class="w-10/12 h-full bg-[#5EC1FF] rounded-3xl py-8 px-4 text-center shadow-lg flex flex-col justify-between flex-1">
               <div class="flex flex-wrap gap-4 items-center justify-center mb-5">
                 <img src="/admin/images/student.svg" alt="student icon" class="w-12 h-12 mb-2">
-                <div class="text-4xl font-bold text-gray-800">120 / 132</div>
+                <div id="prefCount" class="text-4xl font-bold text-gray-800">-- / --</div>
               </div>
               <div class="text-xl md:text-sm lg:text-xl font-bold text-[#1E3C72]">Preferences submitted</div>
             </div>
@@ -65,7 +67,7 @@
             <div class="w-10/12 h-full bg-[#5EC1FF] rounded-3xl py-8 px-4 text-center shadow-lg flex flex-col justify-between flex-1">
               <div class="flex flex-wrap items-center gap-x-9 gap-y-4 justify-center mb-5">
                 <img src="/admin/images/allocation-status.svg" alt="status icon" class="w-12 h-12 mb-2">
-                <div class="text-4xl font-bold text-gray-800">Pending</div>
+                <div id="allocStatus" class="text-4xl font-bold text-gray-800">--</div>
               </div>
               <div class="text-xl md:text-sm lg:text-xl font-bold text-[#1E3C72]">Allocation Status</div>
             </div>
@@ -77,14 +79,14 @@
       <div class="bg-[#B8D7FF] rounded-3xl shadow-lg flex justify-center align-center mr-[-20px] md:mr-0">
         <div class="text-center flex flex-col items-center justify-center p-6">
           <label class="inline-flex items-center cursor-pointer mb-8">
-            <input type="checkbox" value="" class="sr-only peer">
+            <input type="checkbox" id="toggleRegistration" class="sr-only peer">
             <div class="relative w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
           </label>
 
           <h3 class="text-xl font-bold text-[#1E3C72] mb-1">Open/Close Registration</h3>
           <p class="text-xs text-gray-600 mb-6">Manually toggle registration window</p>
 
-          <div class="flex flex-col gap-1 justify-center items-center">
+          <div class="hidden flex flex-col gap-1 justify-center items-center">
             <p class="text-black font-bold"> Close Date: </p>
             <div class="relative w-40 mx-auto">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -95,6 +97,30 @@
               <input id="datepicker-autohide" datepicker datepicker-autohide type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="registrationModal" class="hidden fixed inset-0 z-40 backdrop-blur-sm bg-black/30 flex justify-center items-center px-4">
+      <div class="bg-gradient-to-br from-[#E6F0FF] to-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-blue-100 z-50">
+        <h2 class="text-2xl font-bold text-[#1E3C72] mb-2 text-center">Open Registration?</h2>
+        <p class="text-sm text-gray-600 text-center mb-4">
+          Please ensure that a new instance has been created and all necessary data has been filled.<br>
+          <span class="font-semibold text-red-600">After opening the registration, you won't be able to update the instance.</span>
+        </p>
+
+        <!-- Close Date (optional display or logic) -->
+        <div class="text-center mb-6">
+          <p class="text-sm text-gray-700">Registration will close on: <strong>auto-decided or configurable</strong></p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end gap-4 pt-4">
+          <button onclick="closeModal()" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-[#1E3C72] transition">Cancel</button>
+          <form th:action="@{/open-registration}" method="post">
+            <button type="submit" class="px-4 py-2 rounded-lg bg-[#1E3C72] text-white hover:bg-[#16355f] transition">OK</button>
+          </form>
         </div>
       </div>
     </div>
@@ -208,6 +234,9 @@
   </main>
 </div>
 
+<script th:inline="javascript">
+  const registrationStatus = [[${registrationStatus}]];
+</script>
 <script src="/admin/js/dashboard.js"></script>
 </body>
 </html>

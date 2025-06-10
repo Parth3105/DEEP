@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -65,14 +66,15 @@ public class PreferenceAndResultController {
                 httpServletResponse.setContentType("application/json");
                 httpServletResponse.getOutputStream().write(ResponseMessage.STUDENT_PREFERENCES_NOT_FOUND.getBytes());
             }
+            else {
+                ByteArrayOutputStream byteArrayOutputStream = dataLoader.createStudentPrefSheet(coursePrefList, slotPrefList);
+                String downloadFilename = "Student Preferences.xlsx";
 
-            ByteArrayOutputStream byteArrayOutputStream = dataLoader.createStudentPrefSheet(coursePrefList, slotPrefList);
-            String downloadFilename = "Student Preferences.xlsx";
-
-            httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
-            httpServletResponse.getOutputStream().write(byteArrayOutputStream.toByteArray());
-            httpServletResponse.getOutputStream().flush();
+                httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
+                httpServletResponse.getOutputStream().write(byteArrayOutputStream.toByteArray());
+                httpServletResponse.getOutputStream().flush();
+            }
         } catch (IOException e) {
             httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
         }

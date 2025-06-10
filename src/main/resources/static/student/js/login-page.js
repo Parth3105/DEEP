@@ -13,6 +13,8 @@ function showToast(message, type = 'error') {
         toast.classList.add("bg-red-600");
     } else if (type === 'warning') {
         toast.classList.add("bg-yellow-400", "text-gray-900");
+    } else if (type === 'success') {
+        toast.classList.add("bg-green-600", "text-gray-900");
     }
 
     toast.classList.remove("hidden");
@@ -36,6 +38,19 @@ if(sessionExpired) {
 function printSessionExpiredResponse() {
     if(sessionExpired.status === 419)
         showToast(sessionExpired.message);
+    else
+        showToast("Internal Server Error! Please Contact support.")
+}
+
+if(resetResponse) {
+    printResetResponse();
+}
+
+function printResetResponse() {
+    if(resetResponse.status === 200)
+        showToast(resetResponse.message, 'success');
+    else if(resetResponse.status === 500)
+        showToast(resetResponse.message);
     else
         showToast("Internal Server Error! Please Contact support.")
 }

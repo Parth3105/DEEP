@@ -8,6 +8,17 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+
+<div id="toast-error"
+     class="hidden fixed top-6 right-6 z-[10] max-w-xs text-sm text-white rounded-xl shadow-lg"
+     role="alert" tabindex="-1" aria-labelledby="hs-toast-solid-color-red-label"
+     style="position: fixed !important;">
+  <div id="hs-toast-solid-color-red-label"
+       class="flex p-4 gap-2 items-start rounded-xl">
+    <span id="toast-message"></span>
+  </div>
+</div>
+
 <div class="mx-auto">
   <!-- Header -->
   <div th:replace="~{common/student-navbar::student-navbar}"></div>
@@ -154,7 +165,7 @@
         </button>
 
         <!-- View Results -->
-        <button onclick="HandleRoute('allocation-result')" class="bg-[#0EB17C] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
+        <button onclick="HandleRoute('my-allocation-result')" class="bg-[#0EB17C] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
           <div class="flex flex-col items-center justify-center mb-4">
             <img src="/student/images/white-certificate.svg" alt="certificate Icon" class="w-12 h-12 text-blue-600">
           </div>
@@ -203,6 +214,11 @@
   </footer>
 </main>
 
+<script th:inline="javascript">
+  /*<![CDATA[*/
+    let renderResponse = /*[[${renderResponse}]]*/ null;
+  /*]]>*/
+</script>
 <script src="/student/js/home-page.js"></script>
 </body>
 </html>

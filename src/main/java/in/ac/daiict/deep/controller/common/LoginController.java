@@ -41,20 +41,29 @@ public class LoginController {
 
     @GetMapping(CommonEndPoint.FORGOT_PASSWORD)
     public String renderForgotPasswordPage(Model model, HttpSession session){
-        if(session.getAttribute("loginSession") == null) return "redirect:"+CommonEndPoint.LOGIN;
+        if(session.getAttribute("loginSession") == null){
+            System.out.println("null");
+            return "redirect:"+CommonEndPoint.LOGIN;
+        }
+        System.out.println(session.getAttribute("loginSession"));
         return CommonTemplate.FORGOT_PASSWORD_PAGE;
     }
 
     @PostMapping(CommonEndPoint.FORGOT_PASSWORD)
     public String loadStudentId(@RequestParam("username") String username, RedirectAttributes redirectAttributes, Model model, HttpSession session){
-        if(session.getAttribute("loginSession") == null) return "redirect:"+CommonEndPoint.LOGIN;
+        if(session.getAttribute("loginSession") == null) {
+            System.out.println("null");
+            return "redirect:" + CommonEndPoint.LOGIN;
+        }
         else{
+            System.out.println("not null");
             SessionAttribute<Boolean> sessionAttribute= (SessionAttribute<Boolean>) session.getAttribute("loginSession");
             if(sessionAttribute.isExpired()){
                 redirectAttributes.addFlashAttribute("sessionExpired",new ResponseDto(ResponseStatus.SESSION_TIMEOUT,ResponseMessage.SESSION_EXPIRED));
                 return "redirect:"+CommonEndPoint.LOGIN;
             }
         }
+        System.out.println("not expired");
         User user=userService.findUser(username);
         if(user==null){
             redirectAttributes.addFlashAttribute("submitResponse",new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.USERNAME_NOT_FOUND));

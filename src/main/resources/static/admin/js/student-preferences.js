@@ -47,7 +47,7 @@ function HandleSemesterSelection(semesterBtns, downloadBtns, semesterInputs) {
 
             // Set active state for clicked button
             this.style.backgroundColor = '#2D9D5D';
-            const selectedSemester = this.dataset.sem;
+            selectedSemester = this.dataset.sem;
 
             // Update all hidden semester inputs
             semesterInputs.forEach(input => {
@@ -99,7 +99,6 @@ function HandleDownloadButtonClick(downloadBtns) {
             const name = form.querySelector('input[name="name"]').value;
             const semester = selectedSemester;
             const downloadUrl = `/admin/student-preferences/download/${semester}`;
-            console.log(downloadUrl);
 
             // Show loading state
             const originalText = this.innerHTML;

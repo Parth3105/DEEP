@@ -47,7 +47,7 @@
                 <input
                         type="text"
                         maxlength="1"
-                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-gray-300 rounded-lg
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
                                focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
                                dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         data-index="0"
@@ -55,7 +55,7 @@
                 <input
                         type="text"
                         maxlength="1"
-                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-gray-300 rounded-lg
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
                                focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
                                dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         data-index="1"
@@ -63,7 +63,7 @@
                 <input
                         type="text"
                         maxlength="1"
-                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-gray-300 rounded-lg
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
                                focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
                                dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         data-index="2"
@@ -71,7 +71,7 @@
                 <input
                         type="text"
                         maxlength="1"
-                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-gray-300 rounded-lg
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
                                focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
                                dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         data-index="3"
@@ -79,7 +79,7 @@
                 <input
                         type="text"
                         maxlength="1"
-                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-gray-300 rounded-lg
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
                                focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
                                dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         data-index="4"
@@ -87,7 +87,7 @@
                 <input
                         type="text"
                         maxlength="1"
-                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-gray-300 rounded-lg
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
                                focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
                                dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                         data-index="5"
@@ -117,19 +117,16 @@
             </div>
 
             <!-- Resend OTP link -->
-            <form id="resendForm" method="POST">
-              <!-- Hidden token field -->
-              <input type="hidden" name="random" id="resendToken" />
-
-              <!-- Resend OTP link -->
-              <a id="resendLink"
+            <form id="resendForm" th:action="@{/resend-otp}">
+              <span id="resendLink"
+                 type="submit"
                  href="#"
                  onclick="handleResendClick(event)"
                  class="inline-block text-blue-600 hover:text-blue-700 font-semibold underline cursor-pointer transition duration-300"
                  style="display: none;"
               >
                 Resend OTP
-              </a>
+              </span>
             </form>
           </div>
         </div>
@@ -143,6 +140,11 @@
   </div>
 </main>
 
+<script th:inline="javascript">
+  /*<![CDATA[*/
+    let otpVerificationResponse = /*[[${otpVerificationResponse}]]*/ null;
+  /*]]>*/
+</script>
 <script src="/student/js/verify-otp.js"></script>
 </body>
 </html>

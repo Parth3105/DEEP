@@ -29,6 +29,17 @@ function hideToast() {
     toast.classList.add("hidden");
 }
 
+if(otpVerificationResponse) {
+    printOtpVerificationResponse();
+}
+
+function printOtpVerificationResponse() {
+    if(otpVerificationResponse.status === 404)
+        showToast(otpVerificationResponse.message);
+    else
+        showToast("Internal Server Error! Please Contact support.")
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     let timeLeft = 2 * 60; // 2 minutes
     const countdownEl = document.getElementById("countdown");
@@ -55,24 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
       timeLeft--;
     }, 1000);
 });
-
-function generateToken() {
-    return Math.random().toString(36).substring(2, 15);
-}
-
-function handleResendClick(event) {
-    event.preventDefault();
-    const token = generateToken();
-
-    // Set token in hidden input
-    document.getElementById("resendToken").value = token;
-    console.log(token);
-
-    // Set the form action with token in URL
-    const form = document.getElementById("resendForm");
-    form.action = `/resend-otp/${token}`;
-    form.submit();
-}
 
 const otpInputs = document.querySelectorAll('.otp-input');
 const combinedOtpInput = document.getElementById('combined_otp');
