@@ -3,6 +3,9 @@ package in.ac.daiict.deep.constant.endpoints;
 public class AdminEndpoint {
     public static final String ADMIN_BASE="/admin";
     public static final String DASHBOARD=ADMIN_BASE+"/admin-dashboard";
+    public static final String OPEN_REGISTRATION=ADMIN_BASE+"/open-registration";
+    public static final String EXTEND_REGISTRATION_PERIOD=ADMIN_BASE+"/extend-period";
+    public static final String CLOSE_REGISTRATION=ADMIN_BASE+"/close-registration";
     public static final String CREATE_ALLOCATION_INSTANCE=ADMIN_BASE+"/create-instance";
     public static final String UPDATE_INSTANCE=ADMIN_BASE+"/update-instance";
     public static final String SUBMIT_DATA=ADMIN_BASE+"/submit-data";

@@ -28,13 +28,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) ->
-                        authorize.requestMatchers("/admin/images/**", "/student/images/**", "admin/css/**", "student/css/**",
-                                        "admin/js/**", "student/js/**").permitAll()
+                        authorize.requestMatchers("/admin/images/**", "/student/images/**", "/admin/css/**", "/student/css/**",
+                                        "/admin/js/**", "/student/js/**", CommonEndPoint.FORGOT_PASSWORD,
+                                        CommonEndPoint.RESET_PASSWORD, CommonEndPoint.VERIFY_OTP,
+                                        CommonEndPoint.RESEND_OTP).permitAll()
                                 .requestMatchers(AdminEndpoint.ADMIN_BASE+"/**").hasRole(Roles.ADMIN)
                                 .requestMatchers(StudentEndpoint.STUDENT_BASE+"/**").hasRole(Roles.STUDENT)
-                                .anyRequest().permitAll())
+                                .anyRequest().authenticated())
 
                 .formLogin((login) ->
                         login.loginPage(CommonEndPoint.LOGIN)
