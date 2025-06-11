@@ -30,20 +30,34 @@ public class AllocationInstanceController {
     private InstituteReqService instituteReqService;
     private CourseOfferingService courseOfferingService;
     private UploadService uploadService;
-    private DBConfig schemaSetupService;
+    private InstanceNameService instanceNameService;
+    private DBConfig instanceSetupConfig;
 
     @PostMapping(AdminEndpoint.CREATE_ALLOCATION_INSTANCE)
-    public String initiateSetup(@RequestParam String season, @RequestParam String Year){
-        if(DBConstants.SAVE_SCHEMA_NAME !=null) {
-            schemaSetupService.createSchemaAndSwitch(DBConstants.WORKING_SCHEMA_NAME);
+    public String initiateSetup(@RequestParam String season, @RequestParam String Year, RedirectAttributes redirectAttributes){
+        String latestInstanceName=instanceNameService.fetchLatestInstance();
+        String newInstanceName=season+"_"+Year;
+        if(instanceNameService.checkIfNewInstanceExists(newInstanceName)){
+            redirectAttributes.addFlashAttribute("instanceCreationError",new ResponseDto(ResponseStatus.CONFLICT, ResponseMessage.INSTANCE_ALREADY_EXISTS));
+            return "redirect:"+AdminEndpoint.DASHBOARD;
         }
-        DBConstants.SAVE_SCHEMA_NAME= season+"_"+Year;
+        if(latestInstanceName !=null) {
+            if(!instanceSetupConfig.createSchemaAndSwitch(latestInstanceName,DBConstants.WORKING_INSTANCE_NAME)){
+                redirectAttributes.addFlashAttribute("instanceCreationError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+                return "redirect:"+AdminEndpoint.DASHBOARD;
+            }
+        }
+        boolean canCreate=instanceNameService.insertNewInstance(newInstanceName);
+        if(!canCreate){
+            redirectAttributes.addFlashAttribute("instanceCreationError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+            return "redirect:"+AdminEndpoint.DASHBOARD;
+        }
         return "redirect:"+AdminEndpoint.UPDATE_INSTANCE;
     }
 
     @GetMapping(AdminEndpoint.UPDATE_INSTANCE)
     public String renderUploadPage(Model model){
-        if(DBConstants.SAVE_SCHEMA_NAME == null) return "redirect:/admin-dashboard";
+        if(instanceNameService.fetchLatestInstance() == null) return "redirect:"+AdminEndpoint.DASHBOARD;
 
         Map<String,Long> uploadStatus=new TreeMap<>();
         uploadStatus.put("Semester 5",studentService.countBySemester(5));

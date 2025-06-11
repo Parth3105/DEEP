@@ -21,7 +21,7 @@ public class DashboardController {
 
     @PostMapping(AdminEndpoint.OPEN_REGISTRATION)
     public String openRegistration(@RequestParam("close-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate closeDate){
-        SystemStatusDto systemStatusDto=new SystemStatusDto(RegistrationStatusEnum.OPEN,closeDate, UpdateInstanceStatusEnum.NEVER);
+        SystemStatusDto systemStatusDto=new SystemStatusDto(RegistrationStatusEnum.open,closeDate, UpdateInstanceStatusEnum.never);
         systemStatusService.updateOnOpeningRegistration(systemStatusDto);
         return "redirect:"+AdminEndpoint.DASHBOARD;
     }

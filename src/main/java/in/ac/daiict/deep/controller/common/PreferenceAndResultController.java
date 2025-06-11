@@ -143,7 +143,7 @@ public class PreferenceAndResultController {
         }
 
         List<AllocationResultDto> allocationResultDtoList = allocationResultService.fetchAllocationResult(studentId, studentDto.getProgram());
-        if (allocationResultDtoList == null || (requester=='S' && (systemStatusService.fetchResultStatus()==null || systemStatusService.fetchResultStatus().equals(ResultStatusEnum.PENDING.toString())))) {
+        if (allocationResultDtoList == null || (requester=='S' && (systemStatusService.fetchResultStatus()==null || systemStatusService.fetchResultStatus().equals(ResultStatusEnum.pending.toString())))) {
             // not found any results.
             redirectAttributes.addFlashAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_FOUND));
             return "redirect:" + StudentEndpoint.HOME_PAGE;

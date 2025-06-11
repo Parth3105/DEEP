@@ -64,7 +64,7 @@ public class EnrollmentController {
 
     @PostMapping(StudentEndpoint.SUBMIT_PREFERENCE)
     public String loadSubmittedPreferences(@RequestParam String studentRequirements, @RequestParam String coursePreferences, @RequestParam String slotPreferences, RedirectAttributes redirectAttributes){
-        if(systemStatusService.fetchRegistrationStatus().equals(RegistrationStatusEnum.CLOSE.toString())){
+        if(systemStatusService.fetchRegistrationStatus().equals(RegistrationStatusEnum.close.toString())){
             redirectAttributes.addFlashAttribute("preferenceSubmissionResponse", new ResponseDto(ResponseStatus.FORBIDDEN,ResponseMessage.LATE_SUBMISSION));
             return "redirect:"+StudentEndpoint.HOME_PAGE;
         }

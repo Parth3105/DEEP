@@ -6,6 +6,7 @@ const status = {
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,
     NOT_FOUND: 404,
+    CONFLICT: 409,
     GONE: 410,
     SESSION_TIMEOUT: 419,
     INTERNAL_SERVER_ERROR: 500
@@ -19,6 +20,7 @@ const statusColors = {
     UNAUTHORIZED: 'bg-red-600',
     FORBIDDEN: 'bg-red-600',
     NOT_FOUND: 'bg-red-600',
+    CONFLICT: 'bg-red-600',
     GONE: 'bg-red-600',
     SESSION_TIMEOUT: 'bg-yellow-400',
     INTERNAL_SERVER_ERROR: 'bg-red-600',

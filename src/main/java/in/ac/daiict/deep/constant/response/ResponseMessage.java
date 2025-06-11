@@ -3,6 +3,7 @@ package in.ac.daiict.deep.constant.response;
 public class ResponseMessage {
     public static int UPLOAD_COUNT = 0;
 
+    public static final String INSTANCE_ALREADY_EXISTS="Instance already exists!";
     public static final String USERNAME_NOT_FOUND="Username Not Found";
     public static final String OTP_EXPIRED="OTP has expired!";
     public static final String OTP_INVALID="OTP is invalid!";

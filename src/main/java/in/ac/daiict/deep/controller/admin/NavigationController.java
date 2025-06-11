@@ -24,9 +24,9 @@ public class NavigationController {
     @GetMapping(AdminEndpoint.DASHBOARD)
     public String renderDashboardPage(Model model){
         SystemStatusDto systemStatusDto=systemStatusService.fetchAllStatus();
-        model.addAttribute("registrationStatus",systemStatusDto.getRegistrationStatus().getStatusValue());
-        model.addAttribute("updateInstanceStatus",systemStatusDto.getUpdateInstanceStatus().getStatusValue());
-        model.addAttribute("resultStatus",systemStatusDto.getResultStatus().getStatusValue());
+        if(systemStatusDto.getRegistrationStatus()!=null) model.addAttribute("registrationStatus",systemStatusDto.getRegistrationStatus().getStatusValue());
+        if(systemStatusDto.getRegistrationCloseDate()!=null) model.addAttribute("updateInstanceStatus",systemStatusDto.getUpdateInstanceStatus().getStatusValue());
+        if(systemStatusDto.getResultStatus()!=null) model.addAttribute("resultStatus",systemStatusDto.getResultStatus().getStatusValue());
         if(systemStatusDto.getRegistrationCloseDate()!=null) model.addAttribute("registrationCloseDate",systemStatusDto.getRegistrationCloseDate().getCloseDate());
 
         List<AdminDashboardReqDto> adminDashboardReqDtoList=new ArrayList<>();

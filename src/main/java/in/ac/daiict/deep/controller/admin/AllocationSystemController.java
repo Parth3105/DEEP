@@ -43,7 +43,7 @@ public class AllocationSystemController {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(registrationStatus.equals(RegistrationStatusEnum.OPEN.toString())) systemStatusService.updateOnClosingRegistration();
+                if(registrationStatus.equals(RegistrationStatusEnum.open.toString())) systemStatusService.updateOnClosingRegistration();
             }
         }).start();
 

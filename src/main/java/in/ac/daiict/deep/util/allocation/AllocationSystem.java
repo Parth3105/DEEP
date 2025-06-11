@@ -459,6 +459,7 @@ public class AllocationSystem {
             printWriter.println();
             printWriter.flush();
         }
+        printWriter.close();
         return byteArrayOutputStream;
     }
 }

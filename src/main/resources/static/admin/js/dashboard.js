@@ -1,3 +1,7 @@
+if(instanceCreationError) {
+    printStatusResponse(instanceCreationError);
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   const toggleRegistration = document.getElementById("toggleRegistration");
   const modal = document.getElementById("registrationModal");
