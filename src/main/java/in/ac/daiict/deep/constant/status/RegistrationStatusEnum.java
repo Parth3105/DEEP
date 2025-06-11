@@ -1,10 +1,10 @@
 package in.ac.daiict.deep.constant.status;
 
 public enum RegistrationStatusEnum {
-    OPEN, CLOSE, NEVER;
+    open,close,never;
 
     @Override
     public String toString() {
-        return name().toLowerCase();
+        return name();
     }
 }

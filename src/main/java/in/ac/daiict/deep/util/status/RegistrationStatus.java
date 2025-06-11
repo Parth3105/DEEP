@@ -6,15 +6,10 @@ import lombok.Setter;
 
 public class RegistrationStatus {
     @Getter
-    private static String statusName;
+    private static String statusName="registration_status";
     private RegistrationStatusEnum statusValue;
 
-    public RegistrationStatus() {
-        statusName = "registration_status";
-    }
-
     public RegistrationStatus(RegistrationStatusEnum statusValue) {
-        statusName="registration_status";
         this.statusValue = statusValue;
     }
 
@@ -25,4 +20,5 @@ public class RegistrationStatus {
     public void setStatusValue(String statusValue) {
         this.statusValue = RegistrationStatusEnum.valueOf(statusValue);
     }
+
 }

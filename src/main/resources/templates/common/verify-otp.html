@@ -8,6 +8,17 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+
+<div id="toast-error"
+     class="hidden fixed top-6 right-6 z-[10] max-w-xs text-sm text-white rounded-xl shadow-lg"
+     role="alert" tabindex="-1" aria-labelledby="hs-toast-solid-color-red-label"
+     style="position: fixed !important;">
+  <div id="hs-toast-solid-color-red-label"
+       class="flex p-4 gap-2 items-start rounded-xl">
+    <span id="toast-message"></span>
+  </div>
+</div>
+
 <div class="mx-auto">
   <!-- Header -->
   <div th:replace="~{common/student-authenticate-navbar::student-authenticate-navbar}"></div>
@@ -19,64 +30,130 @@
       <!-- Left Side - forgot Password Form -->
       <div class="flex-5 form-gradient p-8 lg:p-12 flex flex-col justify-center">
         <div class="max-w-sm mx-auto w-full">
-          <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-2">OTP Verification</h2>
-          <p class="text-gray-600 text-xs mb-1">We have sent an OTP to your DAU E-mail.</p>
-          <p class="text-gray-600 text-xs mb-8">Check Your E-mail and Get Started!</p>
+          <h2 class="text-center text-3xl lg:text-4xl font-bold text-gray-800 mb-2">OTP Verification</h2>
+          <p class="text-center text-gray-600 text-xs mb-1">We have sent an OTP to your DAU E-mail.</p>
+          <p class="text-center text-gray-600 text-xs mb-8">Check Your E-mail and Get Started!</p>
 
-          <form class="space-y-6" th:action="@{/verify-otp}" method="post">
-            <!-- UserName Input -->
+          <form class="space-y-6" action="/verify-otp" method="post">
+            <!-- Hidden Username Input -->
+            <input type="hidden" name="username" value="test_user" />
+
+            <!-- Hidden OTP Input (this will contain the final combined OTP) -->
+            <input type="hidden" name="otp" id="combined_otp" />
+
+            <!-- 6-Digit OTP Input Boxes -->
             <div class="relative z-0 w-full mb-5 group">
-              <input type="hidden" name="username" th:value="${username}" />
-              <input
-                      type="text"
-                      name="otp"
-                      id="floating_otp"
-                      placeholder=" "
-                      required
-                      class="peer block w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 pt-4 pb-4 text-sm text-black font-semibold
-                                  focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
-                                  dark:border-gray-600 dark:text-black dark:focus:border-blue-500 dark:focus:ring-blue-500 appearance-none
-                                  [&::-webkit-outer-spin-button]:appearance-none
-                                  [&::-webkit-inner-spin-button]:appearance-none"
-              />
-              <label
-                      for="floating_otp"
-                      class="absolute left-4 top-2 z-10 origin-[0] -translate-y-5 scale-75 transform text-sm font-semibold text-black transition-all duration-300
-                                  bg-white px-1
-                                  peer-placeholder-shown:top-4 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100
-                                  peer-focus:top-1 peer-focus:-translate-y-[15px] peer-focus:scale-75 peer-focus:text-blue-600
-                                  dark:text-black dark:peer-focus:text-black dark:bg-[#8eb4ff]"
-              >
-                OTP
-              </label>
+              <div class="flex justify-between space-x-2">
+                <input
+                        type="text"
+                        maxlength="1"
+                        autocomplete="off"
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
+                               focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
+                               dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        data-index="0"
+                />
+                <input
+                        type="text"
+                        maxlength="1"
+                        autocomplete="off"
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
+                               focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
+                               dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        data-index="1"
+                />
+                <input
+                        type="text"
+                        maxlength="1"
+                        autocomplete="off"
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
+                               focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
+                               dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        data-index="2"
+                />
+                <input
+                        type="text"
+                        maxlength="1"
+                        autocomplete="off"
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
+                               focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
+                               dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        data-index="3"
+                />
+                <input
+                        type="text"
+                        maxlength="1"
+                        autocomplete="off"
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
+                               focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
+                               dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        data-index="4"
+                />
+                <input
+                        type="text"
+                        maxlength="1"
+                        autocomplete="off"
+                        class="otp-input w-12 h-12 text-center text-lg font-semibold border-2 border-black rounded-lg
+                               focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500
+                               dark:border-gray-600 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        data-index="5"
+                />
+              </div>
             </div>
 
-            <!-- Sign In Button -->
+            <!-- Verify Button -->
             <button
                     type="submit"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg cursor-pointer"
             >
               Verify OTP
             </button>
-
-            <!-- Forgot Password -->
-            <div class="text-center">
-<!--              <a href="/student/login-page" class="text-blue-600 hover:text-blue-700 font-semibold underline transition-colors duration-300">-->
-<!--                Back to Login-->
-<!--              </a>-->
-            </div>
           </form>
+
+          <!-- Resend Link -->
+          <div class="text-center mt-3 text-sm text-gray-700">
+            <p class="mb-2">
+              Didn't receive the OTP?
+            </p>
+
+            <!-- Timer message -->
+            <div id="timerMessage" class="text-gray-500 mb-2">
+              You can request to resend the OTP after
+              <span id="countdown" class="font-semibold text-blue-600">2:00</span>
+            </div>
+
+            <!-- Resend OTP link -->
+            <form id="resendForm" th:action="@{/resend-otp}">
+              <span id="resendLink"
+                 type="submit"
+                 href="#"
+                 onclick="handleResendClick(event)"
+                 class="inline-block text-blue-600 hover:text-blue-700 font-semibold underline cursor-pointer transition duration-300"
+                 style="display: none;"
+              >
+                Resend OTP
+              </span>
+            </form>
+          </div>
         </div>
       </div>
 
       <!-- Right Side - Security Illustration -->
       <div class="hidden sm:flex relative flex-3 bg-[linear-gradient(to_bottom,_#3F6498_0%,_#212F89_50%,_#06007B_100%)] p-8 lg:p-12 flex items-center justify-center relative overflow-hidden">
-        <img src="/student/images/forgot-password.svg " alt="login img" class="relative scale-125 sm:scale-120 transition-transform duration-500">
+        <img src="/student/images/verify-otp.svg " alt="otp img" class="relative scale-125 sm:scale-120 transition-transform duration-500">
       </div>
     </div>
   </div>
 </main>
 
-<script src="/student/js/forgot-password.js"></script>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+    let otpVerificationResponse = /*[[${otpVerificationResponse}]]*/ null;
+  /*]]>*/
+</script>
+
+<script src="/common/js/general-utility.js"></script>
+<script src="/common/js/status-response.js"></script>
+<script src="/student/js/verify-otp.js"></script>
 </body>
 </html>

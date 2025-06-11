@@ -11,15 +11,8 @@
 
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
 
-<div id="toast-error"
-     class="hidden fixed top-6 right-6 z-[10] max-w-xs text-sm text-white rounded-xl shadow-lg"
-     role="alert" tabindex="-1" aria-labelledby="hs-toast-solid-color-red-label"
-     style="position: fixed !important;">
-    <div id="hs-toast-solid-color-red-label"
-         class="flex p-4 gap-2 items-start bg-red-600 rounded-xl">
-        <span id="toast-message"></span>
-    </div>
-</div>
+<!-- Toast Display -->
+<div th:replace="~{common/toast-display::toast-display}"></div>
 
 <div class="mx-auto">
     <!-- Header -->
@@ -49,7 +42,7 @@
                         </div>
                     </div>
 
-                    <form id="allocationForm" method="post" th:action="@{/execute-allocation/5}" class="ml-8">
+                    <form id="allocationForm" method="post" th:action="@{/admin/execute-allocation/5}" class="ml-8">
                         <!-- Select Semester Section -->
                         <div class="mb-6">
                             <label class="block text-lg font-bold text-[#1E3C72] mb-2">Select Semester :</label>
@@ -67,6 +60,8 @@
 
                         <!-- Hidden input to store semester -->
                         <input type="hidden" name="semester" id="selectedSemester" value="5" />
+                        <input type="hidden" name="registrationStatus" th:value="${registrationStatus}" />
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}" th:if="${_csrf}" />
 
                         <!-- Execute Allocation Button -->
                         <button type="submit" id="executeBtn"
@@ -75,6 +70,35 @@
                             Execute Allocation
                         </button>
                     </form>
+                </div>
+
+                <!-- Execute Allocation Confirmation Modal -->
+                <div id="closeRegModal"
+                     class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center items-center px-4">
+                    <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-blue-100">
+                        <h2 class="text-xl font-bold text-[#1E3C72] mb-2 text-center">Confirm Execution</h2>
+                        <p class="text-sm text-gray-600 text-center mb-4">
+                            ⚠️ Executing the allocation algorithm will automatically close the registration.<br>
+                            Are you sure you want to proceed?
+                        </p>
+
+                        <!-- Button Controls -->
+                        <div class="flex justify-end gap-4 pt-2 w-full">
+                            <!-- Cancel Button -->
+                            <button type="button"
+                                    onclick="closeCloseRegModal()"
+                                    class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-[#1E3C72] transition cursor-pointer">
+                                Cancel
+                            </button>
+
+                            <!-- OK Button triggers execute -->
+                            <button type="button"
+                                    onclick="handleExecuteConfirmation()"
+                                    class="px-4 py-2 rounded-lg bg-[#1E3C72] text-white hover:bg-[#16355f] transition cursor-pointer">
+                                OK
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Right Card - Allocation Summary -->
@@ -128,14 +152,13 @@
 </div>
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    var selectedSemester = [[${semester}]];
-    const allocationStatusMap = [[${allocationResponse != null ? allocationResponse : {}}]];
-    const allocatedCountMap = [[${allocatedCount != null ? allocatedCount : {}}]];
-    const unallocatedCountMap = [[${unallocatedCount != null ? unallocatedCount : {}}]];
-    /*]]>*/
+    const semester = [[${semester != null ? semester : 5}]];
+    const allocationStatusList = [[${allocationStatus}]];
 </script>
 
+<script src="/common/js/general-utility.js"></script>
+<script src="/common/js/navbar.js"></script>
+<script src="/common/js/status-response.js"></script>
 <script src="/admin/js/run-allocation.js"></script>
 </body>
 </html>

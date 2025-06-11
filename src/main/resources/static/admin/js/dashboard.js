@@ -1,9 +1,102 @@
-// Mobile Navbar Menu Toggle
-const toggle = document.getElementById('menuToggle');
-const menu = document.getElementById('menu');
-toggle.addEventListener('click', () => {
-  menu.classList.toggle('hidden');
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleRegistration = document.getElementById("toggleRegistration");
+  const modal = document.getElementById("registrationModal");
+
+  toggleRegistration.addEventListener("change", function () {
+    if(registrationStatus === 'open') {
+        openCloseRegModal();
+        return;
+    }
+
+    if (this.checked) {
+      modal.classList.remove("hidden");
+    }
+  });
+
+  window.closeModal = function () {
+    modal.classList.add("hidden");
+    toggleRegistration.checked = false;
+  };
 });
+
+function openCloseRegModal() {
+  document.getElementById('closeRegModal').classList.remove('hidden');
+}
+
+function closeCloseRegModal() {
+  document.getElementById('closeRegModal').classList.add('hidden');
+}
+
+function handleOpenRegistration(event) {
+  event.preventDefault();
+
+  const dateInput = document.getElementById("registration-datepicker");
+  const rawValue = dateInput.value.trim();
+
+  if (!rawValue) {
+    showToast("Please select a close date.", 'warning');
+    return;
+  }
+
+  // Parse to Date object
+  const parsedDate = new Date(rawValue);
+  if (isNaN(parsedDate.getTime())) {
+    showToast("Invalid date selected.");
+    return;
+  }
+
+  // Format to YYYY-MM-DD
+  const year = parsedDate.getFullYear();
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+  const formattedDate = `${year}-${month}-${day}`;
+
+  // Set the action with query param
+  const form = event.target;
+  form.action = `/admin/open-registration?close-date=${encodeURIComponent(formattedDate)}`;
+  form.submit();
+}
+
+function openExtendModal() {
+    document.getElementById("extendModal").classList.remove("hidden");
+}
+
+function closeExtendModal() {
+    document.getElementById("extendModal").classList.add("hidden");
+}
+
+function handleExtend(event) {
+    event.preventDefault();
+
+    const input = document.getElementById("extend-datepicker");
+    const rawValue = input.value.trim();
+
+    if (!rawValue) {
+      showToast("Please select a new close date.", 'warning');
+      return;
+    }
+
+    const parsedDate = new Date(rawValue);
+    if (isNaN(parsedDate.getTime())) {
+      showToast("Invalid date.");
+      return;
+    }
+
+    const year = parsedDate.getFullYear();
+    const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+    const day = String(parsedDate.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+
+    const form = event.target;
+    form.action = `/admin/extend-period?close-date=${encodeURIComponent(formattedDate)}`;
+    form.submit();
+}
+
+function closeModal() {
+    modal.classList.add('hidden');
+    // Uncheck the toggle if Cancel is clicked
+    registrationToggle.checked = false;
+}
 
 function openModal() {
     document.getElementById('create-instance-modal').classList.remove('hidden');
@@ -11,10 +104,6 @@ function openModal() {
 
 function closeModal() {
     document.getElementById('create-instance-modal').classList.add('hidden');
-}
-
-function HandleRoute(url) {
-    window.location.href = `/admin/${url}`;
 }
 
 const form = document.getElementById('createForm');
@@ -29,4 +118,84 @@ form.addEventListener('submit', function (e) {
     btnText.textContent = "This may take a while!";
     spinner.classList.remove("hidden");
     submitBtn.disabled = true;
+});
+
+function handleDeclareResult() {
+    const pendingSemesters = [];
+
+    dashboardRequirement.forEach(item => {
+        const semester = item.semester;
+        const totalStudents = item.totalStudents;
+        const allocationStatus = item.allocationStatus;
+
+        if (totalStudents !== 0 && !allocationStatus) {
+            pendingSemesters.push(semester);
+        }
+    });
+
+    if (pendingSemesters.length > 0) {
+        const semList = pendingSemesters.join(', ');
+        showToast(`Allocation pending for Semester(s): ${semList}`, statusColors.ERROR);
+        return;
+    }
+
+    // Proceed to declare results
+    fetch('/admin/declare-results', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(response => {
+        if (response.status === status.OK) {
+            showToast('Results declared successfully!', statusColors.OK);
+        } else {
+            showToast('Failed to declare results.', statusColors.ERROR);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred while declaring results.', statusColors.ERROR);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.semester-btn');
+    const prefCountEl = document.getElementById('prefCount');
+    const allocStatusEl = document.getElementById('allocStatus');
+
+    function updateCard(semester) {
+        const data = dashboardRequirement.find(item => item.semester === semester);
+
+        if (!data || data.totalStudents === 0) {
+            prefCountEl.textContent = '-- / --';
+            allocStatusEl.textContent = '--';
+        } else {
+            prefCountEl.textContent = `${data.submittedPrefCnt} / ${data.totalStudents}`;
+            allocStatusEl.textContent = data.allocationStatus ? 'Done' : 'Pending';
+        }
+
+        // Highlight active button
+        buttons.forEach(btn => {
+            btn.classList.remove('bg-[#46A24A]', 'bg-[#22437E]');
+            btn.classList.add('bg-[#22437E]'); // Reset all to blue
+        });
+
+        const activeBtn = [...buttons].find(btn => parseInt(btn.getAttribute('data-semester'), 10) === semester);
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-[#22437E]');
+            activeBtn.classList.add('bg-[#46A24A]'); // Highlight selected one
+        }
+    }
+
+    // Set up listeners
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const selectedSem = parseInt(button.getAttribute('data-semester'), 10);
+            updateCard(selectedSem);
+        });
+    });
+
+    // Default load: select 5th semester
+    updateCard(5);
 });

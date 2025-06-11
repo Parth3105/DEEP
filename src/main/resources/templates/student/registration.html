@@ -9,18 +9,11 @@
 </head>
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
 
-<div id="toast-error"
-     class="hidden fixed top-6 right-6 z-[10] max-w-xs text-sm text-white rounded-xl shadow-lg"
-     role="alert" tabindex="-1" aria-labelledby="hs-toast-solid-color-red-label"
-     style="position: fixed !important;">
-  <div id="hs-toast-solid-color-red-label"
-       class="flex p-4 gap-2 items-start bg-red-600 rounded-xl">
-    <span id="toast-message"></span>
-  </div>
-</div>
+<!-- Toast Display -->
+<div th:replace="~{common/toast-display::toast-display}"></div>
 
 <div class="mx-auto">
-  <!-- Header -->
+   <!-- Header -->
    <div th:replace="~{common/student-registration-navbar::student-registration-navbar}"></div>
 </div>
 
@@ -258,7 +251,7 @@
         </button>
       </div>
 
-      <form id="myForm" th:action="@{/submit-preferences}" method="post">
+      <form id="myForm" th:action="@{/student/submit-preferences}" method="post">
         <!-- Hidden inputs to hold the strings -->
         <input type="hidden" name="studentRequirements" id="studentRequirements" />
         <input type="hidden" name="coursePreferences" id="coursePreferences" />
@@ -297,6 +290,9 @@
   </div>
 </main>
 
+<script src="/common/js/general-utility.js"></script>
+<script src="/common/js/navbar.js"></script>
+<script src="/common/js/status-response.js"></script>
 <script src="/student/js/registration.js"></script>
 </body>
 </html>

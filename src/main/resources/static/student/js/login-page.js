@@ -1,3 +1,11 @@
+if(sessionExpired) {
+    printStatusResponse(sessionExpired);
+}
+
+if(resetResponse) {
+    printStatusResponse(resetResponse);
+}
+
 function togglePasswordVisibility() {
     const input = document.getElementById('floating_password');
     const icon = document.getElementById('passwordToggleIcon');

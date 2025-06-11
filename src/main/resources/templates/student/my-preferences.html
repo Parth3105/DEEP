@@ -8,6 +8,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+
+<!-- Toast Display -->
+<div th:replace="~{common/toast-display::toast-display}"></div>
+
 <div class="mx-auto">
     <!-- Header -->
     <div th:replace="~{common/student-navbar::student-navbar}"></div>
@@ -65,10 +69,10 @@
 
                     <div class="flex" th:each="sp : ${slotPreferences}">
                         <div class="flex justify-between">
-                            <span class="w-24 md:w-28" th:text="'Preference - ' + ${sp.pref}">Preference - 1</span>
-                            <span class="mr-3">:</span>
+                            <span class="w-24 md:w-28" th:text="'Preference - ' + ${sp.pref}"></span>
+                            <span class="mr-3"></span>
                         </div>
-                        <span th:text="'Slot - ' + ${sp.slot}">Slot - 1</span>
+                        <span th:text="'Slot - ' + ${sp.slot}"></span>
                     </div>
 
                 </div>
@@ -77,6 +81,8 @@
     </div>
 </main>
 
+<script src="/common/js/general-utility.js"></script>
+<script src="/common/js/navbar.js"></script>
 <script src="/student/js/my-preferences.js"></script>
 </body>
 </html>
