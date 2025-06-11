@@ -26,11 +26,9 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     @Override
     public ResponseDto insertAll(byte[] courseOfferData) {
         deleteAll();
-        List<CourseOfferingDto> courseOfferDtos=new ArrayList<>();
-        ResponseDto status=dataLoader.getCourseForProgram(new ByteArrayInputStream(courseOfferData),courseOfferDtos);
+        List<CourseOffering> courseOffers=new ArrayList<>();
+        ResponseDto status=dataLoader.getCourseForProgram(new ByteArrayInputStream(courseOfferData),courseOffers);
         if(status.getStatus()!= ResponseStatus.OK) return status;
-        // TypeToken helps retain generic of list
-        List<CourseOffering> courseOffers=modelMapper.map(courseOfferDtos,new TypeToken<List<CourseOffering>>(){}.getType());
         courseOfferingRepo.saveAll(courseOffers);
         return new ResponseDto(ResponseStatus.OK,"Data Inserted Successfully!");
     }

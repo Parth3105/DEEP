@@ -3,6 +3,7 @@ package in.ac.daiict.deep.controller.student;
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.constant.endpoints.StudentEndpoint;
+import in.ac.daiict.deep.constant.status.RegistrationStatusEnum;
 import in.ac.daiict.deep.constant.template.StudentTemplate;
 import in.ac.daiict.deep.dto.AvailableCourseDto;
 import in.ac.daiict.deep.dto.InstituteReqDto;
@@ -20,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ public class EnrollmentController {
     private StudentReqService studentReqService;
     private CoursePrefService coursePrefService;
     private SlotPrefService slotPrefService;
+    private SystemStatusService systemStatusService;
 
     @GetMapping(StudentEndpoint.ENROLL)
     public String renderEnrollmentForm(String studentId, Model model) {
@@ -60,7 +63,11 @@ public class EnrollmentController {
     }
 
     @PostMapping(StudentEndpoint.SUBMIT_PREFERENCE)
-    public String loadSubmittedPreferences(@RequestParam String studentRequirements, @RequestParam String coursePreferences, @RequestParam String slotPreferences){
+    public String loadSubmittedPreferences(@RequestParam String studentRequirements, @RequestParam String coursePreferences, @RequestParam String slotPreferences, RedirectAttributes redirectAttributes){
+        if(systemStatusService.fetchRegistrationStatus().equals(RegistrationStatusEnum.close.toString())){
+            redirectAttributes.addFlashAttribute("preferenceSubmissionResponse", new ResponseDto(ResponseStatus.FORBIDDEN,ResponseMessage.LATE_SUBMISSION));
+            return "redirect:"+StudentEndpoint.HOME_PAGE;
+        }
         CustomUserDetails userDetails= (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String studentId=userDetails.getUsername();
         Thread recordStudentRequirements=new Thread(new Runnable() {

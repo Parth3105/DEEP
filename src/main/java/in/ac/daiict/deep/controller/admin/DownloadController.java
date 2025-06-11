@@ -14,7 +14,6 @@ import in.ac.daiict.deep.service.UploadService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -27,7 +26,7 @@ public class DownloadController {
     private UploadService uploadService;
 
     @GetMapping(AdminEndpoint.DOWNLOAD_REPORT_SUBMIT)
-    public void downloadReport(HttpServletResponse httpServletResponse, @PathVariable("semester") int semester, @PathVariable("name") String name, Model model) {
+    public void downloadReport(HttpServletResponse httpServletResponse, @PathVariable("semester") int semester, @PathVariable("name") String name) {
         String contentType = null;
         String downloadFilename = null;
         switch (name) {
@@ -72,7 +71,7 @@ public class DownloadController {
     }
 
     @GetMapping(AdminEndpoint.DOWNLOAD_UPLOADED_REPORT_SUBMIT)
-    public void downloadUploadedData(HttpServletResponse httpServletResponse, @PathVariable("name") String name, Model model) {
+    public void downloadUploadedData(HttpServletResponse httpServletResponse, @PathVariable("name") String name) {
         String contentType = null;
         String downloadFilename = null;
         String[] names = {UploadConstants.COURSE_DATA, UploadConstants.INST_REQ_DATA, UploadConstants.OFFERS_DATA};

@@ -90,20 +90,20 @@ public class AllocationSystem {
         // Initialize the setup to load data
         if(students==null || openFor==null || instituteRequirements==null) new ResponseDto(ResponseStatus.BAD_REQUEST,"Error: No Student Found");
         allocationPhase(true);
-        System.out.println("--------------------------------------------------------------------------------");
-        System.out.println("Phase-1 finished");
+//        System.out.println("--------------------------------------------------------------------------------");
+//        System.out.println("Phase-1 finished");
         unmetReqCnt[0] = 0;
-        System.out.println("All Students allocated? " + isStudentReqFulfilled(true, unmetReqCnt));
-        System.out.println("Not allocated in phase-1: " + unmetReqCnt[0]);
-        System.out.println("--------------------------------------------------------------------------------");
+//        System.out.println("All Students allocated? " + isStudentReqFulfilled(true, unmetReqCnt));
+//        System.out.println("Not allocated in phase-1: " + unmetReqCnt[0]);
+//        System.out.println("--------------------------------------------------------------------------------");
 
         allocationPhase(false);
-        System.out.println("--------------------------------------------------------------------------------");
-        System.out.println("Phase-2 finished");
+//        System.out.println("--------------------------------------------------------------------------------");
+//        System.out.println("Phase-2 finished");
         unmetReqCnt[0] = 0;
-        System.out.println("All Students allocated? " + isStudentReqFulfilled(false, unmetReqCnt));
-        System.out.println("Not allocated in phase-2: " + unmetReqCnt[0]);
-        System.out.println("--------------------------------------------------------------------------------");
+//        System.out.println("All Students allocated? " + isStudentReqFulfilled(false, unmetReqCnt));
+//        System.out.println("Not allocated in phase-2: " + unmetReqCnt[0]);
+//        System.out.println("--------------------------------------------------------------------------------");
         return new ResponseDto(ResponseStatus.OK, ResponseMessage.SUCCESS_STATUS);
     }
 
@@ -459,6 +459,7 @@ public class AllocationSystem {
             printWriter.println();
             printWriter.flush();
         }
+        printWriter.close();
         return byteArrayOutputStream;
     }
 }

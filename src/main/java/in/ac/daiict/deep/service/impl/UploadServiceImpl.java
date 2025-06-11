@@ -6,9 +6,7 @@ import in.ac.daiict.deep.service.UploadService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -16,9 +14,8 @@ public class UploadServiceImpl implements UploadService {
     private UploadRepo uploadRepo;
 
     @Override
-    public void insertAll(Map<String, Upload> uploads) {
-        List<Upload> uploadList = new ArrayList<>(uploads.values());
-        uploadRepo.saveAllAndFlush(uploadList);
+    public void insertAll(List<Upload> uploads) {
+        uploadRepo.saveAllAndFlush(uploads);
     }
 
     @Override
@@ -29,5 +26,10 @@ public class UploadServiceImpl implements UploadService {
     @Override
     public void deleteAll() {
         uploadRepo.deleteAll();
+    }
+
+    @Override
+    public boolean checkIfExists(String name) {
+        return uploadRepo.existsById(name);
     }
 }

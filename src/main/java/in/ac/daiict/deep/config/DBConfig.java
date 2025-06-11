@@ -1,6 +1,8 @@
 package in.ac.daiict.deep.config;
 
 import in.ac.daiict.deep.constant.database.DBConstants;
+import in.ac.daiict.deep.service.InstanceNameService;
+import in.ac.daiict.deep.service.UserService;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
 import org.flywaydb.core.Flyway;
@@ -17,6 +19,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Configuration
 public class DBConfig {
@@ -35,26 +38,58 @@ public class DBConfig {
 
     private static LocalContainerEntityManagerFactoryBean emfBean;
 
+    @Autowired
+    private InstanceNameService instanceNameService;
+    @Autowired
+    private UserService userService;
+
     @PostConstruct
     public void initDefaultSchema() {
-        runFlyway(DBConstants.WORKING_SCHEMA_NAME);
-        createEntityManagerFactory(DBConstants.WORKING_SCHEMA_NAME);
+        runFlyway(DBConstants.WORKING_INSTANCE_NAME);
+        createEntityManagerFactory(DBConstants.WORKING_INSTANCE_NAME);
     }
     public void runFlyway(String newSchemaName) {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
                 .schemas(newSchemaName)
+                .locations("filesystem:C:/flyway-scripts")
                 .baselineOnMigrate(true)
                 .load();
 
         flyway.migrate();
     }
 
-    public void createSchemaAndSwitch(String schemaName) {
-        jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS " + schemaName);
-//        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS " + DBConstants.FLYWAY_TABLE);
-        runFlyway(schemaName);
-        createEntityManagerFactory(schemaName);
+    public boolean createSchemaAndSwitch(String latestInstanceName, String workingInstance) {
+        AtomicBoolean isSuccessInstanceMigration=new AtomicBoolean(false);
+        AtomicBoolean isSuccessUserMigration=new AtomicBoolean(false);
+        Thread migrateInstanceData=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(instanceNameService.migrateInstances()) isSuccessInstanceMigration.set(true);
+            }
+        });
+        Thread migrateUserData=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(userService.migrateUserData()) isSuccessUserMigration.set(true);
+            }
+        });
+
+        migrateInstanceData.start();
+        migrateUserData.start();
+        try {
+            migrateInstanceData.join();
+            migrateUserData.join();
+        } catch (InterruptedException e) {
+            return false;
+        }
+        if(!isSuccessInstanceMigration.get() || !isSuccessUserMigration.get()) return false;
+        String sql = String.format("ALTER SCHEMA %s RENAME TO %s", workingInstance, latestInstanceName);
+        jdbcTemplate.execute(sql);
+        jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS " + workingInstance);
+        runFlyway(workingInstance);
+        createEntityManagerFactory(workingInstance);
+        return true;
     }
 
     private void createEntityManagerFactory(String schemaName) {
