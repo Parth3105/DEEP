@@ -28,9 +28,14 @@ public class StudentReqServiceImpl implements StudentReqService {
     }
 
     @Override
-    public List<StudentReqDto> findStudentRequirements(String sid) {
+    public List<StudentReqDto> fetchStudentRequirements(String sid) {
         List<StudentReq> studentReqList=studentReqRepo.findBySid(sid);
         if(studentReqList==null || studentReqList.isEmpty()) return null;
         return modelMapper.map(studentReqList, new TypeToken<List<StudentReqDto>>(){}.getType());
+    }
+
+    @Override
+    public long submittedPrefCntBySemester(int semester) {
+        return studentReqRepo.countDistinctStudentsBySemester(semester);
     }
 }

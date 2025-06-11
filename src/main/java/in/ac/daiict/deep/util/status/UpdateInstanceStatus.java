@@ -6,11 +6,11 @@ import lombok.Getter;
 
 public class UpdateInstanceStatus {
     @Getter
-    private String statusName;
+    private static String statusName;
     private UpdateInstanceStatusEnum statusValue;
 
     public UpdateInstanceStatus(UpdateInstanceStatusEnum statusValue) {
-        this.statusName="update_instance_status";
+        statusName="update_instance_status";
         this.statusValue = statusValue;
     }
 

@@ -1,5 +1,8 @@
 package in.ac.daiict.deep.controller.common;
 
+import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
+import in.ac.daiict.deep.constant.endpoints.CommonEndPoint;
+import in.ac.daiict.deep.constant.endpoints.StudentEndpoint;
 import in.ac.daiict.deep.security.constant.Roles;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -11,7 +14,7 @@ public class HomeController {
     @GetMapping("/")
     public String redirectBasedOnRole(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
+            return "redirect:"+ CommonEndPoint.LOGIN;
         }
 
         boolean isAdmin = authentication.getAuthorities().stream()
@@ -20,11 +23,11 @@ public class HomeController {
                 .anyMatch(auth -> auth.getAuthority().equals(Roles.ROLE_STUDENT));
 
         if (isAdmin) {
-            return "redirect:/admin/home";
+            return "redirect:"+ AdminEndpoint.DASHBOARD;
         } else if (isStudent) {
-            return "redirect:/student/home";
+            return "redirect:"+ StudentEndpoint.HOME_PAGE;
         } else {
-            return "redirect:/login";
+            return "redirect:"+ CommonEndPoint.LOGIN;
         }
     }
 }

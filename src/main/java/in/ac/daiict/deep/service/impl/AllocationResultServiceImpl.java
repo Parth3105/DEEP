@@ -36,4 +36,9 @@ public class AllocationResultServiceImpl implements AllocationResultService {
     public void deleteAll() {
         allocationResultRepo.deleteAll();
     }
+
+    @Override
+    public boolean allocationStatusBySem(int semester) {
+        return allocationResultRepo.allocationStatusBySem(semester);
+    }
 }
