@@ -1,41 +1,3 @@
-// Mobile Navbar Menu Toggle
-const toggle = document.getElementById('menuToggle');
-const menu = document.getElementById('menu');
-toggle.addEventListener('click', () => {
-    menu.classList.toggle('hidden');
-});
-
-// Toast Notification
-function showToast(message, type = 'error') {
-    const toast = document.getElementById("toast-error");
-    const text = document.getElementById("toast-message");
-
-    text.innerText = message;
-
-    // Reset any previous background color
-    toast.classList.remove("bg-red-500", "bg-yellow-400");
-
-    // Apply based on type
-    if (type === 'error') {
-        toast.classList.add("bg-red-500");
-    } else if (type === 'warning') {
-        toast.classList.add("bg-yellow-400", "text-gray-900");
-    }
-
-    toast.classList.remove("hidden");
-    toast.classList.add("flex");
-
-    setTimeout(() => {
-        hideToast();
-    }, 3000);
-}
-
-function hideToast() {
-    const toast = document.getElementById("toast-error");
-    toast.classList.remove("flex");
-    toast.classList.add("hidden");
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('requirementsContainer');
     const filtered = instituteRequirements.filter(obj => obj.course_cnt !== null);
@@ -79,7 +41,6 @@ instituteRequirements.forEach(obj => {
     input.addEventListener("input", () => {
       values[category] = input.value.trim() || "0";
     });
-    console.log(values);
   }
 });
 
@@ -94,8 +55,8 @@ function showStep(step) {
         const progressLine = document.getElementById(`line-${i}`);
 
         if (progressEL) {
-            progressEL.classList.toggle('bg-[#1321EA]', i < step);
-            progressEL.classList.toggle('bg-[#ACCEFF]', i > step);
+            progressEL.classList.toggle('bg-[' + customColors.DARK_BLUE + ']', i < step);
+            progressEL.classList.toggle('bg-[' + customColors.LIGHT_BLUE + ']', i > step);
 
             if (i === step) {
                 progressEL.style.boxShadow = 'inset 0 0 0 5px #1321EA';
@@ -105,8 +66,8 @@ function showStep(step) {
         }
 
         if(progressLine) {
-            progressLine.classList.toggle('bg-[#1321EA]', i <= step);
-            progressLine.classList.toggle('bg-[#ACCEFF]', i > step);
+            progressLine.classList.toggle('bg-[' + customColors.DARK_BLUE + ']', i <= step);
+            progressLine.classList.toggle('bg-[' + customColors.LIGHT_BLUE + ']', i > step);
         }
 
         if (el) {
@@ -406,9 +367,7 @@ document.getElementById('confirmSubmit').addEventListener('click', function () {
   document.getElementById('confirmModal').classList.add('hidden');
   document.body.classList.remove('backdrop-blur-md', 'overflow-hidden');
 
-  console.log(values);
   const acad = getAcadReqToString(values);
-  console.log(acad);
   const course = getCoursePrefsToString(selectedCoursesBySlot);
   const slot = getSlotPrefsToString(collectPreferences());
 

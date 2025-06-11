@@ -1,10 +1,3 @@
-// Mobile Navbar Menu Toggle
-const toggle = document.getElementById('menuToggle');
-const menu = document.getElementById('menu');
-toggle.addEventListener('click', () => {
-  menu.classList.toggle('hidden');
-});
-
 // Send the uploaded file to backend
 const HandleUpload = async (type) => {
     const input = document.getElementById(`fileInput-${type}`);
@@ -16,7 +9,6 @@ const HandleUpload = async (type) => {
     }
 
     const file = input.files?.[0];
-
     if (!file) {
         showMessage(messageBox, 'Please select a file first.', true);
         return;

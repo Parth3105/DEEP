@@ -1,58 +1,9 @@
-// Toast Notification
-function showToast(message, type = 'error') {
-    const toast = document.getElementById("toast-error");
-    const text = document.getElementById("toast-message");
-
-    text.innerText = message;
-
-    // Reset any previous background color
-    toast.classList.remove("bg-red-600", "bg-yellow-400");
-
-    // Apply based on type
-    if (type === 'error') {
-        toast.classList.add("bg-red-600");
-    } else if (type === 'warning') {
-        toast.classList.add("bg-yellow-400", "text-gray-900");
-    } else if (type === 'success') {
-        toast.classList.add("bg-green-600", "text-gray-900");
-    }
-
-    toast.classList.remove("hidden");
-    toast.classList.add("flex");
-
-    setTimeout(() => {
-        hideToast();
-    }, 5000);
-}
-
-function hideToast() {
-    const toast = document.getElementById("toast-error");
-    toast.classList.remove("flex");
-    toast.classList.add("hidden");
-}
-
 if(sessionExpired) {
-    printSessionExpiredResponse();
-}
-
-function printSessionExpiredResponse() {
-    if(sessionExpired.status === 419)
-        showToast(sessionExpired.message);
-    else
-        showToast("Internal Server Error! Please Contact support.")
+    printStatusResponse(sessionExpired);
 }
 
 if(resetResponse) {
-    printResetResponse();
-}
-
-function printResetResponse() {
-    if(resetResponse.status === 200)
-        showToast(resetResponse.message, 'success');
-    else if(resetResponse.status === 500)
-        showToast(resetResponse.message);
-    else
-        showToast("Internal Server Error! Please Contact support.")
+    printStatusResponse(resetResponse);
 }
 
 function togglePasswordVisibility() {

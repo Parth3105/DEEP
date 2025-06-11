@@ -1,52 +1,14 @@
-// Mobile Navbar Menu Toggle
-const toggle = document.getElementById('menuToggle');
-const menu = document.getElementById('menu');
-toggle.addEventListener('click', () => {
-  menu.classList.toggle('hidden');
-});
-
-// Toast Notification
-function showToast(message, type = 'error') {
-    const toast = document.getElementById("toast-error");
-    const text = document.getElementById("toast-message");
-
-    text.innerText = message;
-
-    // Reset any previous background color
-    toast.classList.remove("bg-red-600", "bg-yellow-400");
-
-    // Apply based on type
-    if (type === 'error') {
-        toast.classList.add("bg-red-600");
-    } else if (type === 'warning') {
-        toast.classList.add("bg-yellow-400", "text-gray-900");
-    }
-
-    toast.classList.remove("hidden");
-    toast.classList.add("flex");
-
-    setTimeout(() => {
-        hideToast();
-    }, 5000);
-}
-
-function hideToast() {
-    const toast = document.getElementById("toast-error");
-    toast.classList.remove("flex");
-    toast.classList.add("hidden");
-}
-
 let selectedSemester = null;
 function HandleSemesterSelection(semesterBtns, downloadBtns, semesterInputs) {
     semesterBtns.forEach(btn => {
         btn.addEventListener('click', function () {
             // Remove active state from all buttons
             semesterBtns.forEach(b => {
-                b.style.backgroundColor = '#1E3C72';
+                b.style.backgroundColor = customColors.DARK_GREEN;
             });
 
             // Set active state for clicked button
-            this.style.backgroundColor = '#2D9D5D';
+            this.style.backgroundColor = customColors.DARK_GREEN;
             const selectedSemester = this.dataset.sem;
 
             // Update all hidden semester inputs
@@ -74,15 +36,6 @@ function InitializeDownloadButtons(resultDownloadBtns) {
             input.value = selectedSemester;
         });
     }
-}
-
-function printErrorMessage(status, errorText) {
-    if(status === 404)
-        showToast("Download failed: " + (errorText || "Unknown error"), "warning");
-    else if(status === 500)
-        showToast("Download failed: " + (errorText || "Unknown error"));
-    else
-        showToast("Download failed due to an Unknown error! Please contact support.");
 }
 
 function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
@@ -113,7 +66,7 @@ function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
               .then(async res => {
                 if (res.status !== 200) {
                   const errorText = await res.text();
-                  printErrorMessage(res.status, errorText);
+                  printStatusResponse(res.status, errorText);
                   return;
                 }
 

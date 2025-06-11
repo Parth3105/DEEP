@@ -9,15 +9,8 @@
 </head>
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
 
-<div id="toast-error"
-     class="hidden fixed top-6 right-6 z-[10] max-w-xs text-sm text-white rounded-xl shadow-lg"
-     role="alert" tabindex="-1" aria-labelledby="hs-toast-solid-color-red-label"
-     style="position: fixed !important;">
-  <div id="hs-toast-solid-color-red-label"
-       class="flex p-4 gap-2 items-start rounded-xl">
-    <span id="toast-message"></span>
-  </div>
-</div>
+<!-- Toast Display -->
+<div th:replace="~{common/toast-display::toast-display}"></div>
 
 <div class="mx-auto">
   <!-- Header -->
@@ -147,7 +140,7 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 gap-x-10">
         <!-- Enroll Now -->
-        <button onclick="HandleRoute('enroll')" class="bg-[#FF822E] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
+        <button onclick="HandleStudentRoute('enroll')" class="bg-[#FF822E] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
           <div class="flex flex-col items-center justify-center mb-4">
             <img src="/student/images/white-book.svg" alt="book Icon" class="w-12 h-12 text-blue-600">
           </div>
@@ -156,7 +149,7 @@
         </button>
 
         <!-- View Preferences -->
-        <button onclick="HandleRoute('my-preferences')" class="bg-[#568CEA] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
+        <button onclick="HandleStudentRoute('my-preferences')" class="bg-[#568CEA] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
           <div class="flex flex-col items-center justify-center mb-4">
             <img src="/student/images/white-tick.svg" alt="tick Icon" class="w-12 h-12 text-blue-600">
           </div>
@@ -165,7 +158,7 @@
         </button>
 
         <!-- View Results -->
-        <button onclick="HandleRoute('my-allocation-result')" class="bg-[#0EB17C] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
+        <button onclick="HandleStudentRoute('my-allocation-result')" class="bg-[#0EB17C] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
           <div class="flex flex-col items-center justify-center mb-4">
             <img src="/student/images/white-certificate.svg" alt="certificate Icon" class="w-12 h-12 text-blue-600">
           </div>
@@ -174,7 +167,7 @@
         </button>
 
         <!-- Guidelines -->
-        <button onclick="HandleRoute('guidelines')" class="bg-[#BF4EF7] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
+        <button onclick="HandleStudentRoute('guidelines')" class="bg-[#BF4EF7] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
           <div class="flex flex-col items-center justify-center mb-4">
             <img src="/student/images/guidelines.svg" alt="guidelines Icon" class="w-12 h-12 text-blue-600">
           </div>
@@ -219,6 +212,10 @@
     let renderResponse = /*[[${renderResponse}]]*/ null;
   /*]]>*/
 </script>
+
+<script src="/common/js/general-utility.js"></script>
+<script src="/common/js/navbar.js"></script>
+<script src="/common/js/status-response.js"></script>
 <script src="/student/js/home-page.js"></script>
 </body>
 </html>

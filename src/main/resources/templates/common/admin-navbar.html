@@ -22,7 +22,14 @@
             <a href="/admin/student-preferences" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Students Preferences</a>
             <a href="/admin/allocation-results" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Allocation Result</a>
             <a href="/admin/contact" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Help | FAQs</a>
-            <a href="/logout" class="text-xs sm:text-base md:text-sm bg-[#3F0F83] text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition duration-300 transform hover:scale-105 hover:shadow-lg">Logout</a>
+            <form method="post" action="/logout" style="display: inline;">
+                <!-- CSRF token will be automatically added by Spring Security if using Thymeleaf -->
+                <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button type="submit"
+                        class="text-xs sm:text-base md:text-sm bg-[#3F0F83] text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition duration-300 transform hover:scale-105 hover:shadow-lg border-none cursor-pointer">
+                    Logout
+                </button>
+            </form>
         </nav>
     </div>
 
@@ -32,6 +39,13 @@
         <a href="/admin/student-preferences" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Students Preferences</a>
         <a href="/admin/allocation-results" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Allocation Result</a>
         <a href="/admin/contact" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Help | FAQs</a>
-        <a href="/logout" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Logout</a>
+        <form method="post" action="/logout" style="display: inline;">
+            <!-- CSRF token will be automatically added by Spring Security if using Thymeleaf -->
+            <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit"
+                    class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">
+                Logout
+            </button>
+        </form>
     </div>
 </header>
