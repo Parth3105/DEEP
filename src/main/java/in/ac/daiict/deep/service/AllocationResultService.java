@@ -10,5 +10,4 @@ public interface AllocationResultService {
     List<AllocationResultDto> fetchAllocationResult(String sid, String program);
     List<AllocationResult> fetchCourseWiseAllocation(String cid);
     void deleteAll();
-    boolean allocationStatusBySem(int semester);
 }

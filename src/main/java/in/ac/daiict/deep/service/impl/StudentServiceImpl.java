@@ -25,11 +25,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public ResponseDto insertAll(byte[] studentData) {
-        List<StudentDto> studentDtos=new ArrayList<>();
-        ResponseDto status=dataLoader.getStudentData(new ByteArrayInputStream(studentData),studentDtos);
+        List<Student> students=new ArrayList<>();
+        ResponseDto status=dataLoader.getStudentData(new ByteArrayInputStream(studentData),students);
         if(status.getStatus()!= ResponseStatus.OK) return status;
-        // TypeToken helps retain generic of list
-        List<Student> students=modelMapper.map(studentDtos,new TypeToken<List<Student>>(){}.getType());
         studentRepo.saveAll(students);
         return new ResponseDto(ResponseStatus.OK,"Data Inserted Successfully!");
     }

@@ -51,8 +51,9 @@ public class DBConfig {
     }
 
     public void createSchemaAndSwitch(String schemaName) {
+        String sql = String.format("ALTER SCHEMA %s RENAME TO %s", DBConstants.WORKING_SCHEMA_NAME, DBConstants.SAVE_SCHEMA_NAME);
+        jdbcTemplate.execute(sql);
         jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS " + schemaName);
-//        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS " + DBConstants.FLYWAY_TABLE);
         runFlyway(schemaName);
         createEntityManagerFactory(schemaName);
     }

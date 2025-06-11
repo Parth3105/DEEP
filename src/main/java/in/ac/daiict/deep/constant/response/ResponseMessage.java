@@ -23,6 +23,7 @@ public class ResponseMessage {
     public static final String DOWNLOADING_ERROR="Download failed due to a server error. Please check system logs for more details.";
     public static final String STUDENT_PREFERENCES_NOT_FOUND="Student Preferences Not found";
     public static final String UPLOAD_DATA_NOT_FOUND="Required data files are missing. Please upload all necessary data before running the allocation.";
+    public static final String LATE_SUBMISSION="Registration is closed. Submissions are no longer accepted.";
 
     public static String getUploadSuccessMessage() {
         return "You're all set! " + UPLOAD_COUNT + " file(s) have been successfully uploaded and saved.";

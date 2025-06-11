@@ -4,6 +4,7 @@ import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.constant.endpoints.StudentEndpoint;
+import in.ac.daiict.deep.constant.status.ResultStatusEnum;
 import in.ac.daiict.deep.constant.template.AdminTemplate;
 import in.ac.daiict.deep.constant.template.StudentTemplate;
 import in.ac.daiict.deep.dto.*;
@@ -34,6 +35,7 @@ public class PreferenceAndResultController {
     private CoursePrefService coursePrefService;
     private SlotPrefService slotPrefService;
     private AllocationResultService allocationResultService;
+    private SystemStatusService systemStatusService;
     private DataLoader dataLoader;
 
     @GetMapping(StudentEndpoint.PREFERENCE_SUMMARY)
@@ -140,7 +142,7 @@ public class PreferenceAndResultController {
         }
 
         List<AllocationResultDto> allocationResultDtoList = allocationResultService.fetchAllocationResult(studentId, studentDto.getProgram());
-        if (allocationResultDtoList == null) {
+        if (allocationResultDtoList == null || (requester=='S' && (systemStatusService.fetchResultStatus()==null || systemStatusService.fetchResultStatus().equals(ResultStatusEnum.PENDING.toString())))) {
             // not found any results.
             redirectAttributes.addFlashAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_FOUND));
             return "redirect:" + StudentEndpoint.HOME_PAGE;

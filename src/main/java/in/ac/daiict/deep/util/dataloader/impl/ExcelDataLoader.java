@@ -4,10 +4,7 @@ import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.dto.CourseDto;
 import in.ac.daiict.deep.dto.CourseOfferingDto;
 import in.ac.daiict.deep.dto.InstituteReqDto;
-import in.ac.daiict.deep.dto.StudentDto;
-import in.ac.daiict.deep.entity.AllocationResult;
-import in.ac.daiict.deep.entity.CoursePref;
-import in.ac.daiict.deep.entity.SlotPref;
+import in.ac.daiict.deep.entity.*;
 import in.ac.daiict.deep.service.AllocationResultService;
 import in.ac.daiict.deep.service.CourseService;
 import in.ac.daiict.deep.dto.ResponseDto;
@@ -49,7 +46,7 @@ public class ExcelDataLoader implements DataLoader {
     /**
      * Load the STUDENT_DATA from the sheet.
      */
-    public ResponseDto getStudentData(InputStream studentData, List<StudentDto> studentDtos) {
+    public ResponseDto getStudentData(InputStream studentData, List<Student> students) {
         XSSFWorkbook studentWorkbook = null;
         XSSFSheet studentSheet = null;
         try {
@@ -70,7 +67,7 @@ public class ExcelDataLoader implements DataLoader {
             String studentName = studentRow.getCell(studentHeader.NAME).getStringCellValue();
             String program = studentRow.getCell(studentHeader.PROGRAM).getStringCellValue();
             int semester = (int) studentRow.getCell(studentHeader.SEMESTER).getNumericCellValue();
-            studentDtos.add(new StudentDto(studentID, studentName, program, semester));
+            students.add(new Student(studentID, studentName, program, semester));
         }
         try {
             studentWorkbook.close();
@@ -83,7 +80,7 @@ public class ExcelDataLoader implements DataLoader {
     /**
      * Load the COURSE_DATA from the sheet.
      */
-    public ResponseDto getCourseData(InputStream courseData, List<CourseDto> courseDtos) {
+    public ResponseDto getCourseData(InputStream courseData, List<Course> courses) {
         XSSFWorkbook courseWorkbook;
         XSSFSheet courseSheet;
         try {
@@ -103,7 +100,7 @@ public class ExcelDataLoader implements DataLoader {
             int credits = (int) row.getCell(courseHeader.CREDITS).getNumericCellValue();
             String slot = String.valueOf((int) row.getCell(courseHeader.SLOT).getNumericCellValue());
 
-            courseDtos.add(new CourseDto(courseID, courseName, credits, slot));
+            courses.add(new Course(courseID, courseName, credits, slot));
         }
         try {
             courseWorkbook.close();
@@ -116,7 +113,7 @@ public class ExcelDataLoader implements DataLoader {
     /**
      * Load the institute-requirements from the sheet.
      */
-    public ResponseDto getInstituteRequirements(InputStream instReqData, List<InstituteReqDto> instituteReqDtos) {
+    public ResponseDto getInstituteRequirements(InputStream instReqData, List<InstituteReq> instituteReqs) {
         XSSFWorkbook instReqWorkbook;
         XSSFSheet instReqSheet;
         try {
@@ -136,7 +133,7 @@ public class ExcelDataLoader implements DataLoader {
             String category = row.getCell(instituteReqHeader.CATEGORY).getStringCellValue();
             int count = (int) row.getCell(instituteReqHeader.COUNT).getNumericCellValue();
 
-            instituteReqDtos.add(new InstituteReqDto(program, category, semester, count));
+            instituteReqs.add(new InstituteReq(program, semester, category, count));
         }
         try {
             instReqWorkbook.close();
@@ -149,7 +146,7 @@ public class ExcelDataLoader implements DataLoader {
     /**
      * Load the course-offering Data from the sheet.
      */
-    public ResponseDto getCourseForProgram(InputStream offerData, List<CourseOfferingDto> courseOfferingDtos) {
+    public ResponseDto getCourseForProgram(InputStream offerData, List<CourseOffering> courseOfferings) {
         XSSFWorkbook offerWorkbook;
         XSSFSheet offerSheet;
         try {
@@ -171,10 +168,10 @@ public class ExcelDataLoader implements DataLoader {
             int seats = (int) row.getCell(offerHeader.SEATS).getNumericCellValue();
 
             if (!courseService.isPresent(courseID)) {
-                courseOfferingDtos.clear();
+                courseOfferings.clear();
                 return new ResponseDto(ResponseStatus.BAD_REQUEST, "Error: Some entries refer to non-existing course in course-offerings. Please verify your data.");
             }
-            courseOfferingDtos.add(new CourseOfferingDto(program, courseID, category, semester, seats));
+            courseOfferings.add(new CourseOffering(program, courseID, semester, category, seats));
         }
         try {
             offerWorkbook.close();

@@ -2,10 +2,11 @@ package in.ac.daiict.deep.service;
 
 import in.ac.daiict.deep.entity.Upload;
 
-import java.util.Map;
+import java.util.List;
 
 public interface UploadService {
-    void insertAll(Map<String,Upload> uploads);
+    void insertAll(List<Upload> uploads);
     Upload findFile(String name);
     void deleteAll();
+    boolean checkIfExists(String name);
 }

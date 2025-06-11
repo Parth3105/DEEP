@@ -22,7 +22,4 @@ public interface AllocationResultRepo extends JpaRepository<AllocationResult, Al
     @Modifying
     @Query(value = "DELETE FROM "+ DBConstants.ALLOCATION_RESULTS_TABLE,nativeQuery = true)
     void deleteAll();
-
-    @Query(value = "SELECT EXISTS(SELECT 1 FROM allocation_results NATURAL JOIN students WHERE students.semester=:semester)",nativeQuery = true)
-    boolean allocationStatusBySem(@Param("semester") int semester);
 }

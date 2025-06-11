@@ -25,9 +25,9 @@ public class SystemStatusServiceImpl implements SystemStatusService {
     @Override
     public void updateOnOpeningRegistration(SystemStatusDto systemStatusDto) {
         List<SystemStatus> systemStatusList=new ArrayList<>();
-        systemStatusList.add(new SystemStatus(systemStatusDto.getRegistrationStatus().getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
-        systemStatusList.add(new SystemStatus(systemStatusDto.getRegistrationCloseDate().getStatusName(),systemStatusDto.getRegistrationCloseDate().getStringCloseDate()));
-        systemStatusList.add(new SystemStatus(systemStatusDto.getUpdateInstanceStatus().getStatusName(),systemStatusDto.getUpdateInstanceStatus().getStatusValue()));
+        systemStatusList.add(new SystemStatus(RegistrationStatus.getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
+        systemStatusList.add(new SystemStatus(RegistrationCloseDate.getStatusName(),systemStatusDto.getRegistrationCloseDate().getStringCloseDate()));
+        systemStatusList.add(new SystemStatus(UpdateInstanceStatus.getStatusName(),systemStatusDto.getUpdateInstanceStatus().getStatusValue()));
         registrationTaskManager.updateCloseRegistrationDate(systemStatusDto.getRegistrationCloseDate().getCloseDate());
         registrationTaskManager.startRegistration();
         systemStatusRepo.saveAll(systemStatusList);
@@ -43,9 +43,8 @@ public class SystemStatusServiceImpl implements SystemStatusService {
     }
 
     @Override
-    public void updateOnClosingRegistration(SystemStatusDto systemStatusDto) {
+    public void updateOnClosingRegistration() {
         registrationTaskManager.closeRegistration();
-        systemStatusRepo.save(new SystemStatus(RegistrationStatus.getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
     }
 
     @Override
@@ -66,6 +65,20 @@ public class SystemStatusServiceImpl implements SystemStatusService {
         }
 
         return systemStatusDto;
+    }
+
+    @Override
+    public String fetchRegistrationStatus() {
+        SystemStatus systemStatus= systemStatusRepo.findById(RegistrationStatus.getStatusName()).orElse(null);
+        if(systemStatus==null) return null;
+        return systemStatus.getStatusValue();
+    }
+
+    @Override
+    public String fetchResultStatus() {
+        SystemStatus systemStatus= systemStatusRepo.findById(ResultStatus.getStatusName()).orElse(null);
+        if(systemStatus==null) return null;
+        return systemStatus.getStatusValue();
     }
 
 

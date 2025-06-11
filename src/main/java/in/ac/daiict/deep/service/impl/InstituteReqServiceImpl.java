@@ -26,11 +26,9 @@ public class InstituteReqServiceImpl implements InstituteReqService {
     @Override
     public ResponseDto insertAll(byte[] instituteReqData) {
         deleteAll();
-        List<InstituteReqDto> instituteReqDtos=new ArrayList<>();
-        ResponseDto status=dataLoader.getInstituteRequirements(new ByteArrayInputStream(instituteReqData),instituteReqDtos);
+        List<InstituteReq> instituteReqs=new ArrayList<>();
+        ResponseDto status=dataLoader.getInstituteRequirements(new ByteArrayInputStream(instituteReqData),instituteReqs);
         if(status.getStatus()!= ResponseStatus.OK) return status;
-        // TypeToken helps retain generic of list
-        List<InstituteReq> instituteReqs=modelMapper.map(instituteReqDtos,new TypeToken<List<InstituteReq>>(){}.getType());
         instituteReqRepo.saveAll(instituteReqs);
         return new ResponseDto(ResponseStatus.OK,"Data Inserted Successfully!");
     }
