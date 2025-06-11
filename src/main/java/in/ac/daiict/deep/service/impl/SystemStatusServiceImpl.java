@@ -13,6 +13,7 @@ import in.ac.daiict.deep.util.status.UpdateInstanceStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +36,11 @@ public class SystemStatusServiceImpl implements SystemStatusService {
 
     @Override
     public void updateOnExtendingRegistrationPeriod(SystemStatusDto systemStatusDto) {
-        SystemStatusDto systemStatusDtoCheck=new SystemStatusDto(RegistrationStatusEnum.OPEN);
+        SystemStatusDto systemStatusDtoCheck=new SystemStatusDto(RegistrationStatusEnum.open);
         SystemStatus systemStatus=systemStatusRepo.findById(RegistrationStatus.getStatusName()).orElse(null);
         if(systemStatus==null || !systemStatus.getStatusValue().equals(systemStatusDtoCheck.getRegistrationStatus().getStatusValue())) return;
-        registrationTaskManager.updateCloseRegistrationDate(systemStatusDto.getRegistrationCloseDate().getCloseDate());
+        if(systemStatusDto.getRegistrationCloseDate().getCloseDate().isBefore(LocalDate.now())) registrationTaskManager.closeRegistration();
+        else registrationTaskManager.updateCloseRegistrationDate(systemStatusDto.getRegistrationCloseDate().getCloseDate());
         systemStatusRepo.save(new SystemStatus(RegistrationCloseDate.getStatusName(),systemStatusDto.getRegistrationCloseDate().getStringCloseDate()));
     }
 
@@ -50,7 +52,7 @@ public class SystemStatusServiceImpl implements SystemStatusService {
 
     @Override
     public void autoCloseRegistration() {
-        SystemStatusDto systemStatusDto=new SystemStatusDto(RegistrationStatusEnum.CLOSE);
+        SystemStatusDto systemStatusDto=new SystemStatusDto(RegistrationStatusEnum.close);
         systemStatusRepo.save(new SystemStatus(RegistrationStatus.getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
     }
 

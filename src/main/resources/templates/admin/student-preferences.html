@@ -11,15 +11,8 @@
 
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
 
-<div id="toast-error"
-     class="hidden fixed top-6 right-6 z-[10] max-w-xs text-sm text-white rounded-xl shadow-lg"
-     role="alert" tabindex="-1" aria-labelledby="hs-toast-solid-color-red-label"
-     style="position: fixed !important;">
-  <div id="hs-toast-solid-color-red-label"
-       class="flex p-4 gap-2 items-start rounded-xl">
-    <span id="toast-message"></span>
-  </div>
-</div>
+<!-- Toast Display -->
+<div th:replace="~{common/toast-display::toast-display}"></div>
 
 <div class="mx-auto">
   <!-- Header -->
@@ -62,7 +55,7 @@
           </div>
 
           <!-- Execute Allocation Button -->
-          <form class="download-form" th:action="@{/download-reports}" method="get">
+          <form class="download-form" th:action="@{/admin/download-reports}" method="get">
             <input type="hidden" name="semester" class="semester-input" value="">
             <input type="hidden" name="name" value="preferences">
             <button type="submit" class="download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-not-allowed opacity-50"
@@ -193,6 +186,10 @@
     let renderResponse = /*[[${renderResponse}]]*/ null;
   /*]]>*/
 </script>
+
+<script src="/common/js/general-utility.js"></script>
+<script src="/common/js/navbar.js"></script>
+<script src="/common/js/status-response.js"></script>
 <script src="/admin/js/student-preferences.js"></script>
 
 </body>

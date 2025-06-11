@@ -1,3 +1,15 @@
+function validatePasswords() {
+    const password = document.getElementById('floating_password').value;
+    const confirmPassword = document.getElementById('floating_confirm_password').value;
+
+    if (password !== confirmPassword) {
+      showToast('Passwords do not match! Please verify it.');
+      return false;
+    }
+
+    return true;
+}
+
 function togglePasswordVisibility() {
   const input = document.getElementById('floating_password');
   const icon = document.getElementById('passwordToggleIcon');

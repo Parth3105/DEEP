@@ -1,39 +1,5 @@
-// Mobile Navbar Menu Toggle
-const toggle = document.getElementById('menuToggle');
-const menu = document.getElementById('menu');
-toggle.addEventListener('click', () => {
-    menu.classList.toggle('hidden');
-});
-
-// Toast Notification
-function showToast(message, type = 'error') {
-    const toast = document.getElementById("toast-error");
-    const text = document.getElementById("toast-message");
-
-    text.innerText = message;
-
-    // Reset any previous background color
-    toast.classList.remove("bg-red-600", "bg-yellow-400");
-
-    // Apply based on type
-    if (type === 'error') {
-        toast.classList.add("bg-red-600");
-    } else if (type === 'warning') {
-        toast.classList.add("bg-yellow-400", "text-gray-900");
-    }
-
-    toast.classList.remove("hidden");
-    toast.classList.add("flex");
-
-    setTimeout(() => {
-        hideToast();
-    }, 5000);
-}
-
-function hideToast() {
-    const toast = document.getElementById("toast-error");
-    toast.classList.remove("flex");
-    toast.classList.add("hidden");
+if(renderResponse) {
+    printStatusResponse(renderResponse);
 }
 
 let selectedSemester = null;
@@ -42,12 +8,12 @@ function HandleSemesterSelection(semesterBtns, downloadBtns, semesterInputs) {
         btn.addEventListener('click', function () {
             // Remove active state from all buttons
             semesterBtns.forEach(b => {
-                b.style.backgroundColor = '#1E3C72';
+                b.style.backgroundColor = customColors.COBALT_BLUE;
             });
 
             // Set active state for clicked button
-            this.style.backgroundColor = '#2D9D5D';
-            const selectedSemester = this.dataset.sem;
+            this.style.backgroundColor = customColors.DARK_GREEN;
+            selectedSemester = this.dataset.sem;
 
             // Update all hidden semester inputs
             semesterInputs.forEach(input => {
@@ -76,31 +42,20 @@ function InitializeDownloadButtons(resultDownloadBtns) {
     }
 }
 
-function printErrorMessage(status, errorText) {
-    if(status === 404)
-        showToast("Download failed: " + (errorText || "Unknown error"), "warning");
-    else if(status === 500)
-        showToast("Download failed: " + (errorText || "Unknown error"));
-    else
-        showToast("Download failed due to an Unknown error! Please contact support.");
-}
-
-function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
+function HandleDownloadButtonClick(downloadBtns) {
     downloadBtns.forEach(btn => {
         btn.addEventListener('click', async function (e) {
             e.preventDefault();
 
-            if (checkforSemester && !selectedSemester) {
+            if (!selectedSemester) {
                 showToast('Please select a semester first!');
                 return;
             }
 
             const form = this.closest('form');
             const name = form.querySelector('input[name="name"]').value;
-            const semester = checkforSemester ? selectedSemester : '';
-            const downloadUrl = checkforSemester
-                ? `/download-reports/${semester}/${name}`
-                : `/download-reports/${name}`;
+            const semester = selectedSemester;
+            const downloadUrl = `/admin/student-preferences/download/${semester}`;
 
             // Show loading state
             const originalText = this.innerHTML;
@@ -113,7 +68,7 @@ function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
               .then(async res => {
                 if (res.status !== 200) {
                   const errorText = await res.text();
-                  printErrorMessage(res.status, errorText);
+                  printStatusResponse(res.status, errorText);
                   return;
                 }
 
@@ -163,33 +118,13 @@ document.addEventListener('DOMContentLoaded', function() {
     HandleDownloadButtonClick(resultDownloadBtns);
 });
 
-if(renderResponse) {
-    printRenderResponse();
-}
-
-function printRenderResponse() {
-    if(renderResponse.status === 404)
-        showToast(renderResponse.message);
-    else
-        showToast("Internal Server Error! Please Contact support.")
-}
-
 function submitWithPath(event) {
     event.preventDefault();
     const sid = document.getElementById("studentId").value.trim();
     if (sid) {
-        window.location.href = `/student-preferences/${encodeURIComponent(sid)}`;
+        window.location.href = `/admin/student-preferences/${encodeURIComponent(sid)}`;
     }
 }
-
-const categoryLabels = {
-    'ICTE': 'ICT Electives',
-    'TE': 'Technical Electives',
-    'SE': 'Science Electives',
-    'MNCE': 'MNCE Electives',
-    'OE': 'Open Electives',
-    'HSSE': 'Humanities and Social Sciences Electives'
-};
 
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("requirements-container");
@@ -197,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if(!studentRequirements) return;
     studentRequirements.forEach(req => {
         const label = categoryLabels[req.category] || 'Other';
-        const courseCount = req.course_cnt;
+        const courseCount = req.courseCnt;
 
         // Outer div with class "flex"
         const outerDiv = document.createElement("div");

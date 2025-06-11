@@ -8,6 +8,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+
+<!-- Toast Display -->
+<div th:replace="~{common/toast-display::toast-display}"></div>
+
 <div class="mx-auto">
   <!-- Header -->
   <div th:replace="~{common/student-navbar::student-navbar}"></div>
@@ -22,7 +26,7 @@
         DAIICT Elective Enrollment Portal - Register your elective course preferences easily and
         track your allocation status.
       </p>
-      <button class="bg-gradient-to-r from-[#EA580C] to-[#FB923C] text-white font-semibold py-3 px-5 sm:px-8 rounded-full cursor-pointer">
+      <button onclick="HandleStudentRoute('enroll')" th:disabled="${registrationStatus != 'open'}" th:classappend="${registrationStatus != 'open'} ? ' opacity-50 cursor-not-allowed' : ' opacity-100 cursor-pointer'" class="bg-gradient-to-r from-[#EA580C] to-[#FB923C] text-white font-semibold py-3 px-5 sm:px-8 rounded-full">
         <div class="flex items-center justify-center">
           <span class="text-sm sm:text-base">Register for Electives</span>
           <img src="/student/images/right-arrow.svg" alt="Arrow Right" class="inline-block ml-3 w-5 h-5">
@@ -98,7 +102,10 @@
               <h3 class="text-xl font-bold text-gray-800 mb-2">Registration Deadline</h3>
             </div>
             <div>
-              <p class="text-3xl md:text-3xl font-bold mb-1">June 15, 2025</p>
+              <p class="text-3xl md:text-3xl font-bold mb-1"
+                 th:text="${registrationStatus != 'open'} ? (${registrationCloseDate == null} ? 'Yet to Open' : 'Registration closed') : ${registrationCloseDate}">
+                Yet to Open
+              </p>
               <p class="text-gray-600 text-sm">Last date to submit preferences</p>
             </div>
           </div>
@@ -117,7 +124,9 @@
               <h3 class="text-xl font-bold text-gray-800 mb-2">Result Release</h3>
             </div>
             <div>
-              <p class="text-3xl md:text-3xl font-bold mb-1">To be announced</p>
+              <p class="text-3xl md:text-3xl font-bold mb-1"
+                 th:text="${resultStatus == 'pending'} ? 'To be Declared' : 'Results are Out!'">
+                To be announced</p>
               <p class="text-gray-600 text-sm">Allocation Results will be published</p>
             </div>
           </div>
@@ -136,16 +145,21 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 place-items-center gap-4 gap-x-10">
         <!-- Enroll Now -->
-        <button onclick="HandleRoute('/enroll')" class="bg-[#FF822E] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
+        <button onclick="HandleStudentRoute('enroll')"
+                th:disabled="${registrationStatus != 'open'}"
+                th:classappend="${registrationStatus != 'open'} ? ' opacity-50 cursor-not-allowed' : ' opacity-100 cursor-pointer'"
+                class="bg-[#FF822E] rounded-3xl p-6 w-full text-center text-white transition">
+
           <div class="flex flex-col items-center justify-center mb-4">
             <img src="/student/images/white-book.svg" alt="book Icon" class="w-12 h-12 text-blue-600">
           </div>
+
           <h3 class="font-bold text-black text-lg mb-1">Enroll Now</h3>
           <p class="text-xs text-black opacity-90">Start your registration</p>
         </button>
 
         <!-- View Preferences -->
-        <button onclick="HandleRoute('/my-preferences')" class="bg-[#568CEA] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
+        <button onclick="HandleStudentRoute('my-preferences')" class="bg-[#568CEA] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
           <div class="flex flex-col items-center justify-center mb-4">
             <img src="/student/images/white-tick.svg" alt="tick Icon" class="w-12 h-12 text-blue-600">
           </div>
@@ -154,7 +168,7 @@
         </button>
 
         <!-- View Results -->
-        <button onclick="HandleRoute('/allocation-result')" class="bg-[#0EB17C] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
+        <button onclick="HandleStudentRoute('my-allocation-result')" class="bg-[#0EB17C] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
           <div class="flex flex-col items-center justify-center mb-4">
             <img src="/student/images/white-certificate.svg" alt="certificate Icon" class="w-12 h-12 text-blue-600">
           </div>
@@ -163,7 +177,7 @@
         </button>
 
         <!-- Guidelines -->
-        <button onclick="HandleRoute('/guidelines')" class="bg-[#BF4EF7] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
+        <button onclick="HandleStudentRoute('guidelines')" class="bg-[#BF4EF7] rounded-3xl p-6 w-full text-center text-white cursor-pointer">
           <div class="flex flex-col items-center justify-center mb-4">
             <img src="/student/images/guidelines.svg" alt="guidelines Icon" class="w-12 h-12 text-blue-600">
           </div>
@@ -203,6 +217,16 @@
   </footer>
 </main>
 
+<script th:inline="javascript">
+  /*<![CDATA[*/
+    let renderResponse = /*[[${renderResponse}]]*/ null;
+    let preferenceSubmissionResponse = /*[[${preferenceSubmissionResponse}]]*/ null;
+  /*]]>*/
+</script>
+
+<script src="/common/js/general-utility.js"></script>
+<script src="/common/js/navbar.js"></script>
+<script src="/common/js/status-response.js"></script>
 <script src="/student/js/home-page.js"></script>
 </body>
 </html>

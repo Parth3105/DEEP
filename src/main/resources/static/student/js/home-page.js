@@ -1,10 +1,7 @@
-// Mobile Navbar Menu Toggle
-const toggle = document.getElementById('menuToggle');
-const menu = document.getElementById('menu');
-toggle.addEventListener('click', () => {
-    menu.classList.toggle('hidden');
-});
+if(renderResponse) {
+    printStatusResponse(renderResponse);
+}
 
-function HandleRoute(url) {
-    window.location.href = url;
+if(preferenceSubmissionResponse) {
+    printStatusResponse(preferenceSubmissionResponse);
 }

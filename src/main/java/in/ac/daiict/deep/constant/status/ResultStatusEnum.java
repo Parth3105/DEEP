@@ -1,10 +1,10 @@
 package in.ac.daiict.deep.constant.status;
 
 public enum ResultStatusEnum {
-    PENDING, DECLARED;
+    pending,declared;
 
     @Override
     public String toString() {
-        return name().toLowerCase();
+        return name();
     }
 }
