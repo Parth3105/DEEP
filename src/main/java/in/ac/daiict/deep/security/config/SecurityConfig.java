@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,7 +28,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorize) ->
-                        authorize.requestMatchers("/admin/images/**", "/student/images/**", "/admin/css/**", "/student/css/**",
+                        authorize.requestMatchers("/admin/images/**", "/student/images/**", "/common/js/**",
                                         "/admin/js/**", "/student/js/**", CommonEndPoint.FORGOT_PASSWORD,
                                         CommonEndPoint.RESET_PASSWORD, CommonEndPoint.VERIFY_OTP,
                                         CommonEndPoint.RESEND_OTP).permitAll()
