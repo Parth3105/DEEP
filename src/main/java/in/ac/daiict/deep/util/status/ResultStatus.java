@@ -5,11 +5,11 @@ import lombok.Getter;
 
 public class ResultStatus {
     @Getter
-    private String statusName;
+    private static String statusName;
     private ResultStatusEnum statusValue;
 
     public ResultStatus(ResultStatusEnum statusValue) {
-        this.statusName="result_status";
+        statusName="result_status";
         this.statusValue = statusValue;
     }
 

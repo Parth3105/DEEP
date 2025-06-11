@@ -24,21 +24,21 @@ public class DashboardController {
     public String openRegistration(@RequestParam("close-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate closeDate){
         SystemStatusDto systemStatusDto=new SystemStatusDto(RegistrationStatusEnum.OPEN,closeDate, UpdateInstanceStatusEnum.NEVER);
         systemStatusService.updateOnOpeningRegistration(systemStatusDto);
-        return AdminTemplate.DASHBOARD_PAGE;
+        return "redirect:"+AdminEndpoint.DASHBOARD;
     }
 
     @PostMapping(AdminEndpoint.EXTEND_REGISTRATION_PERIOD)
     public String extendRegistrationPeriod(@RequestParam("close-date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate closeDate){
         SystemStatusDto systemStatusDto=new SystemStatusDto(closeDate);
         systemStatusService.updateOnExtendingRegistrationPeriod(systemStatusDto);
-        return AdminTemplate.DASHBOARD_PAGE;
+        return "redirect:"+AdminEndpoint.DASHBOARD;
     }
 
     @PostMapping(AdminEndpoint.CLOSE_REGISTRATION)
     public String closeRegistration(){
         SystemStatusDto systemStatusDto=new SystemStatusDto(RegistrationStatusEnum.CLOSE);
         systemStatusService.updateOnClosingRegistration(systemStatusDto);
-        return AdminTemplate.DASHBOARD_PAGE;
+        return "redirect:"+AdminEndpoint.DASHBOARD;
     }
 }
 

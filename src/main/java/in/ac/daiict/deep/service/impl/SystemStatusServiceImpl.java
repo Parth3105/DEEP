@@ -6,6 +6,10 @@ import in.ac.daiict.deep.entity.SystemStatus;
 import in.ac.daiict.deep.repository.SystemStatusRepo;
 import in.ac.daiict.deep.service.RegistrationTaskManager;
 import in.ac.daiict.deep.service.SystemStatusService;
+import in.ac.daiict.deep.util.status.RegistrationCloseDate;
+import in.ac.daiict.deep.util.status.RegistrationStatus;
+import in.ac.daiict.deep.util.status.ResultStatus;
+import in.ac.daiict.deep.util.status.UpdateInstanceStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,20 +35,37 @@ public class SystemStatusServiceImpl implements SystemStatusService {
 
     @Override
     public void updateOnExtendingRegistrationPeriod(SystemStatusDto systemStatusDto) {
+        SystemStatusDto systemStatusDtoCheck=new SystemStatusDto(RegistrationStatusEnum.OPEN);
+        SystemStatus systemStatus=systemStatusRepo.findById(RegistrationStatus.getStatusName()).orElse(null);
+        if(systemStatus==null || !systemStatus.getStatusValue().equals(systemStatusDtoCheck.getRegistrationStatus().getStatusValue())) return;
         registrationTaskManager.updateCloseRegistrationDate(systemStatusDto.getRegistrationCloseDate().getCloseDate());
-        systemStatusRepo.save(new SystemStatus(systemStatusDto.getRegistrationCloseDate().getStatusName(),systemStatusDto.getRegistrationCloseDate().getStringCloseDate()));
+        systemStatusRepo.save(new SystemStatus(RegistrationCloseDate.getStatusName(),systemStatusDto.getRegistrationCloseDate().getStringCloseDate()));
     }
 
     @Override
     public void updateOnClosingRegistration(SystemStatusDto systemStatusDto) {
         registrationTaskManager.closeRegistration();
-        systemStatusRepo.save(new SystemStatus(systemStatusDto.getRegistrationStatus().getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
+        systemStatusRepo.save(new SystemStatus(RegistrationStatus.getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
     }
 
     @Override
     public void autoCloseRegistration() {
         SystemStatusDto systemStatusDto=new SystemStatusDto(RegistrationStatusEnum.CLOSE);
-        systemStatusRepo.save(new SystemStatus(systemStatusDto.getRegistrationStatus().getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
+        systemStatusRepo.save(new SystemStatus(RegistrationStatus.getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
+    }
+
+    @Override
+    public SystemStatusDto fetchAllStatus() {
+        List<SystemStatus> systemStatusList = systemStatusRepo.findAll();
+        SystemStatusDto systemStatusDto=new SystemStatusDto();
+        for(SystemStatus systemStatus: systemStatusList){
+            if(systemStatus.getStatusName().equals(RegistrationStatus.getStatusName())) systemStatusDto.setRegistrationStatus(systemStatus.getStatusValue());
+            else if(systemStatus.getStatusName().equals(RegistrationCloseDate.getStatusName())) systemStatusDto.setRegistrationCloseDate(systemStatus.getStatusValue());
+            else if(systemStatus.getStatusName().equals(ResultStatus.getStatusName())) systemStatusDto.setResultStatus(systemStatus.getStatusValue());
+            else if(systemStatus.getStatusName().equals(UpdateInstanceStatus.getStatusName())) systemStatusDto.setUpdateInstanceStatus(systemStatus.getStatusValue());
+        }
+
+        return systemStatusDto;
     }
 
 

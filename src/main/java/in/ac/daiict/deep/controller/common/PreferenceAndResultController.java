@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -98,7 +99,7 @@ public class PreferenceAndResultController {
         }
 
         // Fetch the student requirements of the student.
-        List<StudentReqDto> studentReqDtoList = studentReqService.findStudentRequirements(studentId);
+        List<StudentReqDto> studentReqDtoList = studentReqService.fetchStudentRequirements(studentId);
 
         // Fetch the course preferences slot-wise.
         List<CoursePrefDto> coursePrefDtoList = coursePrefService.fetchStudentCoursePref(studentId);
@@ -135,7 +136,7 @@ public class PreferenceAndResultController {
             else
                 redirectAttributes.addFlashAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.STUDENT_NOT_FOUND));
             if (requester == 'S') return "redirect:" + StudentEndpoint.HOME_PAGE;
-            return "redirect:" + AdminEndpoint.STUDENT_PREFERENCE;
+            return "redirect:" + AdminEndpoint.ALLOCATION_RESULTS;
         }
 
         List<AllocationResultDto> allocationResultDtoList = allocationResultService.fetchAllocationResult(studentId, studentDto.getProgram());

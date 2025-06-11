@@ -5,6 +5,4 @@ CREATE TABLE system_status (
 
 INSERT INTO system_status VALUES ('registration_status', 'close');
 INSERT INTO system_status VALUES ('update_instance_status', 'open');
-INSERT INTO system_status VALUES ('registration_close_date', '');
-INSERT INTO system_status VALUES ('allocation_status', 'pending');
 INSERT INTO system_status VALUES ('result_status', 'pending');
