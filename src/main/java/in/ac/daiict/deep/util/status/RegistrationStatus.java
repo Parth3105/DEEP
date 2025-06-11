@@ -25,4 +25,5 @@ public class RegistrationStatus {
     public void setStatusValue(String statusValue) {
         this.statusValue = RegistrationStatusEnum.valueOf(statusValue);
     }
+
 }
