@@ -1,8 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const toggle = document.getElementById("toggleRegistration");
+  const toggleRegistration = document.getElementById("toggleRegistration");
   const modal = document.getElementById("registrationModal");
 
-  toggle.addEventListener("change", function () {
+  toggleRegistration.addEventListener("change", function () {
+    if(registrationStatus === 'open') {
+        openCloseRegModal();
+        return;
+    }
+
     if (this.checked) {
       modal.classList.remove("hidden");
     }
@@ -10,9 +15,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.closeModal = function () {
     modal.classList.add("hidden");
-    toggle.checked = false;
+    toggleRegistration.checked = false;
   };
 });
+
+function openCloseRegModal() {
+  document.getElementById('closeRegModal').classList.remove('hidden');
+}
+
+function closeCloseRegModal() {
+  document.getElementById('closeRegModal').classList.add('hidden');
+}
 
 function handleOpenRegistration(event) {
   event.preventDefault();
@@ -44,15 +57,15 @@ function handleOpenRegistration(event) {
   form.submit();
 }
 
-  function openExtendModal() {
+function openExtendModal() {
     document.getElementById("extendModal").classList.remove("hidden");
-  }
+}
 
-  function closeExtendModal() {
+function closeExtendModal() {
     document.getElementById("extendModal").classList.add("hidden");
-  }
+}
 
-  function handleExtend(event) {
+function handleExtend(event) {
     event.preventDefault();
 
     const input = document.getElementById("extend-datepicker");
@@ -77,7 +90,7 @@ function handleOpenRegistration(event) {
     const form = event.target;
     form.action = `/admin/extend-period?close-date=${encodeURIComponent(formattedDate)}`;
     form.submit();
-  }
+}
 
 function closeModal() {
     modal.classList.add('hidden');
@@ -105,4 +118,84 @@ form.addEventListener('submit', function (e) {
     btnText.textContent = "This may take a while!";
     spinner.classList.remove("hidden");
     submitBtn.disabled = true;
+});
+
+function handleDeclareResult() {
+    const pendingSemesters = [];
+
+    dashboardRequirement.forEach(item => {
+        const semester = item.semester;
+        const totalStudents = item.totalStudents;
+        const allocationStatus = item.allocationStatus;
+
+        if (totalStudents !== 0 && !allocationStatus) {
+            pendingSemesters.push(semester);
+        }
+    });
+
+    if (pendingSemesters.length > 0) {
+        const semList = pendingSemesters.join(', ');
+        showToast(`Allocation pending for Semester(s): ${semList}`, statusColors.ERROR);
+        return;
+    }
+
+    // Proceed to declare results
+    fetch('/admin/declare-results', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(response => {
+        if (response.status === status.OK) {
+            showToast('Results declared successfully!', statusColors.OK);
+        } else {
+            showToast('Failed to declare results.', statusColors.ERROR);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('An error occurred while declaring results.', statusColors.ERROR);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.semester-btn');
+    const prefCountEl = document.getElementById('prefCount');
+    const allocStatusEl = document.getElementById('allocStatus');
+
+    function updateCard(semester) {
+        const data = dashboardRequirement.find(item => item.semester === semester);
+
+        if (!data || data.totalStudents === 0) {
+            prefCountEl.textContent = '-- / --';
+            allocStatusEl.textContent = '--';
+        } else {
+            prefCountEl.textContent = `${data.submittedPrefCnt} / ${data.totalStudents}`;
+            allocStatusEl.textContent = data.allocationStatus ? 'Done' : 'Pending';
+        }
+
+        // Highlight active button
+        buttons.forEach(btn => {
+            btn.classList.remove('bg-[#46A24A]', 'bg-[#22437E]');
+            btn.classList.add('bg-[#22437E]'); // Reset all to blue
+        });
+
+        const activeBtn = [...buttons].find(btn => parseInt(btn.getAttribute('data-semester'), 10) === semester);
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-[#22437E]');
+            activeBtn.classList.add('bg-[#46A24A]'); // Highlight selected one
+        }
+    }
+
+    // Set up listeners
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const selectedSem = parseInt(button.getAttribute('data-semester'), 10);
+            updateCard(selectedSem);
+        });
+    });
+
+    // Default load: select 5th semester
+    updateCard(5);
 });

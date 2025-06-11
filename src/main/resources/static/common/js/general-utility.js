@@ -4,6 +4,7 @@ const status = {
     WARNING: 299,
     BAD_REQUEST: 400,
     UNAUTHORIZED: 401,
+    FORBIDDEN: 403,
     NOT_FOUND: 404,
     GONE: 410,
     SESSION_TIMEOUT: 419,
@@ -16,10 +17,12 @@ const statusColors = {
     WARNING: 'bg-yellow-400',
     BAD_REQUEST: 'bg-yellow-400',
     UNAUTHORIZED: 'bg-red-600',
+    FORBIDDEN: 'bg-red-600',
     NOT_FOUND: 'bg-red-600',
     GONE: 'bg-red-600',
     SESSION_TIMEOUT: 'bg-yellow-400',
-    INTERNAL_SERVER_ERROR: 'bg-red-600'
+    INTERNAL_SERVER_ERROR: 'bg-red-600',
+    ERROR: 'bg-red-600'
 };
 
 const categoryLabels = {

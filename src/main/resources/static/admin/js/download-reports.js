@@ -4,7 +4,7 @@ function HandleSemesterSelection(semesterBtns, downloadBtns, semesterInputs) {
         btn.addEventListener('click', function () {
             // Remove active state from all buttons
             semesterBtns.forEach(b => {
-                b.style.backgroundColor = customColors.DARK_GREEN;
+                b.style.backgroundColor = customColors.COBALT_BLUE;
             });
 
             // Set active state for clicked button
@@ -44,7 +44,7 @@ function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
             e.preventDefault();
 
             if (checkforSemester && !selectedSemester) {
-                showToast('Please select a semester first!');
+                showToast('Please select a semester first!', statusColors.ERROR);
                 return;
             }
 

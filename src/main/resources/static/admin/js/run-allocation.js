@@ -1,64 +1,109 @@
+const allocationStatusMap = {};
+allocationStatusList?.forEach(entry => {
+    allocationStatusMap[entry.semester] = {
+        allocated: entry.allocated,
+        unallocated: entry.unallocated,
+        allocationstatus: entry.allocationstatus
+    };
+});
+
 function updateAllocationSummary(sem) {
-    const status = allocationStatusMap?.[sem] || {};
-    const allocated = allocatedCountMap?.[sem] ?? 0;
-    const unallocated = unallocatedCountMap?.[sem] ?? 0;
+    const data = allocationStatusMap?.[sem] || {
+        allocated: "-",
+        unallocated: "-",
+        allocationstatus: "204"
+    };
 
     const statusDiv = document.getElementById("allocation-status");
     const statusText = document.getElementById("allocation-status-text");
     const allocatedDiv = document.getElementById("allocated-count");
     const unallocatedDiv = document.getElementById("unallocated-count");
 
-    if (!status || Object.keys(status).length === 0 || status.status === 204) {
+    const status = data.allocationstatus;
+
+    if (status === "204") {
         statusDiv.className = "bg-yellow-400 text-white px-7 py-2 rounded-xl font-medium text-lg";
         statusText.textContent = "Yet to run";
-    } else if (status.status === 200) {
+    } else if (status === "200") {
         statusDiv.className = "bg-gradient-to-r from-[#27AE60] to-[#2ECC71] text-white px-7 py-2 rounded-xl font-medium text-lg";
-        statusText.textContent = status.message;
-    } else if (status.status === 500) {
+        statusText.textContent = "Allocation Successful";
+    } else if (status === "500") {
         statusDiv.className = "bg-red-500 text-white px-7 py-2 rounded-xl font-medium text-lg";
         statusText.textContent = "Failed";
-        showToast(status.message);
+        showToast("Internal server error during allocation.");
     } else {
         statusDiv.className = "bg-gray-500 text-white px-7 py-2 rounded-xl font-medium text-lg";
         statusText.textContent = "Unknown";
     }
 
-    allocatedDiv.textContent = allocated;
-    unallocatedDiv.textContent = unallocated;
+    allocatedDiv.textContent = data.allocated;
+    unallocatedDiv.textContent = data.unallocated;
 }
 
+//const registrationStatus = 'close';
 document.addEventListener('DOMContentLoaded', function () {
     const buttons = document.querySelectorAll('.semester-btn');
     const hiddenInput = document.getElementById('selectedSemester');
     const form = document.getElementById('allocationForm');
+    const executeBtn = document.getElementById('executeBtn');
 
-    let initialSemester = [5, 6, 7, 8].includes(selectedSemester) ? selectedSemester : 5;
+    let selectedSemester = 5;
+    if ([5, 6, 7, 8].includes(parseInt(hiddenInput.value))) {
+        selectedSemester = parseInt(hiddenInput.value);
+    }
+    hiddenInput.value = selectedSemester;
 
-    selectedSemester = initialSemester;
-    hiddenInput.value = initialSemester;
-
-    // Style buttons
+    // Style buttons and attach listeners
     buttons.forEach(btn => {
         const sem = parseInt(btn.getAttribute('data-sem'));
-        btn.style.backgroundColor = sem === initialSemester ? customColors.DARK_GREEN : customColors.COBALT_BLUE;
+        btn.style.backgroundColor = sem === selectedSemester ? customColors.DARK_GREEN : customColors.COBALT_BLUE;
 
         btn.addEventListener('click', () => {
-            const selected = parseInt(btn.getAttribute('data-sem'));
-            selectedSemester = selected;
-            hiddenInput.value = selected;
+            selectedSemester = sem;
+            hiddenInput.value = sem;
 
             buttons.forEach(b => b.style.backgroundColor = customColors.COBALT_BLUE);
             btn.style.backgroundColor = customColors.DARK_GREEN;
 
-            updateAllocationSummary(selected);
+            updateAllocationSummary(sem);
         });
     });
 
-    form.addEventListener('submit', function () {
-        const semester = hiddenInput.value;
-        this.setAttribute('action', `/admin/execute-allocation/${semester}`);
+    // Initial allocation summary
+    updateAllocationSummary(selectedSemester);
+
+    // 🔁 Re-apply active styling to selected semester button
+    buttons.forEach(btn => {
+        const sem = parseInt(btn.getAttribute('data-sem'));
+        btn.style.backgroundColor = sem === selectedSemester ? customColors.DARK_GREEN : customColors.COBALT_BLUE;
     });
 
-    // Initial summary
-    updateAllocationSummary(initialSemester);
+    // Intercept form submission to conditionally show modal
+    form.addEventListener('submit', function (e) {
+        if (registrationStatus === 'open') {
+            e.preventDefault(); // prevent normal submission
+            openCloseRegModal(); // show modal
+        } else {
+            const semester = hiddenInput.value;
+            this.setAttribute('action', `/admin/execute-allocation/${semester}`);
+        }
+    });
 });
+
+function openCloseRegModal() {
+    document.getElementById("closeRegModal").classList.remove("hidden");
+}
+
+function closeCloseRegModal() {
+    document.getElementById("closeRegModal").classList.add("hidden");
+}
+
+function handleExecuteConfirmation() {
+    closeCloseRegModal();
+
+    // Now allow form to submit with correct semester
+    const form = document.getElementById('allocationForm');
+    const semester = document.getElementById('selectedSemester').value;
+    form.setAttribute('action', `/admin/execute-allocation/${semester}`);
+    form.submit();
+}

@@ -9,16 +9,11 @@ import java.time.LocalDate;
 
 public class RegistrationCloseDate {
     @Getter
-    private static String statusName;
+    private static String statusName="registration_close_date";
     @Getter
     private LocalDate closeDate;
 
-    public RegistrationCloseDate() {
-        statusName = "registration_close_date";
-    }
-
     public RegistrationCloseDate(LocalDate closeDate) {
-        statusName="registration_close_date";
         this.closeDate = closeDate;
     }
 
