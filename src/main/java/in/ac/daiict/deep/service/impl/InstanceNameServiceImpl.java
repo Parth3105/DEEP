@@ -55,4 +55,9 @@ public class InstanceNameServiceImpl implements InstanceNameService {
             return false;
         }
     }
+
+    @Override
+    public void deleteInstance(String instanceName) {
+        instanceNameRepo.deleteById(instanceName);
+    }
 }

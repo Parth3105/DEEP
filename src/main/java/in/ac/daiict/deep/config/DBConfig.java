@@ -19,6 +19,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Configuration
@@ -60,36 +62,37 @@ public class DBConfig {
     }
 
     public boolean createSchemaAndSwitch(String latestInstanceName, String workingInstance) {
-        AtomicBoolean isSuccessInstanceMigration=new AtomicBoolean(false);
-        AtomicBoolean isSuccessUserMigration=new AtomicBoolean(false);
-        Thread migrateInstanceData=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(instanceNameService.migrateInstances()) isSuccessInstanceMigration.set(true);
-            }
-        });
-        Thread migrateUserData=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(userService.migrateUserData()) isSuccessUserMigration.set(true);
-            }
-        });
+        CompletableFuture<Boolean> instanceMigrationFuture = CompletableFuture.supplyAsync(() ->
+                instanceNameService.migrateInstances()
+        );
 
-        migrateInstanceData.start();
-        migrateUserData.start();
+        CompletableFuture<Boolean> userMigrationFuture = CompletableFuture.supplyAsync(() ->
+                userService.migrateUserData()
+        );
+
+        CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(instanceMigrationFuture, userMigrationFuture);
+
         try {
-            migrateInstanceData.join();
-            migrateUserData.join();
-        } catch (InterruptedException e) {
+            combinedFuture.join();
+
+            boolean isSuccessInstanceMigration = instanceMigrationFuture.get();
+            boolean isSuccessUserMigration = userMigrationFuture.get();
+
+            if (!isSuccessInstanceMigration || !isSuccessUserMigration) {
+                return false;
+            }
+
+            String sql = String.format("ALTER SCHEMA %s RENAME TO %s", workingInstance, latestInstanceName);
+            jdbcTemplate.execute(sql);
+            jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS " + workingInstance);
+            runFlyway(workingInstance);
+            createEntityManagerFactory(workingInstance);
+
+            return true;
+
+        } catch (InterruptedException | ExecutionException e) {
             return false;
         }
-        if(!isSuccessInstanceMigration.get() || !isSuccessUserMigration.get()) return false;
-        String sql = String.format("ALTER SCHEMA %s RENAME TO %s", workingInstance, latestInstanceName);
-        jdbcTemplate.execute(sql);
-        jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS " + workingInstance);
-        runFlyway(workingInstance);
-        createEntityManagerFactory(workingInstance);
-        return true;
     }
 
     private void createEntityManagerFactory(String schemaName) {

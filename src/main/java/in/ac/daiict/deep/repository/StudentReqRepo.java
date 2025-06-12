@@ -13,4 +13,6 @@ public interface StudentReqRepo extends JpaRepository<StudentReq, StudentReqPK> 
 
     @Query("SELECT COUNT(DISTINCT sr.sid) FROM StudentReq sr JOIN Student s ON sr.sid=s.sid WHERE s.semester=:semester")
     long countDistinctStudentsBySemester(@Param("semester") int semester);
+
+    boolean existsBySid(String sid);
 }

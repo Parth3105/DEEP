@@ -54,6 +54,14 @@ public class SystemStatusServiceImpl implements SystemStatusService {
     }
 
     @Override
+    public void updateOnDeclaringResults(SystemStatusDto systemStatusDto) {
+        List<SystemStatus> systemStatusList=new ArrayList<>();
+        systemStatusList.add(new SystemStatus(RegistrationStatus.getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
+        systemStatusList.add(new SystemStatus(ResultStatus.getStatusName(),systemStatusDto.getResultStatus().getStatusValue()));
+        systemStatusRepo.saveAll(systemStatusList);
+    }
+
+    @Override
     public SystemStatusDto fetchAllStatus() {
         List<SystemStatus> systemStatusList = systemStatusRepo.findAll();
         SystemStatusDto systemStatusDto=new SystemStatusDto();
@@ -63,7 +71,6 @@ public class SystemStatusServiceImpl implements SystemStatusService {
             else if(systemStatus.getStatusName().equals(ResultStatus.getStatusName())) systemStatusDto.setResultStatus(systemStatus.getStatusValue());
             else if(systemStatus.getStatusName().equals(UpdateInstanceStatus.getStatusName())) systemStatusDto.setUpdateInstanceStatus(systemStatus.getStatusValue());
         }
-
         return systemStatusDto;
     }
 

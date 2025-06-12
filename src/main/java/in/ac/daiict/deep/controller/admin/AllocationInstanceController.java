@@ -20,6 +20,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -42,16 +45,17 @@ public class AllocationInstanceController {
             redirectAttributes.addFlashAttribute("instanceCreationError",new ResponseDto(ResponseStatus.CONFLICT, ResponseMessage.INSTANCE_ALREADY_EXISTS));
             return "redirect:"+AdminEndpoint.DASHBOARD;
         }
-        if(latestInstanceName !=null) {
-            if(!instanceSetupConfig.createSchemaAndSwitch(latestInstanceName,DBConstants.WORKING_INSTANCE_NAME)){
-                redirectAttributes.addFlashAttribute("instanceCreationError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
-                return "redirect:"+AdminEndpoint.DASHBOARD;
-            }
-        }
         boolean canCreate=instanceNameService.insertNewInstance(newInstanceName);
         if(!canCreate){
             redirectAttributes.addFlashAttribute("instanceCreationError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
             return "redirect:"+AdminEndpoint.DASHBOARD;
+        }
+        if(latestInstanceName !=null) {
+            if(!instanceSetupConfig.createSchemaAndSwitch(latestInstanceName,DBConstants.WORKING_INSTANCE_NAME)){
+                CompletableFuture.runAsync(() -> instanceNameService.deleteInstance(newInstanceName));
+                redirectAttributes.addFlashAttribute("instanceCreationError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+                return "redirect:"+AdminEndpoint.DASHBOARD;
+            }
         }
         return "redirect:"+AdminEndpoint.UPDATE_INSTANCE;
     }
@@ -60,11 +64,17 @@ public class AllocationInstanceController {
     public String renderUploadPage(Model model){
         if(instanceNameService.fetchLatestInstance() == null) return "redirect:"+AdminEndpoint.DASHBOARD;
 
-        Map<String,Long> uploadStatus=new TreeMap<>();
-        uploadStatus.put("Semester 5",studentService.countBySemester(5));
-        uploadStatus.put("Semester 6",studentService.countBySemester(6));
-        uploadStatus.put("Semester 7",studentService.countBySemester(7));
-        uploadStatus.put("Semester 8",studentService.countBySemester(8));
+        Map<String, Long> uploadStatus = new ConcurrentSkipListMap<>();
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        for (int sem = 5; sem <= 8; sem++) {
+            int finalSem = sem;
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                long studentCnt = studentService.countBySemester(finalSem);
+                uploadStatus.put("Semester " + finalSem, studentCnt);
+            });
+            futures.add(future);
+        }
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
         model.addAttribute("uploadStatus",uploadStatus);
         return AdminTemplate.UPDATE_INSTANCE_PAGE;
     }
@@ -74,95 +84,83 @@ public class AllocationInstanceController {
         AtomicReference<ResponseDto> errorStatus=new AtomicReference<>(null);
         AtomicReference<ResponseDto> warningStatus=new AtomicReference<>(null);
         AtomicInteger cnt=new AtomicInteger(0);
-        Thread u1=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(!studentData.isEmpty()){
-                    try {
-                        ResponseDto status = studentService.insertAll(studentData.getBytes());
-                        if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
-                        else cnt.set(cnt.get()+1);
-                    } catch (IOException e) {
-                        redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
-                    }
-                }
-//                System.out.println("\n\nFinished uploading .......\n\n");
-            }
-        });
-        Thread u2=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean offersUploadedOnce=uploadService.checkIfExists(UploadConstants.OFFERS_DATA);
-                boolean isCoursesUploaded=false;
-                boolean isOffersUploaded=false;
-                if(!courseData.isEmpty()){
-                    try {
-                        ResponseDto status = courseService.insertAll(courseData.getBytes());
-                        if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
-                        else {
-                            cnt.set(cnt.get() + 1);
-                            isCoursesUploaded = true;
-                        }
-                    } catch (IOException e) {
-                        redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
-                    }
-                }
-                if(!courseOfferingData.isEmpty()){
-                    try {
-                        ResponseDto status = courseOfferingService.insertAll(courseOfferingData.getBytes());
-                        if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
-                        else {
-                            cnt.set(cnt.get() + 1);
-                            isOffersUploaded = true;
-                        }
-                    } catch (IOException e) {
-                        redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
-                    }
-                }
-                if(isCoursesUploaded && !isOffersUploaded && offersUploadedOnce) warningStatus.set(new ResponseDto(ResponseStatus.WARNING, List.of(ResponseMessage.UPLOAD_OFFERS)));
-            }
-        });
-        Thread u3=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(!instReqData.isEmpty()){
-                    try {
-                        ResponseDto status = instituteReqService.insertAll(instReqData.getBytes());
-                        if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
-                        else cnt.set(cnt.get()+1);
-                    } catch (IOException e) {
-                        redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
-                    }
-                }
-            }
-        });
-        Thread u4=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<Upload> uploads=new ArrayList<>();
+
+        // Upload Student Data.
+        CompletableFuture<Void> uploadStudentData=CompletableFuture.runAsync(()->{
+            if(!studentData.isEmpty()){
                 try {
-                    if (!studentData.isEmpty()) uploads.add(new Upload(UploadFileNames.STUDENT_DATA, studentData.getBytes()));
-                    if(!courseData.isEmpty()) uploads.add(new Upload(UploadFileNames.COURSE_DATA,courseData.getBytes()));
-                    if(!courseOfferingData.isEmpty()) uploads.add(new Upload(UploadFileNames.OFFERS_DATA,courseOfferingData.getBytes()));
-                    if(!instReqData.isEmpty()) uploads.add(new Upload(UploadFileNames.INST_REQ_DATA,instReqData.getBytes()));
-                    if(!uploads.isEmpty()) uploadService.insertAll(uploads);
+                    ResponseDto status = studentService.insertAll(studentData.getBytes());
+                    if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
+                    else cnt.set(cnt.get()+1);
                 } catch (IOException e) {
                     redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
                 }
             }
         });
-        u1.start();
-        u2.start();
-        u3.start();
-        u4.start();
+
+        // Upload Course Data and Course Offering Data.
+        CompletableFuture<Void> uploadCourseAndOfferingData=CompletableFuture.runAsync(() -> {
+            boolean offersUploadedOnce=uploadService.checkIfExists(UploadConstants.OFFERS_DATA);
+            boolean isCoursesUploaded=false;
+            boolean isOffersUploaded=false;
+            if(!courseData.isEmpty()){
+                try {
+                    ResponseDto status = courseService.insertAll(courseData.getBytes());
+                    if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
+                    else {
+                        cnt.set(cnt.get() + 1);
+                        isCoursesUploaded = true;
+                    }
+                } catch (IOException e) {
+                    redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+                }
+            }
+            if(!courseOfferingData.isEmpty()){
+                try {
+                    ResponseDto status = courseOfferingService.insertAll(courseOfferingData.getBytes());
+                    if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
+                    else {
+                        cnt.set(cnt.get() + 1);
+                        isOffersUploaded = true;
+                    }
+                } catch (IOException e) {
+                    redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+                }
+            }
+            if(isCoursesUploaded && !isOffersUploaded && offersUploadedOnce) warningStatus.set(new ResponseDto(ResponseStatus.WARNING, List.of(ResponseMessage.UPLOAD_OFFERS)));
+        });
+
+        // Upload Institute Requirements.
+        CompletableFuture<Void> uploadInstReqData=CompletableFuture.runAsync(() -> {
+            if(!instReqData.isEmpty()){
+                try {
+                    ResponseDto status = instituteReqService.insertAll(instReqData.getBytes());
+                    if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
+                    else cnt.set(cnt.get()+1);
+                } catch (IOException e) {
+                    redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+                }
+            }
+        });
+
+        // Saving uploaded Files.
+        CompletableFuture.runAsync(() -> {
+            List<Upload> uploads=new ArrayList<>();
+            try {
+                if (!studentData.isEmpty()) uploads.add(new Upload(UploadFileNames.STUDENT_DATA, studentData.getBytes()));
+                if(!courseData.isEmpty()) uploads.add(new Upload(UploadFileNames.COURSE_DATA,courseData.getBytes()));
+                if(!courseOfferingData.isEmpty()) uploads.add(new Upload(UploadFileNames.OFFERS_DATA,courseOfferingData.getBytes()));
+                if(!instReqData.isEmpty()) uploads.add(new Upload(UploadFileNames.INST_REQ_DATA,instReqData.getBytes()));
+                if(!uploads.isEmpty()) uploadService.insertAll(uploads);
+            } catch (IOException e) {
+                redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+            }
+        });
+
         try {
-            u2.join();
-            u3.join();
-            u4.join();
-            u1.join();
-        } catch (InterruptedException e) {
-            // handle error
-            throw new RuntimeException(e);
+            CompletableFuture.allOf(uploadCourseAndOfferingData, uploadInstReqData, uploadStudentData).join();
+        }catch (CompletionException completionException){
+            redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
         }
         if(cnt.get()==0){
             ResponseDto warnings=warningStatus.get();

@@ -93,7 +93,7 @@ public class DownloadController {
                 httpServletResponse.setHeader("Pragma", "no-cache");
                 httpServletResponse.setDateHeader("Expires", 0);
                 httpServletResponse.setContentType("application/json");
-                httpServletResponse.getOutputStream().write(ResponseMessage.DOWNLOAD_RESULTS_NOT_FOUND.getBytes());
+                httpServletResponse.getOutputStream().write(ResponseMessage.UPLOAD_DATA_NOT_FOUND.getBytes());
             } else {
                 httpServletResponse.setContentType(contentType);
                 httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");

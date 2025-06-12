@@ -2,6 +2,7 @@ package in.ac.daiict.deep.controller.admin;
 
 import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
 import in.ac.daiict.deep.constant.status.RegistrationStatusEnum;
+import in.ac.daiict.deep.constant.status.ResultStatusEnum;
 import in.ac.daiict.deep.constant.status.UpdateInstanceStatusEnum;
 import in.ac.daiict.deep.dto.SystemStatusDto;
 import in.ac.daiict.deep.service.SystemStatusService;
@@ -36,6 +37,13 @@ public class DashboardController {
     @PostMapping(AdminEndpoint.CLOSE_REGISTRATION)
     public String closeRegistration(){
         systemStatusService.updateOnClosingRegistration();
+        return "redirect:"+AdminEndpoint.DASHBOARD;
+    }
+
+    @PostMapping(AdminEndpoint.DECLARE_RESULTS)
+    public String declareResults(){
+        SystemStatusDto systemStatusDto=new SystemStatusDto(RegistrationStatusEnum.never, ResultStatusEnum.declared);
+        systemStatusService.updateOnDeclaringResults(systemStatusDto);
         return "redirect:"+AdminEndpoint.DASHBOARD;
     }
 }

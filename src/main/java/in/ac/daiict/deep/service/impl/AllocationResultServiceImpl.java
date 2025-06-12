@@ -18,6 +18,7 @@ public class AllocationResultServiceImpl implements AllocationResultService {
     public void insertAll(List<AllocationResult> allocationResultList) {
         deleteAll();
         allocationResultRepo.saveAll(allocationResultList);
+        allocationResultRepo.flush();
     }
 
     @Override

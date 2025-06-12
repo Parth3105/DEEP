@@ -12,6 +12,8 @@ import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 @Component
 @AllArgsConstructor
@@ -30,13 +32,28 @@ public class AllocationDataLoader {
     public Map<String, AllocationStudent> getStudentData(int semester, int[] maxRequirement){
         Map<String, AllocationStudent> allocationStudents=new HashMap<>();
 
+        CompletableFuture<List<Student>> fetchingStudentData =CompletableFuture.supplyAsync(() -> studentService.fetchStudentsBySemester(semester));
+        CompletableFuture<List<StudentReq>> fetchingStudentReqData =CompletableFuture.supplyAsync(() -> studentReqService.fetchAllStudentReqs());
+        CompletableFuture<List<SlotPref>> fetchingSlotPref=CompletableFuture.supplyAsync(() -> slotPrefService.fetchAllSlotSortedByPref());
+        CompletableFuture<List<CoursePref>> fetchingCoursePref =CompletableFuture.supplyAsync(() -> coursePrefService.fetchAllCoursePrefSortedByPref());
+
         // Fetch and set the student information
-        List<Student> studentData=studentService.fetchStudentsBySemester(semester);
+        List<Student> studentData;
+        try{
+            studentData= fetchingStudentData.join();
+        } catch (CompletionException completionException){
+            studentData=null;
+        }
         if(studentData==null) return null;
         for(Student s: studentData) allocationStudents.put(s.getSid(),new AllocationStudent(s.getSid(),s.getName(),s.getProgram(),s.getSemester()));
 
         // Fetch and set the student requirements
-        List<StudentReq> studentReqs=studentReqService.fetchAllStudentReqs();
+        List<StudentReq> studentReqs;
+        try {
+            studentReqs= fetchingStudentReqData.join();
+        } catch (CompletionException exception){
+            return null;
+        }
         Map<String,Map<String,Integer>> studentReqMap=new HashMap<>();
         for(StudentReq studentReq: studentReqs) {
             Map<String, Integer> reqs=studentReqMap.getOrDefault(studentReq.getSid(),new HashMap<>());
@@ -55,7 +72,12 @@ public class AllocationDataLoader {
         }
 
         // Fetch and set the slot preferences
-        List<SlotPref> slotPrefs=slotPrefService.fetchAllSlotSortedByPref();
+        List<SlotPref> slotPrefs;
+        try {
+            slotPrefs=fetchingSlotPref.join();
+        } catch (CompletionException completionException){
+            return null;
+        }
         Map<String,List<String>> studentSlotPrefMap=new HashMap<>();
         for(SlotPref slotPref:slotPrefs){
             List<String> pref= studentSlotPrefMap.getOrDefault(slotPref.getSid(),new ArrayList<>());
@@ -69,7 +91,12 @@ public class AllocationDataLoader {
         }
 
         // Fetch and set the course preferences
-        List<CoursePref> coursePrefs=coursePrefService.fetchAllCoursePrefSortedByPref();
+        List<CoursePref> coursePrefs;
+        try {
+            coursePrefs= fetchingCoursePref.join();
+        } catch (CompletionException completionException){
+            return null;
+        }
         Map<String,Map<String,List<String>>> studentCoursePrefMap=new HashMap<>();
         for(CoursePref coursePref:coursePrefs){
             Map<String,List<String>> slotWiseCoursePref=studentCoursePrefMap.getOrDefault(coursePref.getSid(), new HashMap<>());
