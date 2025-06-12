@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('requirementsContainer');
-    const filtered = instituteRequirements.filter(obj => obj.course_cnt !== null);
+    console.log(instituteRequirements);
+    const filtered = instituteRequirements.filter(obj => obj.courseCnt !== null);
     filtered.sort((a, b) => a.category.localeCompare(b.category));
 
     // Render each
@@ -10,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         div.innerHTML = `
             <label class="text-lg font-semibold text-gray-800 w-16 text-right">${obj.category.toUpperCase()} :</label>
-            <input type="text" value="${obj.course_cnt}" readonly
+            <input type="text" value="${obj.courseCnt}" readonly
                    class="ml-4 px-3 py-1 border-2 border-gray-300 rounded-lg bg-gray-200 text-center font-medium w-16 cursor-not-allowed" />
         `;
         container.appendChild(div);
@@ -21,7 +22,7 @@ const values = {};
 const container = document.getElementById("categoryInputsContainer");
 
 instituteRequirements.forEach(obj => {
-  if (obj.course_cnt != null) {
+  if (obj.courseCnt != null) {
     const category = obj.category?.toUpperCase();
     const div = document.createElement("div");
     div.className = "flex items-center";

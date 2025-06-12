@@ -47,121 +47,6 @@
             </div>
         </section>
 
-<!--        <form action="/admin/submit-data" method="post" enctype="multipart/form-data">-->
-<!--            <div class="bg-[#B8D7FF] rounded-3xl grid grid-cols-1 md:grid-cols-2 place-items-center gap-6 md:gap-10 mb-4 p-8 md:px-[6rem] md:py-[3rem]" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">-->
-<!--                &lt;!&ndash; Student Data &ndash;&gt;-->
-<!--                <div class="border-2 w-11/12 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">-->
-<!--                    <img src="/admin/images/uploading.png" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">-->
-<!--                    <h3 class="text-xl font-semibold text-gray-800 mb-6">Student Data</h3>-->
-
-<!--                    &lt;!&ndash; File Input &ndash;&gt;-->
-<!--                    <div class="relative">-->
-<!--                        <label-->
-<!--                                for="fileInput-student-data"-->
-<!--                                class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"-->
-<!--                        >-->
-<!--                                <span id="fileLabel-student-data">-->
-<!--                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB-->
-<!--                                </span>-->
-<!--                        </label>-->
-<!--                        <input-->
-<!--                                id="fileInput-student-data"-->
-<!--                                type="file"-->
-<!--                                name="student-data"-->
-<!--                                accept=".xlsx"-->
-<!--                                class="hidden"-->
-<!--                                onchange="document.getElementById('fileLabel-student-data').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"-->
-<!--                        />-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                &lt;!&ndash; Institute Requirements &ndash;&gt;-->
-<!--                <div class="border-2 w-11/12 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">-->
-<!--                    <img src="/admin/images/uploading.png" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">-->
-<!--                    <h3 class="text-xl font-semibold text-gray-800 mb-6">Institute Requirements</h3>-->
-
-<!--                    &lt;!&ndash; File Input &ndash;&gt;-->
-<!--                    <div class="relative">-->
-<!--                        <label-->
-<!--                                for="fileInput-institute-requirements"-->
-<!--                                class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"-->
-<!--                        >-->
-<!--                                <span id="fileLabel-institute-requirements">-->
-<!--                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB-->
-<!--                                </span>-->
-<!--                        </label>-->
-<!--                        <input-->
-<!--                                id="fileInput-institute-requirements"-->
-<!--                                type="file"-->
-<!--                                name="institute-requirements"-->
-<!--                                accept=".xlsx"-->
-<!--                                class="hidden"-->
-<!--                                onchange="document.getElementById('fileLabel-institute-requirements').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"-->
-<!--                        />-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                &lt;!&ndash; Course Data &ndash;&gt;-->
-<!--                <div class="border-2 w-11/12 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">-->
-<!--                    <img src="/admin/images/uploading.png" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">-->
-<!--                    <h3 class="text-xl font-semibold text-gray-800 mb-6">Course Data</h3>-->
-
-<!--                    &lt;!&ndash; File Input &ndash;&gt;-->
-<!--                    <div class="relative">-->
-<!--                        <label-->
-<!--                                for="fileInput-course-data"-->
-<!--                                class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"-->
-<!--                        >-->
-<!--                                <span id="fileLabel-course-data">-->
-<!--                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB-->
-<!--                                </span>-->
-<!--                        </label>-->
-<!--                        <input-->
-<!--                                id="fileInput-course-data"-->
-<!--                                type="file"-->
-<!--                                name="course-data"-->
-<!--                                accept=".xlsx"-->
-<!--                                class="hidden"-->
-<!--                                onchange="document.getElementById('fileLabel-course-data').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"-->
-<!--                        />-->
-<!--                    </div>-->
-<!--                </div>-->
-
-<!--                &lt;!&ndash; Course Offerings &ndash;&gt;-->
-<!--                <div class="border-2 w-11/12 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">-->
-<!--                    <img src="/admin/images/uploading.png" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">-->
-<!--                    <h3 class="text-xl font-semibold text-gray-800 mb-6">Course Offerings</h3>-->
-
-<!--                    &lt;!&ndash; File Input &ndash;&gt;-->
-<!--                    <div class="relative">-->
-<!--                        <label-->
-<!--                                for="fileInput-course-offerings"-->
-<!--                                class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"-->
-<!--                        >-->
-<!--                                <span id="fileLabel-course-offerings">-->
-<!--                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB-->
-<!--                                </span>-->
-<!--                        </label>-->
-<!--                        <input-->
-<!--                                id="fileInput-course-offerings"-->
-<!--                                type="file"-->
-<!--                                name="course-offerings"-->
-<!--                                accept=".xlsx"-->
-<!--                                class="hidden"-->
-<!--                                onchange="document.getElementById('fileLabel-course-offerings').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"-->
-<!--                        />-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            &lt;!&ndash; submit Button &ndash;&gt;-->
-<!--            <button type="submit"-->
-<!--                    class="mx-auto text-white px-10 py-3 rounded-2xl text-xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center justify-center gap-2"-->
-<!--                    style="background: linear-gradient(to right, #27AE60, #2ECC71); box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">-->
-<!--                <span id="button-text">Submit</span>-->
-<!--            </button>-->
-<!--        </form>-->
-
         <form th:action="@{/admin/submit-data}" method="post" enctype="multipart/form-data" class="flex flex-col justify-center text-center mt-6" onsubmit="handleSubmit(event)">
             <!-- Upload Sections -->
             <div class="bg-[#B8D7FF] rounded-3xl grid grid-cols-1 md:grid-cols-2 place-items-center gap-6 md:gap-10 mb-4 p-8 md:px-[6rem] md:py-[3rem]" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
@@ -177,7 +62,7 @@
                                 class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                         >
                                 <span id="fileLabel-student-data">
-                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB
+                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
                                 </span>
                         </label>
                         <input
@@ -186,7 +71,10 @@
                                 name="student-data"
                                 accept=".xlsx"
                                 class="hidden"
-                                onchange="document.getElementById('fileLabel-student-data').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                                onchange="document.getElementById('fileLabel-student-data').innerHTML = this.files[0]?.name
+                                ?  this.files[0].name
+                                : '<img src=&quot;/admin/images/file-xlsx.png&quot; alt=&quot;Upload Icon&quot; class=&quot;inline-block w-6 h-6 mr-1&quot;> Max upload size: 5MB';"
+
                         />
                     </div>
                 </div>
@@ -203,7 +91,7 @@
                                 class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                         >
                                 <span id="fileLabel-institute-requirements">
-                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB
+                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
                                 </span>
                         </label>
                         <input
@@ -212,7 +100,9 @@
                                 name="institute-requirements"
                                 accept=".xlsx"
                                 class="hidden"
-                                onchange="document.getElementById('fileLabel-institute-requirements').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                                onchange="document.getElementById('fileLabel-institute-requirements').innerHTML = this.files[0]?.name
+                                ?  this.files[0].name
+                                : '<img src=&quot;/admin/images/file-xlsx.png&quot; alt=&quot;Upload Icon&quot; class=&quot;inline-block w-6 h-6 mr-1&quot;> Max upload size: 5MB';"
                         />
                     </div>
                 </div>
@@ -229,7 +119,7 @@
                                 class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                         >
                                 <span id="fileLabel-course-data">
-                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB
+                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
                                 </span>
                         </label>
                         <input
@@ -238,7 +128,9 @@
                                 name="course-data"
                                 accept=".xlsx"
                                 class="hidden"
-                                onchange="document.getElementById('fileLabel-course-data').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                                onchange="document.getElementById('fileLabel-course-data').innerHTML = this.files[0]?.name
+                                ?  this.files[0].name
+                                : '<img src=&quot;/admin/images/file-xlsx.png&quot; alt=&quot;Upload Icon&quot; class=&quot;inline-block w-6 h-6 mr-1&quot;> Max upload size: 5MB';"
                         />
                     </div>
                 </div>
@@ -255,7 +147,7 @@
                                 class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                         >
                                 <span id="fileLabel-course-offerings">
-                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 10MB
+                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
                                 </span>
                         </label>
                         <input
@@ -264,7 +156,9 @@
                                 name="course-offerings"
                                 accept=".xlsx"
                                 class="hidden"
-                                onchange="document.getElementById('fileLabel-course-offerings').textContent = this.files[0]?.name || '📄 Max upload size: 10MB';"
+                                onchange="document.getElementById('fileLabel-course-offerings').innerHTML = this.files[0]?.name
+                                ?  this.files[0].name
+                                : '<img src=&quot;/admin/images/file-xlsx.png&quot; alt=&quot;Upload Icon&quot; class=&quot;inline-block w-6 h-6 mr-1&quot;> Max upload size: 5MB';"
                         />
                     </div>
                 </div>

@@ -2,6 +2,10 @@ if(instanceCreationError) {
     printStatusResponse(instanceCreationError);
 }
 
+if(resultStatus === 'declared') {
+    showToast("Results are successfully declared!", statusColors.OK);
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   const toggleRegistration = document.getElementById("toggleRegistration");
   const modal = document.getElementById("registrationModal");
@@ -143,24 +147,8 @@ function handleDeclareResult() {
         return;
     }
 
-    // Proceed to declare results
-    fetch('/admin/declare-results', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    })
-    .then(response => {
-        if (response.status === status.OK) {
-            showToast('Results declared successfully!', statusColors.OK);
-        } else {
-            showToast('Failed to declare results.', statusColors.ERROR);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showToast('An error occurred while declaring results.', statusColors.ERROR);
-    });
+    // ✅ Submit the hidden form to trigger POST request
+    document.getElementById("declareResultForm").submit();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

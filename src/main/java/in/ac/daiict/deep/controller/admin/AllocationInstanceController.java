@@ -6,6 +6,7 @@ import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.constant.uploads.UploadConstants;
 import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
 import in.ac.daiict.deep.constant.template.AdminTemplate;
+import in.ac.daiict.deep.constant.uploads.UploadFileNames;
 import in.ac.daiict.deep.entity.Upload;
 import in.ac.daiict.deep.service.*;
 import in.ac.daiict.deep.config.DBConfig;
@@ -140,10 +141,10 @@ public class AllocationInstanceController {
             public void run() {
                 List<Upload> uploads=new ArrayList<>();
                 try {
-                    if (!studentData.isEmpty()) uploads.add(new Upload(UploadConstants.STUDENT_DATA, studentData.getBytes()));
-                    if(!courseData.isEmpty()) uploads.add(new Upload(UploadConstants.COURSE_DATA,courseData.getBytes()));
-                    if(!courseOfferingData.isEmpty()) uploads.add(new Upload(UploadConstants.OFFERS_DATA,courseOfferingData.getBytes()));
-                    if(!instReqData.isEmpty()) uploads.add(new Upload(UploadConstants.INST_REQ_DATA,instReqData.getBytes()));
+                    if (!studentData.isEmpty()) uploads.add(new Upload(UploadFileNames.STUDENT_DATA, studentData.getBytes()));
+                    if(!courseData.isEmpty()) uploads.add(new Upload(UploadFileNames.COURSE_DATA,courseData.getBytes()));
+                    if(!courseOfferingData.isEmpty()) uploads.add(new Upload(UploadFileNames.OFFERS_DATA,courseOfferingData.getBytes()));
+                    if(!instReqData.isEmpty()) uploads.add(new Upload(UploadFileNames.INST_REQ_DATA,instReqData.getBytes()));
                     if(!uploads.isEmpty()) uploadService.insertAll(uploads);
                 } catch (IOException e) {
                     redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
