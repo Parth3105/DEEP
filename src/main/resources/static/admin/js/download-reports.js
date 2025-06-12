@@ -9,7 +9,7 @@ function HandleSemesterSelection(semesterBtns, downloadBtns, semesterInputs) {
 
             // Set active state for clicked button
             this.style.backgroundColor = customColors.DARK_GREEN;
-            const selectedSemester = this.dataset.sem;
+            selectedSemester = this.dataset.sem;
 
             // Update all hidden semester inputs
             semesterInputs.forEach(input => {
@@ -64,7 +64,7 @@ function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
 
             fetch(downloadUrl)
               .then(async res => {
-                if (res.status !== 200) {
+                if (res.status !== status.OK) {
                   const errorText = await res.text();
                   printStatusResponse(res.status, errorText);
                   return;

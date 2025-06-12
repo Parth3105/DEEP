@@ -47,21 +47,29 @@
                         <div class="mb-6">
                             <label class="block text-lg font-bold text-[#1E3C72] mb-2">Select Semester :</label>
                             <div class="flex flex-wrap gap-2">
-                                <button type="button" class="semester-btn w-11 h-11 rounded-full text-white text-xl font-medium cursor-pointer"
-                                        data-sem="5" style="background-color: #2D9D5D;">5</button>
-                                <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
-                                        data-sem="6">6</button>
-                                <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
-                                        data-sem="7">7</button>
-                                <button type="button" class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
-                                        data-sem="8">8</button>
+                                <button type="button"
+                                        class="semester-btn w-11 h-11 rounded-full text-white text-xl font-medium cursor-pointer"
+                                        data-sem="5" style="background-color: #2D9D5D;">5
+                                </button>
+                                <button type="button"
+                                        class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                        data-sem="6">6
+                                </button>
+                                <button type="button"
+                                        class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                        data-sem="7">7
+                                </button>
+                                <button type="button"
+                                        class="semester-btn w-11 h-11 rounded-full bg-[#1E3C72] text-white text-xl font-medium cursor-pointer"
+                                        data-sem="8">8
+                                </button>
                             </div>
                         </div>
 
                         <!-- Hidden input to store semester -->
-                        <input type="hidden" name="semester" id="selectedSemester" value="5" />
-                        <input type="hidden" name="registrationStatus" th:value="${registrationStatus}" />
-                        <input type="hidden" name="_csrf" th:value="${_csrf.token}" th:if="${_csrf}" />
+                        <input type="hidden" name="semester" id="selectedSemester" value="5"/>
+                        <input type="hidden" name="registrationStatus" th:value="${registrationStatus}"/>
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}" th:if="${_csrf}"/>
 
                         <!-- Execute Allocation Button -->
                         <button type="submit" id="executeBtn"
@@ -142,7 +150,7 @@
 
             <!-- Download Reports Button -->
             <div class="mb-6 flex justify-center sm:block">
-                <button class="bg-[#1E3C72] text-white px-4 py-3 rounded-lg font-medium flex text-md items-center cursor-pointer">
+                <button onclick="HandleAdminRoute('download-reports')" class="bg-[#1E3C72] text-white px-4 py-3 rounded-lg font-medium flex text-md items-center cursor-pointer">
                     <img src="/admin/images/link.svg" alt="Download Icon" class="w-6 h-6 mr-2">
                     Download Reports
                 </button>
@@ -154,6 +162,11 @@
 <script th:inline="javascript">
     const semester = [[${semester != null ? semester : 5}]];
     const allocationStatusList = [[${allocationStatus}]];
+    const registrationStatus = [[${registrationStatus}]];
+
+    console.log(semester);
+    console.log(allocationStatusList);
+    console.log(registrationStatus);
 </script>
 
 <script src="/common/js/general-utility.js"></script>
