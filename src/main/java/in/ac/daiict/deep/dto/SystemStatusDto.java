@@ -24,6 +24,11 @@ public class SystemStatusDto {
         this.updateInstanceStatus=new UpdateInstanceStatus(updateInstanceStatusValue);
     }
 
+    public SystemStatusDto(RegistrationStatusEnum registrationStatusValue, ResultStatusEnum resultStatusValue){
+        this.registrationStatus=new RegistrationStatus(registrationStatusValue);
+        this.resultStatus=new ResultStatus(resultStatusValue);
+    }
+
     public SystemStatusDto(LocalDate closingDate){
         this.registrationCloseDate=new RegistrationCloseDate(closingDate);
     }

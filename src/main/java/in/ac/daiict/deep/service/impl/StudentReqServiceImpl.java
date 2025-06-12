@@ -38,4 +38,9 @@ public class StudentReqServiceImpl implements StudentReqService {
     public long submittedPrefCntBySemester(int semester) {
         return studentReqRepo.countDistinctStudentsBySemester(semester);
     }
+
+    @Override
+    public boolean isExist(String sid) {
+        return studentReqRepo.existsBySid(sid);
+    }
 }

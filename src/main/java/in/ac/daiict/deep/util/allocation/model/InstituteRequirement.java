@@ -13,5 +13,5 @@ public class InstituteRequirement {
     private String program;
     private int semester;
     private String category;
-    private int course_cnt;
+    private int courseCnt;
 }
