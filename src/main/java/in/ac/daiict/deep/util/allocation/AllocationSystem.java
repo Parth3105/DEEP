@@ -77,7 +77,7 @@ public class AllocationSystem {
     private int getInstituteRequirement(String program, int semester, String category) {
         for (InstituteRequirement req : instituteRequirements) {
             if (req.getProgram().equals(program) && req.getSemester() == semester && req.getCategory().equals(category))
-                return req.getCourse_cnt();
+                return req.getCourseCnt();
         }
         return 0;
     }
@@ -88,7 +88,6 @@ public class AllocationSystem {
      */
     private ResponseDto allocationInPhase(long[] unmetReqCnt) {
         // Initialize the setup to load data
-        if(students==null || openFor==null || instituteRequirements==null) new ResponseDto(ResponseStatus.BAD_REQUEST,"Error: No Student Found");
         allocationPhase(true);
 //        System.out.println("--------------------------------------------------------------------------------");
 //        System.out.println("Phase-1 finished");

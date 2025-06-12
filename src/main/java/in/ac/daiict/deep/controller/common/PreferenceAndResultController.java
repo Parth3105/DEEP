@@ -146,7 +146,8 @@ public class PreferenceAndResultController {
         if (allocationResultDtoList == null || (requester=='S' && (systemStatusService.fetchResultStatus()==null || systemStatusService.fetchResultStatus().equals(ResultStatusEnum.pending.toString())))) {
             // not found any results.
             redirectAttributes.addFlashAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_FOUND));
-            return "redirect:" + StudentEndpoint.HOME_PAGE;
+            if(requester=='S') return "redirect:" + StudentEndpoint.HOME_PAGE;
+            else return "redirect:"+AdminEndpoint.ALLOCATION_RESULTS;
         }
 
         // send allocation result details

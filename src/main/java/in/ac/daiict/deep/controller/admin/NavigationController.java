@@ -25,7 +25,7 @@ public class NavigationController {
     public String renderDashboardPage(Model model){
         SystemStatusDto systemStatusDto=systemStatusService.fetchAllStatus();
         if(systemStatusDto.getRegistrationStatus()!=null) model.addAttribute("registrationStatus",systemStatusDto.getRegistrationStatus().getStatusValue());
-        if(systemStatusDto.getRegistrationCloseDate()!=null) model.addAttribute("updateInstanceStatus",systemStatusDto.getUpdateInstanceStatus().getStatusValue());
+        if(systemStatusDto.getUpdateInstanceStatus()!=null) model.addAttribute("updateInstanceStatus",systemStatusDto.getUpdateInstanceStatus().getStatusValue());
         if(systemStatusDto.getResultStatus()!=null) model.addAttribute("resultStatus",systemStatusDto.getResultStatus().getStatusValue());
         if(systemStatusDto.getRegistrationCloseDate()!=null) model.addAttribute("registrationCloseDate",systemStatusDto.getRegistrationCloseDate().getCloseDate());
 
