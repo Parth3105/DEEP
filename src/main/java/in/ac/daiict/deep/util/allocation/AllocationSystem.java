@@ -101,7 +101,6 @@ public class AllocationSystem {
      */
     private ResponseDto allocationInPhase(long[] unmetReqCnt) {
         // Initialize the setup to load data
-        if(students==null || openFor==null || instituteRequirements==null) new ResponseDto(ResponseStatus.BAD_REQUEST,"Error: No Student Found");
         allocationPhase(true);
 //        System.out.println("--------------------------------------------------------------------------------");
 //        System.out.println("Phase-1 finished");

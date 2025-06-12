@@ -46,6 +46,7 @@
               Registration Closed
             </button>
 
+            <form id="declareResultForm" method="POST" action="/admin/declare-results" th:csrf="true" style="display: none;"></form>
             <!-- Case 1: result_status == 'Pending'-->
             <button th:if="${resultStatus == 'pending'}"
                     onclick="handleDeclareResult()"
@@ -116,7 +117,11 @@
       <div class="bg-[#B8D7FF] rounded-3xl shadow-lg flex justify-center align-center mr-[-20px] md:mr-0">
         <div class="text-center flex flex-col items-center justify-center p-6">
           <label class="inline-flex items-center cursor-pointer mb-6">
-            <input type="checkbox" id="toggleRegistration" class="sr-only peer" th:checked="${registrationStatus == 'open'}">
+            <input type="checkbox"
+                   id="toggleRegistration"
+                   class="sr-only peer"
+                   th:checked="${registrationStatus == 'open'}"
+                   th:disabled="${registrationStatus == 'never'}">
             <div class="relative w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
           </label>
 
@@ -125,7 +130,10 @@
 
           <!-- Close Date Display (Visible After Submit) -->
           <div th:if="${registrationCloseDate != null}" class="flex flex-col space-y-4 justify-center items-center text-sm font-semibold text-[#1E3C72]">
-            <div class="flex flex-row space-y-2 space-x-2 sm:flex-col sm:space-y-2 sm:space-x-0 lg:flex-row lg:space-y-2 lg:space-x-2"><span>Registration closes on: </span><span th:text="${registrationStatus == 'close'} ? 'Registration closed' : ${registrationCloseDate}"></span></div>
+            <div class="flex flex-row space-y-2 space-x-2 sm:flex-col sm:space-y-2 sm:space-x-0 lg:flex-row lg:space-y-2 lg:space-x-2">
+              <span th:if="${registrationStatus != 'close'}">Registration closes on: </span>
+              <span th:text="${registrationStatus == 'close'} ? 'Registration closed' : registrationCloseDate"></span>
+            </div>
 
             <!-- Extend Button -->
             <button th:if="${registrationStatus == 'open'}"
@@ -361,6 +369,8 @@
   const instanceCreationError = [[${instanceCreationError}]]
   const registrationStatus = [[${registrationStatus}]];
   const dashboardRequirement = [[${dashboardRequirement}]];
+  const updateInstanceStatus = [[${updateInstanceStatus}]];
+  const resultStatus = [[${resultStatus}]];
 </script>
 
 <script src="/common/js/general-utility.js"></script>

@@ -1,10 +1,20 @@
-if(sessionExpired) {
-    printStatusResponse(sessionExpired);
-}
+document.addEventListener('DOMContentLoaded', function () {
+    // Check for login error in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+        showToast('Invalid username or password.', statusColors.ERROR);
+    }
 
-if(resetResponse) {
-    printStatusResponse(resetResponse);
-}
+    // Session expired response
+    if (sessionExpired) {
+        printStatusResponse(sessionExpired);
+    }
+
+    // Reset password response
+    if (resetResponse) {
+        printStatusResponse(resetResponse);
+    }
+});
 
 function togglePasswordVisibility() {
     const input = document.getElementById('floating_password');
