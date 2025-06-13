@@ -2,93 +2,163 @@ if(otpVerificationResponse) {
     printStatusResponse(otpVerificationResponse);
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const STORAGE_KEY = "otpCountdownExpiry";
-  localStorage.removeItem(STORAGE_KEY);
+// Timer functionality
+let countdownTimer;
+let timeLeft;
 
-  const resendLink = document.getElementById("resendLink");
-  const timerContainer = document.getElementById("timerContainer");
-  const TIMER_DURATION = 2 * 60; // 2 minutes
+// Storage keys
+const TIMER_KEY = 'otpTimerEndTime';
+const RESEND_KEY = 'otpResendTime';
 
-  function insertTimerMessage() {
-    timerContainer.innerHTML = `
-      <div id="timerMessage" class="text-gray-500 mb-2">
-        You can request to resend the OTP after
-        <span id="countdown" class="font-semibold text-blue-600">2:00</span>
-      </div>`;
-  }
+// Elements
+const timerContainer = document.getElementById('timerContainer');
+const timerMessage = document.getElementById('timerMessage');
+const countdown = document.getElementById('countdown');
+const resendLink = document.getElementById('resendLink');
+const resendForm = document.getElementById('resendForm');
+const statusMessage = document.getElementById('statusMessage');
 
-  function updateCountdownDisplay(timeLeft) {
-    const countdownEl = document.getElementById("countdown");
-    if (countdownEl) {
-      const minutes = Math.floor(timeLeft / 60);
-      const seconds = timeLeft % 60;
-      countdownEl.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-    }
-  }
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+}
 
-  function showResendLink() {
-    timerContainer.innerHTML = ""; // remove timer
-    resendLink.style.display = "inline-block";
-    resendLink.textContent = "Resend OTP";
-    resendLink.classList.remove("text-gray-500", "cursor-not-allowed", "pointer-events-none");
-    resendLink.classList.add("text-blue-600", "hover:text-blue-700", "cursor-pointer");
-  }
+function updateCountdown() {
+    const now = Date.now();
+    const endTime = parseInt(sessionStorage.getItem(TIMER_KEY) || '0');
 
-  function startTimer(duration) {
-    const expiryTime = Date.now() + duration * 1000;
-    localStorage.setItem(STORAGE_KEY, expiryTime.toString());
+    if (endTime > now) {
+        timeLeft = Math.ceil((endTime - now) / 1000);
+        countdown.textContent = formatTime(timeLeft);
 
-    insertTimerMessage(); // restore UI
-    let timeLeft = duration;
-    updateCountdownDisplay(timeLeft);
-
-    const timer = setInterval(() => {
-      timeLeft--;
-      updateCountdownDisplay(timeLeft);
-
-      if (timeLeft <= 0) {
-        clearInterval(timer);
-        localStorage.removeItem(STORAGE_KEY);
-        showResendLink();
-      }
-    }, 1000);
-  }
-
-  function resumeTimer() {
-    const expiry = localStorage.getItem(STORAGE_KEY);
-    if (expiry) {
-      const remaining = Math.floor((parseInt(expiry) - Date.now()) / 1000);
-      if (remaining > 0) {
-        resendLink.style.display = "none";
-        startTimer(remaining);
-      } else {
-        showResendLink();
-      }
+        if (timeLeft <= 0) {
+            showResendLink();
+        }
     } else {
-      resendLink.style.display = "none";
-      startTimer(TIMER_DURATION);
+        showResendLink();
     }
-  }
+}
 
-  // Resend handler — triggered on form submit
-  window.handleResendClick = function (event) {
-    resendLink.onclick = null;
+function startTimer(duration = 120) { // 2 minutes = 120 seconds
+    // Set end time in sessionStorage
+    const endTime = Date.now() + (duration * 1000);
+    sessionStorage.setItem(TIMER_KEY, endTime.toString());
 
-    resendLink.textContent = "Resend request sent";
-    resendLink.classList.remove("hover:text-blue-700", "cursor-pointer");
-    resendLink.classList.add("text-gray-500", "cursor-not-allowed", "pointer-events-none");
+    // Show timer, hide resend link and status
+    timerMessage.style.display = 'block';
+    resendLink.style.display = 'none';
+    statusMessage.style.display = 'none';
 
-    const form = document.getElementById("resendForm");
-    form.submit();
+    // Clear any existing timer
+    if (countdownTimer) {
+        clearInterval(countdownTimer);
+    }
 
-    setTimeout(() => {
-      resendLink.style.display = "none";
-      startTimer(TIMER_DURATION);
-    }, 10000);
-  };
+    // Start countdown
+    countdownTimer = setInterval(updateCountdown, 1000);
+    updateCountdown(); // Initial update
+}
 
-  resumeTimer();
+function showResendLink() {
+    // Clear timer
+    if (countdownTimer) {
+        clearInterval(countdownTimer);
+    }
+
+    // Remove timer from storage
+    sessionStorage.removeItem(TIMER_KEY);
+
+    // Hide timer, show resend link
+    timerMessage.style.display = 'none';
+    resendLink.style.display = 'inline-block';
+    statusMessage.style.display = 'none';
+}
+
+function handleResendClick() {
+    // Show status message
+    statusMessage.style.display = 'block';
+    resendLink.style.display = 'none';
+
+    // Store resend time for the 10-second delay
+    sessionStorage.setItem(RESEND_KEY, Date.now().toString());
+
+    // Submit the form
+    resendForm.submit();
+}
+
+function checkResendDelay() {
+    const resendTime = parseInt(sessionStorage.getItem(RESEND_KEY) || '0');
+    const now = Date.now();
+    const delayTime = 10000; // 10 seconds
+
+    if (resendTime > 0 && (now - resendTime) < delayTime) {
+        // Still within 10-second delay, show status message
+        statusMessage.style.display = 'block';
+        resendLink.style.display = 'none';
+        timerMessage.style.display = 'none';
+
+        // Start timer after remaining delay
+        const remainingDelay = delayTime - (now - resendTime);
+        setTimeout(() => {
+            sessionStorage.removeItem(RESEND_KEY);
+            startTimer();
+        }, remainingDelay);
+
+        return true;
+    } else if (resendTime > 0) {
+        // Delay is over, clean up and start timer
+        sessionStorage.removeItem(RESEND_KEY);
+        startTimer();
+        return true;
+    }
+
+    return false;
+}
+
+// Initialize on page load
+function initializeTimer() {
+    // First check if we're in the post-resend delay period
+    if (checkResendDelay()) {
+        return;
+    }
+
+    // Check if timer should be running
+    const endTime = parseInt(sessionStorage.getItem(TIMER_KEY) || '0');
+    const now = Date.now();
+
+    if (endTime > now) {
+        // Timer should be running
+        const remaining = Math.ceil((endTime - now) / 1000);
+        if (remaining > 0) {
+            startTimer(remaining);
+        } else {
+            showResendLink();
+        }
+    } else {
+        // No active timer, start fresh or show resend link
+        if (endTime === 0) {
+            // First visit, start timer
+            startTimer();
+        } else {
+            // Timer expired, show resend link
+            showResendLink();
+        }
+    }
+}
+
+// Event listeners
+resendLink.addEventListener('click', handleResendClick);
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', initializeTimer);
+
+// Handle page visibility change (when user switches tabs)
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        // Page became visible again, update timer
+        updateCountdown();
+    }
 });
 
 const otpInputs = document.querySelectorAll('.otp-input');

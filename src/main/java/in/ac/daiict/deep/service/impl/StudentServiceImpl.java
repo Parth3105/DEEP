@@ -76,4 +76,21 @@ public class StudentServiceImpl implements StudentService {
         if(student==null) return null;
         return modelMapper.map(student, StudentDto.class);
     }
+
+    @Override
+    public boolean fetchEnrollmentStatusForStudent(String sid) {
+        Student student = studentRepo.findById(sid).orElse(null);
+        if(student==null) return false;
+        return student.isHasEnrolled();
+    }
+
+    @Override
+    public long countEnrolledStudents() {
+        return studentRepo.countByHasEnrolled(true);
+    }
+
+    @Override
+    public void updateEnrollmentStatus(String sid) {
+        studentRepo.updateHasEnrolled(sid);
+    }
 }

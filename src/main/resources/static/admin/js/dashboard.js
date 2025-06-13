@@ -40,7 +40,7 @@ function openRegModal() {
 
 function closeRegModal() {
   const toggleRegistration = document.getElementById("toggleRegistration");
-  toggleRegistration.checked = false;
+  toggleRegistration.checked = registrationStatus === 'open';
   document.getElementById('closeRegModal').classList.add('hidden');
 }
 
@@ -144,6 +144,14 @@ form.addEventListener('submit', function (e) {
     spinner.classList.remove("hidden");
     submitBtn.disabled = true;
 });
+
+function openDeclareRegModal() {
+    document.getElementById('DeclareRegModal').classList.remove('hidden');
+};
+
+function closeDeclareRegModal() {
+    document.getElementById('DeclareRegModal').classList.add('hidden');
+};
 
 function handleDeclareResult() {
     const pendingSemesters = [];

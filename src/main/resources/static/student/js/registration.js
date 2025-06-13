@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('requirementsContainer');
-    console.log(instituteRequirements);
     const filtered = instituteRequirements.filter(obj => obj.courseCnt !== null);
     filtered.sort((a, b) => a.category.localeCompare(b.category));
 
@@ -350,13 +349,13 @@ function getCoursePrefsToCourseMap() {
     ]);
 
     for (let slot of allSlots) {
-        if (skippedSlots[slot] === true) continue; // skip
+        if (skippedSlots[slot] === true) continue; // Skip this slot
 
         const selected = selectedCoursesBySlot[slot] || [];
 
-        // Only add if user selected some courses
         if (selected.length > 0) {
-            slotCourseMap[slot] = selected;
+            // Extract only the cids in the order they appear
+            slotCourseMap[slot] = selected.map(course => course.cid);
         }
     }
 
@@ -375,6 +374,11 @@ document.getElementById('submitButton').addEventListener('click', function () {
 document.getElementById('confirmSubmit').addEventListener('click', function () {
   document.getElementById('confirmModal').classList.add('hidden');
   document.body.classList.remove('backdrop-blur-md', 'overflow-hidden');
+
+  const submitButton = document.getElementById('submitButton');
+  submitButton.disabled = true;
+  submitButton.classList.remove('opacity-100', 'cursor-pointer');
+  submitButton.classList.add('opacity-50', 'cursor-not-allowed');
 
   const coursePrefsMapping = getCoursePrefsToCourseMap();
   document.getElementById('studentRequirements').value = JSON.stringify(values);
