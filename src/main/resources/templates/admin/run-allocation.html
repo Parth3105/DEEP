@@ -73,7 +73,9 @@
 
                         <!-- Execute Allocation Button -->
                         <button type="submit" id="executeBtn"
-                                class="w-full max-w-48 bg-gradient-to-r from-[#27AE60] to-[#2ECC71] text-white px-2 py-2 rounded-xl font-medium flex items-center justify-center cursor-pointer">
+                                th:disabled="${resultStatus == 'declared'}"
+                                th:classappend="${resultStatus == 'declared'} ? ' opacity-50 cursor-not-allowed' : 'opacity-100 cursor-pointer'"
+                                class="w-full max-w-48 bg-gradient-to-r from-[#27AE60] to-[#2ECC71] text-white px-2 py-2 rounded-xl font-medium flex items-center justify-center">
                             <img src="/admin/images/execute-allocation.svg" alt="Execute Icon" class="w-7 h-7 mr-2">
                             Execute Allocation
                         </button>
@@ -163,10 +165,6 @@
     const semester = [[${semester != null ? semester : 5}]];
     const allocationStatusList = [[${allocationStatus}]];
     const registrationStatus = [[${registrationStatus}]];
-
-    console.log(semester);
-    console.log(allocationStatusList);
-    console.log(registrationStatus);
 </script>
 
 <script src="/common/js/general-utility.js"></script>

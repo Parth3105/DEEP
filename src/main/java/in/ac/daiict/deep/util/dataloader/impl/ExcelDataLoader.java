@@ -63,7 +63,12 @@ public class ExcelDataLoader implements DataLoader {
         studentIterator.next();
         while (studentIterator.hasNext()) {
             Row studentRow = studentIterator.next();
-            String studentID = formatStudentID.format(studentRow.getCell(studentHeader.STUDENT_ID).getNumericCellValue());
+            String studentID = "";
+            if(studentRow.getCell(studentHeader.STUDENT_ID).getCellType().equals(CellType.NUMERIC)) studentID=formatStudentID.format(studentRow.getCell(studentHeader.STUDENT_ID).getNumericCellValue());
+            else if(studentRow.getCell(studentHeader.STUDENT_ID).getCellType().equals(CellType.STRING)) studentID=studentRow.getCell(studentHeader.STUDENT_ID).getStringCellValue();
+            else{
+                System.out.println(studentRow.getCell(studentHeader.STUDENT_ID).getCellType().name());
+            }
             String studentName = studentRow.getCell(studentHeader.NAME).getStringCellValue();
             String program = studentRow.getCell(studentHeader.PROGRAM).getStringCellValue();
             int semester = (int) studentRow.getCell(studentHeader.SEMESTER).getNumericCellValue();

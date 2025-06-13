@@ -9,6 +9,10 @@
 </head>
 
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
+
+<!-- Toast Display -->
+<div th:replace="~{common/toast-display::toast-display}"></div>
+
 <div class="mx-auto">
     <!-- Header -->
     <div th:replace="~{common/admin-navbar::admin-navbar}"></div>
@@ -283,7 +287,7 @@
             // UploadWarning (status 299) with list of messages
             const uploadWarning = /*[[${uploadWarning}]]*/ null;
             if (uploadWarning && uploadWarning.status === 299) {
-              createToast('warning', uploadWarning.warnings);
+              createToast('warning', uploadWarning.message);
             }
 
             // UploadError
@@ -299,6 +303,9 @@
 
 <script th:inline="javascript">
     const uploadError = [[${uploadError}]];
+    const uploadWarning = [[${uploadWarning}]];
+    const uploadSuccess = [[${uploadSuccess}]];
+    const internalServerError = [[${internalServerError}]];
 </script>
 
 <script src="/common/js/general-utility.js"></script>

@@ -33,7 +33,7 @@ const categoryLabels = {
     'SE': 'Science Electives',
     'MNCE': 'MNCE Electives',
     'OE': 'Open Electives',
-    'HSSE': 'Humanities and Social Sciences Electives'
+    'HASSE': 'Humanities and Social Sciences Electives'
 };
 
 const customColors = {

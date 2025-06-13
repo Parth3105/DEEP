@@ -66,8 +66,13 @@ public class AllocationSystem {
         if(students==null) return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.STUDENT_DATA_NOT_FOUND);
         else if(courses==null) return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.COURSE_DATA_NOT_FOUND);
         else if(openFor==null) return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.COURSE_OFFERS_NOT_FOUND);
+        try {
+            printWriter=new PrintWriter(new FileWriter("./src/main/java/in/ac/daiict/deep/tmp/dryRunLog.txt",false));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         ResponseDto response=allocationInPhase(unmetReqCnt);
-        saveOutput();
+//        saveOutput();
         return response;
     }
 
@@ -89,20 +94,20 @@ public class AllocationSystem {
     private ResponseDto allocationInPhase(long[] unmetReqCnt) {
         // Initialize the setup to load data
         allocationPhase(true);
-//        System.out.println("--------------------------------------------------------------------------------");
-//        System.out.println("Phase-1 finished");
+        printWriter.println("--------------------------------------------------------------------------------");
+        printWriter.println("Phase-1 finished");
         unmetReqCnt[0] = 0;
-//        System.out.println("All Students allocated? " + isStudentReqFulfilled(true, unmetReqCnt));
-//        System.out.println("Not allocated in phase-1: " + unmetReqCnt[0]);
-//        System.out.println("--------------------------------------------------------------------------------");
+        printWriter.println("All Students allocated? " + isStudentReqFulfilled(true, unmetReqCnt));
+        printWriter.println("Not allocated in phase-1: " + unmetReqCnt[0]);
+        printWriter.println("--------------------------------------------------------------------------------");
 
         allocationPhase(false);
-//        System.out.println("--------------------------------------------------------------------------------");
-//        System.out.println("Phase-2 finished");
+        printWriter.println("--------------------------------------------------------------------------------");
+        printWriter.println("Phase-2 finished");
         unmetReqCnt[0] = 0;
-//        System.out.println("All Students allocated? " + isStudentReqFulfilled(false, unmetReqCnt));
-//        System.out.println("Not allocated in phase-2: " + unmetReqCnt[0]);
-//        System.out.println("--------------------------------------------------------------------------------");
+        printWriter.println("All Students allocated? " + isStudentReqFulfilled(false, unmetReqCnt));
+        printWriter.println("Not allocated in phase-2: " + unmetReqCnt[0]);
+        printWriter.println("--------------------------------------------------------------------------------");
         return new ResponseDto(ResponseStatus.OK, ResponseMessage.SUCCESS_STATUS);
     }
 
@@ -115,18 +120,39 @@ public class AllocationSystem {
         List<AllocationStudent> studentList = new ArrayList<>(students.values());
         Collections.shuffle(studentList);
 
+        printWriter.println("Loop size (number of allocation attempts): " + maxRequirement[0]);
         // debug
 //        System.out.println(maxRequirement[0]);
 
         for (int i = 0; i < maxRequirement[0]; i++) {
+            printWriter.println("================ Allocation Round: " + (i + 1) + " ================"); // DRY RUN
+            
             updatePriorityGroups();
+
+            printWriter.println("----------------------- Priority Groups -----------------------"); // DRY RUN
+            printWriter.println("Note: List of students for each priority is sorted in the decreasing order of cumulative priority");
+            printWriter.println("{");
+
+            // @TODO-1
+            for(Map.Entry<Integer,List<AllocationStudent>> entry: priorityGroups.entrySet()){
+                printWriter.print("\t"+entry.getKey()+": [ ");
+                for(AllocationStudent s: entry.getValue()) printWriter.print(s.getSid()+" ");
+                printWriter.print("],");
+            }
+            printWriter.println("}");
+            printWriter.println("---------------------------------------------------------------"); // DRY RUN
+
 
             Set<Integer> priorities = priorityGroups.keySet();
 
             for (int priority : priorities) {
+                printWriter.println("--------- Processing Priority Group: " + priority + " ---------"); // DRY RUN
                 for (AllocationStudent student : priorityGroups.get(priority)) {
 //                    System.out.println("Commencing allocation for student: "+student.getSid());
+                    printWriter.println("Allocating for student: " + student.getSid() + " | Name: " + student.getName()); // DRY RUN
                     courseAllocation(student, isPhaseOne, false);
+                    printWriter.println("Allocated courses so far: " + student.getAllocatedCourses()); // DRY RUN
+                    printWriter.println("---------------------------------------");
                 }
             }
         }
@@ -182,28 +208,53 @@ public class AllocationSystem {
         int maxPrefIndex = -1;
         if(student.getCoursePreferences()!=null){
             for (List<String> coursePrefBySlot : student.getCoursePreferences().values()) {
-                maxPrefIndex=coursePrefBySlot.size();
+                maxPrefIndex=Math.max(maxPrefIndex, coursePrefBySlot.size());
             }
         }
 
+        printWriter.println();
         for (int prefIndex = 0; prefIndex < maxPrefIndex; prefIndex++) {
+            printWriter.println(">>> Trying course preference index: " + (prefIndex + 1) +" from all slots"); // DRY RUN
+
+            printWriter.print(">>> Slot Pref: [ ");
+            for (String slot : student.getSlotPreferences()) printWriter.print(slot+" ");
+            printWriter.println("]");
+
             for (String slot : student.getSlotPreferences()) {
-                if (student.getAllocatedSlots().contains(slot)) continue;
+                // TODO-2
+
+                if (student.getAllocatedSlots().contains(slot)) {
+                    printWriter.println(">>> Slot " + slot + " already allocated. Skipping..."); // DRY RUN                    
+                    continue;
+                }
 
                 List<String> coursePrefInSlot = student.getCoursePreferences().getOrDefault(slot,new ArrayList<>());
                 String coursePref = null;
                 if(coursePrefInSlot.size()>prefIndex) coursePref=coursePrefInSlot.get(prefIndex);
-                if (coursePref == null) continue;
+                if (coursePref == null) {
+                    printWriter.println(">>> No courses preferred from slot-"+slot);
+                    continue;
+                }
+
                 String courseID = coursePref;
+                printWriter.println(">>> Trying course: " + courseID + " in slot " + slot); // DRY RUN
 
                 if(isErrorPhase) printWriter.println(">>> Trying course: "+courseID+" in Slot-"+slot);
 
                 if (canAllocateCourse(student, courseID, isPhaseOne, isErrorPhase)) {
-//                    debug if(student.getSid().equals("202201174")) System.out.println("AllocatingCourse: "+courseID);
+                    printWriter.println(">>> Course " + courseID + " allocated to " + student.getName()); // DRY RUN
+                    //                    debug if(student.getSid().equals("202201174")) System.out.println("AllocatingCourse: "+courseID);
                     allocateCourse(student, courseID);
                     student.setPriority(prefIndex + 1);
                     student.setCumulativePriority(student.getCumulativePriority() + student.getPriority());
+
+                    printWriter.println(">>> Updated priority of student: "+student.getPriority());
+                    printWriter.println(">>> Updated cumulative priority of student: "+student.getCumulativePriority());
+                    printWriter.println();
                     return;
+                } else {
+                    printWriter.println(">>> Course " + courseID + " NOT allocated (doesn't meet constraints)"); // DRY RUN
+                    printWriter.println();
                 }
             }
         }
@@ -273,6 +324,8 @@ public class AllocationSystem {
         Map<String, Integer> programSpecificSeats = availableSeats.getOrDefault(student.getProgram(), new HashMap<>());
         programSpecificSeats.put(courseID, seats - 1);
         availableSeats.put(student.getProgram(), programSpecificSeats);
+
+        printWriter.println(">>> Updated seats for " + courseID + ": " + (seats - 1));
     }
 
     private boolean isStudentReqFulfilled(boolean isPhaseOne, long[] unmetReqCnt) {
@@ -371,11 +424,14 @@ public class AllocationSystem {
         } catch (InterruptedException e) {
             System.out.println("Error: Saving record...");
         }
+
+        // TODO-3
     }
 
     private ByteArrayOutputStream getAllocationFailureDetail() {
+        // TODO-4
         ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        printWriter=new PrintWriter(byteArrayOutputStream);
+//        printWriter=new PrintWriter(byteArrayOutputStream);
         printWriter.println("====================================================================================================================================================================");
         printWriter.println(" NOTE: Course allocation logs will be shown only for courses in slots which are unallocated to a student and available courses which are selected by a student");
         printWriter.println("====================================================================================================================================================================");

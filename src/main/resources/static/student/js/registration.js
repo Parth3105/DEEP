@@ -93,7 +93,7 @@ function validateAllSlotsBeforeSubmit() {
 
         // If user has not selected all courses and not skipped the slot => throw warning
         if (selected.length !== total) {
-            showToast(`Please select all courses or confirm no preference for Slot ${slot}.`, "warning");
+            showToast(`Please select all courses or confirm no preference for Slot ${slot}.`, statusColors.WARNING);
             return false;
         }
     }
@@ -114,7 +114,7 @@ function CheckInputs() {
 
     for (let input of inputs) {
         if (input.value.trim() === '') {
-            showToast("Please, Fill all 4 requirements First!");
+            showToast("Please, Fill all 4 requirements First!", statusColors.ERROR);
             return false;
         }
     }
@@ -170,7 +170,7 @@ function showSlotCourses(slot) {
 
   const isCurrentSkipped = skippedSlots[currentSlot] === true;
   if (currentStep === 2 && selectedInCurrent.length !== totalInCurrent && !isCurrentSkipped) {
-    showToast(`Please select all courses or confirm you don't want any from Slot ${currentSlot}.`, "warning");
+    showToast(`Please select all courses or confirm you dont want any from Slot ${currentSlot}.`, statusColors.WARNING);
     return;
   }
 
@@ -219,7 +219,7 @@ function addCourseToSelected(cid, slot, name, program, category, credits) {
     }
 
     if (selectedCoursesBySlot[slot].find(course => course.cid === cid)) {
-        showToast('Course already selected in this slot!', 'warning');
+        showToast('Course already selected in this slot!', statusColors.WARNING);
         return;
     }
 
@@ -314,19 +314,19 @@ function validateSlotPreferences() {
         const pref = preferences[i];
 
         if (pref === '') {
-            showToast(`Please fill all ${maxSlot} preferences.`, "warning");
+            showToast(`Please fill all ${maxSlot} preferences.`, statusColors.WARNING);
             return false;
         }
 
         const num = Number(pref);
 
         if (isNaN(num) || num < 1 || num > maxSlot) {
-            showToast(`Preference ${i + 1} must be a number between 1 and ${maxSlot}.`, "error");
+            showToast(`Preference ${i + 1} must be a number between 1 and ${maxSlot}.`, statusColors.ERROR);
             return false;
         }
 
         if (seen.has(num)) {
-            showToast(`Duplicate preference "${num}" detected. All preferences must be unique.`, "error");
+            showToast(`Duplicate preference "${num}" detected. All preferences must be unique.`, statusColors.ERROR);
             return false;
         }
 
@@ -336,23 +336,26 @@ function validateSlotPreferences() {
     return true;
 }
 
-function getSlotPrefsToString(slotPrefs) {
-    return slotPrefs.join('$');
-}
+function getCoursePrefsToCourseMap() {
+    const slotCourseMap = {};
 
-function getCoursePrefsToString(coursePrefs) {
-  return Object.entries(coursePrefs)
-    .map(([slotId, courses]) => {
-      const cids = courses.map(course => course.cid).join('$');
-      return `${slotId}:${cids}`;
-    })
-    .join('#');
-}
+    const allSlots = new Set([
+        ...Object.keys(skippedSlots),
+        ...Object.keys(selectedCoursesBySlot)
+    ]);
 
-function getAcadReqToString(obj) {
-  return Object.entries(obj)
-    .map(([key, value]) => `${key}:${value}`)
-    .join('#');
+    for (let slot of allSlots) {
+        if (skippedSlots[slot] === true) continue; // skip
+
+        const selected = selectedCoursesBySlot[slot] || [];
+
+        // Only add if user selected some courses
+        if (selected.length > 0) {
+            slotCourseMap[slot] = selected;
+        }
+    }
+
+    return slotCourseMap;
 }
 
 document.getElementById('submitButton').addEventListener('click', function () {
@@ -368,13 +371,10 @@ document.getElementById('confirmSubmit').addEventListener('click', function () {
   document.getElementById('confirmModal').classList.add('hidden');
   document.body.classList.remove('backdrop-blur-md', 'overflow-hidden');
 
-  const acad = getAcadReqToString(values);
-  const course = getCoursePrefsToString(selectedCoursesBySlot);
-  const slot = getSlotPrefsToString(collectPreferences());
-
-  document.getElementById('studentRequirements').value = acad;
-  document.getElementById('coursePreferences').value = course;
-  document.getElementById('slotPreferences').value = slot;
+  const coursePrefsMapping = getCoursePrefsToCourseMap();
+  document.getElementById('studentRequirements').value = JSON.stringify(values);
+  document.getElementById('coursePreferences').value = JSON.stringify(coursePrefsMapping);
+  document.getElementById('slotPreferences').value = JSON.stringify(collectPreferences());
 
   document.getElementById('myForm').submit();
 });
