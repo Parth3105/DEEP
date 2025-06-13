@@ -1,5 +1,6 @@
 package in.ac.daiict.deep.util.dataloader.impl;
 
+import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.dto.CourseDto;
 import in.ac.daiict.deep.dto.CourseOfferingDto;
@@ -169,7 +170,7 @@ public class ExcelDataLoader implements DataLoader {
 
             if (!courseService.isPresent(courseID)) {
                 courseOfferings.clear();
-                return new ResponseDto(ResponseStatus.BAD_REQUEST, "Error: Some entries refer to non-existing course in course-offerings. Please verify your data.");
+                return new ResponseDto(ResponseStatus.BAD_REQUEST, ResponseMessage.DB_SAVE_ERROR);
             }
             courseOfferings.add(new CourseOffering(program, courseID, semester, category, seats));
         }

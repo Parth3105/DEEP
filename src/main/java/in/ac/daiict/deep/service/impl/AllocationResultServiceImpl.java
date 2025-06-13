@@ -4,6 +4,9 @@ import in.ac.daiict.deep.dto.AllocationResultDto;
 import in.ac.daiict.deep.entity.AllocationResult;
 import in.ac.daiict.deep.repository.AllocationResultRepo;
 import in.ac.daiict.deep.service.AllocationResultService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +17,25 @@ import java.util.List;
 public class AllocationResultServiceImpl implements AllocationResultService {
     private AllocationResultRepo allocationResultRepo;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Transactional
     @Override
-    public void insertAll(List<AllocationResult> allocationResultList) {
+    public void bulkInsert(List<AllocationResult> allocationResultList) {
         deleteAll();
-        allocationResultRepo.saveAll(allocationResultList);
-        allocationResultRepo.flush();
+        int batchSize = 100;
+
+        for (int i = 0; i < allocationResultList.size(); i++) {
+            entityManager.persist(allocationResultList.get(i));
+            if (i % batchSize == 0 && i > 0) {
+                entityManager.flush();
+                entityManager.clear();
+            }
+        }
+
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Override

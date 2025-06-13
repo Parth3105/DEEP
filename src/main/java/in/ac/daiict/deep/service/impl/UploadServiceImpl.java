@@ -27,9 +27,4 @@ public class UploadServiceImpl implements UploadService {
     public void deleteAll() {
         uploadRepo.deleteAll();
     }
-
-    @Override
-    public boolean checkIfExists(String name) {
-        return uploadRepo.existsById(name);
-    }
 }

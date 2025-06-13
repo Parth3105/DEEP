@@ -2,6 +2,18 @@ if(uploadError) {
     printStatusResponse(uploadError);
 }
 
+if(uploadWarning) {
+    printStatusResponse(uploadWarning);
+}
+
+if(uploadSuccess) {
+    printStatusResponse(uploadSuccess);
+}
+
+if(internalServerError) {
+    printStatusResponse(internalServerError);
+}
+
 // Enabling submit button only if at least one file is selected
 const fileInputIds = ['fileInput-student-data', 'fileInput-course-offerings', 'fileInput-institute-requirements', 'fileInput-course-data'];
 const submitBtn = document.getElementById('final-submit-btn');

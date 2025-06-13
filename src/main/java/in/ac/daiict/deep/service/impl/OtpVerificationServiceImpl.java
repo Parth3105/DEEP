@@ -29,7 +29,7 @@ public class OtpVerificationServiceImpl implements OtpVerificationService {
         while(otpVerificationRepo.existsByOtp(otp)) otp=generateOtp();
         String finalOtp = otp;
         CompletableFuture.runAsync(() -> otpVerificationRepo.save(new OtpVerification(username, finalOtp, LocalDateTime.now().plusMinutes(Deadline.OTP_EXPIRATION_MINUTES))));
-        CompletableFuture.runAsync(() -> emailService.sendOtp(email,finalOtp));
+        CompletableFuture.runAsync(() -> emailService.sendOtp(username,email,finalOtp));
     }
 
     private String generateOtp(){

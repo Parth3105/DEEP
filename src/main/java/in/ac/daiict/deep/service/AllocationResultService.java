@@ -6,7 +6,7 @@ import in.ac.daiict.deep.entity.AllocationResult;
 import java.util.List;
 
 public interface AllocationResultService {
-    void insertAll(List<AllocationResult> allocationResultList);
+    void bulkInsert(List<AllocationResult> allocationResultList);
     List<AllocationResultDto> fetchAllocationResult(String sid, String program);
     List<AllocationResult> fetchCourseWiseAllocation(String cid);
     void deleteAll();

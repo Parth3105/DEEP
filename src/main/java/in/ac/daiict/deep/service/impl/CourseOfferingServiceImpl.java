@@ -55,4 +55,9 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     public void deleteAll() {
         courseOfferingRepo.deleteAll();
     }
+
+    @Override
+    public boolean existsAnyOffer() {
+        return courseOfferingRepo.existsAnyOffer();
+    }
 }

@@ -7,7 +7,6 @@ allocationStatusList?.forEach(entry => {
     };
 });
 
-let shouldShowToast = true;
 function updateAllocationSummary(sem) {
     const data = allocationStatusMap?.[sem] || {
         allocated: "--",
@@ -22,6 +21,7 @@ function updateAllocationSummary(sem) {
 
     const status = data.allocationstatus;
 
+    const showToastForSemester = sessionStorage.getItem(`showToastForSemester`) === "true";
     switch (status) {
         case 200:
         case "200":
@@ -32,7 +32,7 @@ function updateAllocationSummary(sem) {
         case "500":
             statusDiv.className = "bg-red-500 text-white px-7 py-2 rounded-xl font-medium text-lg";
             statusText.textContent = "Failed";
-            if (shouldShowToast) {
+            if (showToastForSemester) {
                 showToast("Internal server error during allocation.", statusColors.INTERNAL_SERVER_ERROR);
             }
             break;
@@ -40,8 +40,8 @@ function updateAllocationSummary(sem) {
         case "400":
             statusDiv.className = "bg-red-500 text-white px-7 py-2 rounded-xl font-medium text-lg";
             statusText.textContent = "Failed";
-            if (shouldShowToast) {
-                showToast("Some required information is missing: student data for the selected semester or course data or course offerings.", statusColors.BAD_REQUEST);
+            if (showToastForSemester) {
+                showToast("Data upload failed: Missing or invalid data detected. Please ensure that student-data for the selected semester, course-data and course-offerings is valid.", statusColors.BAD_REQUEST);
             }
             break;
         case 204:
@@ -49,7 +49,7 @@ function updateAllocationSummary(sem) {
         default:
             statusDiv.className = "bg-yellow-500 text-white px-7 py-2 rounded-xl font-medium text-lg";
             statusText.textContent = "Yet to run";
-            if (shouldShowToast) {
+            if (showToastForSemester) {
                 showToast("Something went wrong! Please contact support.", statusColors.INTERNAL_SERVER_ERROR);
             }
             break;
@@ -57,9 +57,7 @@ function updateAllocationSummary(sem) {
 
     allocatedDiv.textContent = data.allocated;
     unallocatedDiv.textContent = data.unallocated;
-
-    // Reset toast flag so toast is not shown again on future semester switches
-    shouldShowToast = false;
+    sessionStorage.removeItem(`showToastForSemester`);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -68,11 +66,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('allocationForm');
     const executeBtn = document.getElementById('executeBtn');
 
-    // ✅ Use semester value from backend
+    // Use semester value from backend
     let selectedSemester = semester || 5; // fallback to 5 if somehow undefined
     hiddenInput.value = selectedSemester;
 
-    // ✅ Style semester buttons based on selection
+    // Style semester buttons based on selection
     buttons.forEach(btn => {
         const sem = parseInt(btn.getAttribute('data-sem'));
         btn.style.backgroundColor = sem === selectedSemester ? customColors.DARK_GREEN : customColors.COBALT_BLUE;
@@ -117,9 +115,9 @@ function handleExecuteConfirmation() {
     const form = document.getElementById('allocationForm');
     const semester = document.getElementById('selectedSemester').value;
 
-    shouldShowToast = true;
+    // Mark that toast should show for this semester
+    sessionStorage.setItem(`showToastForSemester`, "true");
 
-    // Submit will trigger server-side allocation → on reload, toast shows for that semester
     form.setAttribute('action', `/admin/execute-allocation/${semester}`);
     form.submit();
 }

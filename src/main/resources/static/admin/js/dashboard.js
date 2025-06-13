@@ -2,6 +2,10 @@ if(instanceCreationError) {
     printStatusResponse(instanceCreationError);
 }
 
+if(updateInstanceError) {
+    printStatusResponse(updateInstanceError);
+}
+
 if(resultStatus === 'declared') {
     showToast("Results are successfully declared!", statusColors.OK);
 }
@@ -12,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   toggleRegistration.addEventListener("change", function () {
     if(registrationStatus === 'open') {
-        openCloseRegModal();
+        openRegModal();
         return;
     }
 
@@ -20,18 +24,15 @@ document.addEventListener("DOMContentLoaded", function () {
       modal.classList.remove("hidden");
     }
   });
-
-  window.closeModal = function () {
-    modal.classList.add("hidden");
-    toggleRegistration.checked = false;
-  };
 });
 
-function openCloseRegModal() {
+function openRegModal() {
   document.getElementById('closeRegModal').classList.remove('hidden');
 }
 
-function closeCloseRegModal() {
+function closeRegModal() {
+  const toggleRegistration = document.getElementById("toggleRegistration");
+  toggleRegistration.checked = false;
   document.getElementById('closeRegModal').classList.add('hidden');
 }
 
@@ -100,13 +101,8 @@ function handleExtend(event) {
     form.submit();
 }
 
-function closeModal() {
-    modal.classList.add('hidden');
-    // Uncheck the toggle if Cancel is clicked
-    registrationToggle.checked = false;
-}
-
 function openModal() {
+    sessionStorage.setItem("isModalOpen", "true");
     document.getElementById('create-instance-modal').classList.remove('hidden');
 }
 
@@ -119,10 +115,23 @@ const btnText = document.getElementById('submitBtnText');
 const spinner = document.getElementById('spinner');
 const submitBtn = document.getElementById('submitBtn');
 
+document.addEventListener('DOMContentLoaded', function () {
+    const isModalOpen = sessionStorage.getItem("isModalOpen");
+
+    if (isModalOpen === "false") {
+        closeModal();
+        // Remove it immediately so modal doesn't keep auto-closing
+        sessionStorage.removeItem("isModalOpen");
+    }
+});
+
 form.addEventListener('submit', function (e) {
     if (!form.checkValidity()) return;
 
-    // Otherwise, show loading state
+    // Store flag to indicate modal was submitted
+    sessionStorage.setItem("isModalOpen", "false");
+
+    // Show loading state
     btnText.textContent = "This may take a while!";
     spinner.classList.remove("hidden");
     submitBtn.disabled = true;
@@ -147,7 +156,7 @@ function handleDeclareResult() {
         return;
     }
 
-    // ✅ Submit the hidden form to trigger POST request
+    // Submit the hidden form to trigger POST request
     document.getElementById("declareResultForm").submit();
 }
 
