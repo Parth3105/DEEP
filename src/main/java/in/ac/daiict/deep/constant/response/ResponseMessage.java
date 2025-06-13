@@ -11,10 +11,11 @@ public class ResponseMessage {
     public static final String INTERNAL_SERVER_ERROR="There's a temporary problem with the service. Please try again. If you continue to get this message, try again later.";
     public static final String USER_NOT_FOUND = "Your information is currently unavailable. Please try again later or contact support.";
     public static final String STUDENT_NOT_FOUND="Student information not found. Ensure the student is registered or data has been uploaded.";
+    public static final String ALLOCATION_INSTANCE_NOT_FOUND="No allocation instance found";
     public static final String USER_NOT_REGISTERED = "Your enrollment status is incomplete. Submission of the preferences is necessary to proceed.";
     public static final String STUDENT_NOT_REGISTERED = "The student appears to be unregistered or has not completed the enrollment process.";
     public static final String UPLOAD_OFFERS = "Warning: Course Data has been updated. Please re-upload Course Offering file to avoid data loss.";
-    public static final String NO_FILES_UPLOADED = "Warning: No files were uploaded. Please make sure to select and upload files before submitting.";
+    public static final String DB_SAVE_ERROR="Error: Some entries refer to non-existing course in course-offerings. Please verify your data.";
     public static final String RESULTS_NOT_FOUND = "No results found!";
     public static final String STUDENT_DATA_NOT_FOUND="Student data is not available for this semester.";
     public static final String COURSE_DATA_NOT_FOUND="Course data is not available.";
@@ -25,6 +26,8 @@ public class ResponseMessage {
     public static final String STUDENT_PREFERENCES_NOT_FOUND="Student Preferences Not found";
     public static final String UPLOAD_DATA_NOT_FOUND="Required data files are missing. Please upload all necessary data before running the allocation.";
     public static final String LATE_SUBMISSION="Registration is closed. Submissions are no longer accepted.";
+    public static final String PREFERENCE_MISSING="Preferences expected from user, but missing.";
+    public static final String JSON_PARSING_ERROR="Input could not be processed.";
 
     public static String getUploadSuccessMessage() {
         return "You're all set! " + UPLOAD_COUNT + " file(s) have been successfully uploaded and saved.";

@@ -12,4 +12,5 @@ public interface CourseOfferingService {
     List<CourseOfferingDto> fetchAllCourseOfferingDtos();
     List<CourseOffering> fetchCourseOfferingBySemester(int semester);
     void deleteAll();
+    boolean existsAnyOffer();
 }

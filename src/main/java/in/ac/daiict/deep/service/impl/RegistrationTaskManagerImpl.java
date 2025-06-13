@@ -65,6 +65,7 @@ public class RegistrationTaskManagerImpl implements RegistrationTaskManager {
         }
         activeRegistrationTask=null;
         closingDate=null;
+        System.out.println("auto closing started...");
         systemStatusService.autoCloseRegistration();
     }
 }

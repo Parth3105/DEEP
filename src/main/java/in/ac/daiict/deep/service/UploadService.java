@@ -8,5 +8,4 @@ public interface UploadService {
     void insertAll(List<Upload> uploads);
     Upload findFile(String name);
     void deleteAll();
-    boolean checkIfExists(String name);
 }

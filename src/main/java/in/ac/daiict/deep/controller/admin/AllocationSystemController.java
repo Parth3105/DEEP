@@ -35,8 +35,10 @@ public class AllocationSystemController {
                 .thenAccept(registrationStatus -> model.addAttribute("registrationStatus",registrationStatus));
         CompletableFuture<Void> allStatusFetchFuture=CompletableFuture.supplyAsync(() -> allocationStatusService.fetchAll())
                 .thenAccept(allocationStatusDtoList -> model.addAttribute("allocationStatus",allocationStatusDtoList));
+        CompletableFuture<Void> resultStatusFetchFuture=CompletableFuture.supplyAsync(() -> systemStatusService.fetchResultStatus())
+                        .thenAccept(resultStatus -> model.addAttribute("resultStatus",resultStatus));
 
-        CompletableFuture.allOf(statusFetchFuture,allStatusFetchFuture).join();
+        CompletableFuture.allOf(statusFetchFuture,allStatusFetchFuture,resultStatusFetchFuture).join();
         return AdminTemplate.RUN_ALLOCATION_PAGE;
     }
 

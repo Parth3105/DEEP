@@ -147,7 +147,7 @@ public class AllocationDataLoader {
             Set<String> allocatedCourses=student.getAllocatedCourses();
             for(String courseId: allocatedCourses) allocationResultList.add(new AllocationResult(student.getSid(),courseId));
         }
-        allocationResultService.insertAll(allocationResultList);
+        allocationResultService.bulkInsert(allocationResultList);
     }
 
     public void saveSeatSummary(int semester, Map<String,Map<String,Integer>> availableSeats){

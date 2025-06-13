@@ -72,7 +72,7 @@ public class AllocationSystem {
         pendingRequirements=new ArrayList<>();
 
         try{
-            CompletableFuture.allOf(studentLoadFuture,courseLoadFuture,openForLoadFuture,instReqLoadFuture);
+            CompletableFuture.allOf(studentLoadFuture,courseLoadFuture,openForLoadFuture,instReqLoadFuture).join();
         } catch (CompletionException completionException){
             return new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
         }
@@ -105,7 +105,8 @@ public class AllocationSystem {
 //        System.out.println("--------------------------------------------------------------------------------");
 //        System.out.println("Phase-1 finished");
         unmetReqCnt[0] = 0;
-//        System.out.println("All Students allocated? " + isStudentReqFulfilled(true, unmetReqCnt));
+        isStudentReqFulfilled(true, unmetReqCnt);
+//        System.out.println("All Students allocated? " + );
 //        System.out.println("Not allocated in phase-1: " + unmetReqCnt[0]);
 //        System.out.println("--------------------------------------------------------------------------------");
 
@@ -113,7 +114,8 @@ public class AllocationSystem {
 //        System.out.println("--------------------------------------------------------------------------------");
 //        System.out.println("Phase-2 finished");
         unmetReqCnt[0] = 0;
-//        System.out.println("All Students allocated? " + isStudentReqFulfilled(false, unmetReqCnt));
+        isStudentReqFulfilled(false, unmetReqCnt);
+//        System.out.println("All Students allocated? " + );
 //        System.out.println("Not allocated in phase-2: " + unmetReqCnt[0]);
 //        System.out.println("--------------------------------------------------------------------------------");
         return new ResponseDto(ResponseStatus.OK, ResponseMessage.SUCCESS_STATUS);
@@ -316,14 +318,12 @@ public class AllocationSystem {
         CompletableFuture<Void> recordResultAndCreateSheet=CompletableFuture.runAsync(() -> {
             allocationDataLoader.saveAllocationResult(new ArrayList<>(students.values()));
             System.out.println("\n\n Allocation Result saved \n\n");
-        })
-                .thenRun(() -> {
-                    ByteArrayOutputStream byteArrayOutputStream=dataLoader.createCourseWiseAllocation(courses,students);
-                    if(byteArrayOutputStream!=null){
-                        allocationReportService.insertReport(new AllocationReport(AllocationReportNames.COURSE_WISE_ALLOCATION,semester, byteArrayOutputStream.toByteArray()));
-                        System.out.println("\n\n Course-wise Allocation data created and saved. \n\n");
-                    }
-                });
+            ByteArrayOutputStream byteArrayOutputStream=dataLoader.createCourseWiseAllocation(courses,students);
+            if(byteArrayOutputStream!=null){
+                allocationReportService.insertReport(new AllocationReport(AllocationReportNames.COURSE_WISE_ALLOCATION,semester, byteArrayOutputStream.toByteArray()));
+                System.out.println("\n\n Course-wise Allocation data created and saved. \n\n");
+            }
+        });
 
         // record Seat Summary
         CompletableFuture<Void> recordSeatSummary=CompletableFuture.runAsync(() -> {
