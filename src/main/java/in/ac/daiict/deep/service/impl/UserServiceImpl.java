@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     public ResponseDto resetPassword(String username, String password) {
         int status= userRepo.updatePassword(username,passwordEncoder.encode(password));
         ResponseDto response;
-        if(status==1) response=new ResponseDto(ResponseStatus.OK, ResponseMessage.SUCCESS_STATUS);
+        if(status==1) response=new ResponseDto(ResponseStatus.OK, ResponseMessage.RESET_SUCCESS);
         else response = new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
         return response;
     }

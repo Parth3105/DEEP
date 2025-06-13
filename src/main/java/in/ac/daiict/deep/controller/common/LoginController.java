@@ -11,9 +11,7 @@ import in.ac.daiict.deep.service.UserService;
 import in.ac.daiict.deep.dto.ResponseDto;
 import in.ac.daiict.deep.util.sessionhelper.SessionAttribute;
 import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,19 +29,19 @@ public class LoginController {
     private OtpVerificationService otpVerificationService;
 
     @GetMapping(CommonEndPoint.LOGIN)
-    public String renderLoginPage(HttpSession session, Model model) {
+    public String renderLoginPage(HttpSession session) {
         session.setAttribute("loginSession", new SessionAttribute<>(true, Duration.ofMinutes(Deadline.LOGIN_SESSION_DURATION_MINUTES)));
         session.getId();
         return CommonTemplate.LOGIN_PAGE;
     }
 
     @PostMapping(CommonEndPoint.AUTHENTICATE)
-    public String authenticate(HttpSession session) {
+    public String authenticate() {
         return "";
     }
 
     @GetMapping(CommonEndPoint.FORGOT_PASSWORD)
-    public String renderForgotPasswordPage(Model model, HttpSession session) {
+    public String renderForgotPasswordPage(HttpSession session) {
         if (session.getAttribute("loginSession") == null) {
             return "redirect:" + CommonEndPoint.LOGIN;
         }
@@ -52,7 +50,7 @@ public class LoginController {
     }
 
     @PostMapping(CommonEndPoint.FORGOT_PASSWORD)
-    public String loadStudentId(@RequestParam("username") String username, RedirectAttributes redirectAttributes, Model model, HttpSession session) {
+    public String loadStudentId(@RequestParam("username") String username, RedirectAttributes redirectAttributes, HttpSession session) {
         if (session.getAttribute("loginSession") == null) return "redirect:" + CommonEndPoint.LOGIN;
         else {
             SessionAttribute<Boolean> sessionAttribute = (SessionAttribute<Boolean>) session.getAttribute("loginSession");
@@ -69,7 +67,7 @@ public class LoginController {
         otpVerificationService.generateOtpAndSendMail(user.getUsername(), user.getEmail());
         session.setAttribute("forgotPasswordSession", new SessionAttribute<>(username, Duration.ofMinutes(Deadline.FORGOT_PASSWORD_SESSION_DURATION_MINUTES)));
         session.setAttribute("userEmail", new SessionAttribute<>(user.getEmail(), Duration.ofMinutes(Deadline.FORGOT_PASSWORD_SESSION_DURATION_MINUTES)));
-        return "redirect:" + CommonEndPoint.VERIFY_OTP;
+        return "redirect:"+CommonEndPoint.VERIFY_OTP;
     }
 
     @GetMapping(CommonEndPoint.VERIFY_OTP)
@@ -79,7 +77,7 @@ public class LoginController {
     }
 
     @PostMapping(CommonEndPoint.RESEND_OTP)
-    public String resendOtp(RedirectAttributes redirectAttributes, HttpSession session) {
+    public String resendOtp(@PathVariable("random") String randomVariable, RedirectAttributes redirectAttributes, HttpSession session) {
         String username, email;
         if (session.getAttribute("forgotPasswordSession") == null) return "redirect:" + CommonEndPoint.LOGIN;
         else {
@@ -93,7 +91,7 @@ public class LoginController {
             }
         }
         otpVerificationService.generateOtpAndSendMail(username, email);
-        return "redirect:" + CommonEndPoint.VERIFY_OTP;
+        return "redirect:"+CommonEndPoint.VERIFY_OTP;
     }
 
     @PostMapping(CommonEndPoint.VERIFY_OTP)
@@ -109,8 +107,7 @@ public class LoginController {
             }
         }
         ResponseDto response = otpVerificationService.verifyOtp(username, otp);
-        model.addAttribute("otpVerificationResponse", response);
-        if (response.getStatus() != ResponseStatus.OK) return CommonTemplate.VERIFY_OTP_PAGE;
+        if (response.getStatus() != ResponseStatus.OK) return "redirect:"+CommonEndPoint.LOGIN;
         session.setAttribute("resetSession", new SessionAttribute<>(username, Duration.ofMinutes(Deadline.RESET_SESSION_DURATION_MINUTES)));
         return CommonTemplate.RESET_PASSWORD_PAGE;
     }

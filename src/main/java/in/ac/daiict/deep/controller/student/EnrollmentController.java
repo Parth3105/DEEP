@@ -60,7 +60,7 @@ public class    EnrollmentController {
         model.addAttribute("semester", student.getSemester());
         model.addAttribute("program", student.getProgram());
 
-        CompletableFuture<Void> fetchingInstitutePref = CompletableFuture.supplyAsync(() -> instituteReqService.findInstituteReq(student.getProgram(), student.getSemester()))
+        CompletableFuture<Void> fetchingInstituteReq = CompletableFuture.supplyAsync(() -> instituteReqService.findInstituteReq(student.getProgram(), student.getSemester()))
                 .thenAccept(instituteReqDtoList -> model.addAttribute("instituteRequirements", instituteReqDtoList));
 
         // Send the available courses to Student with required information
@@ -68,8 +68,10 @@ public class    EnrollmentController {
                 .thenAccept(availableCourseDtoList -> model.addAttribute("availableCourses", availableCourseDtoList));
 
         try {
-            CompletableFuture.allOf(fetchingInstitutePref, fetchingAvailableCourses).join();
-        } catch (CompletionException completionException) {
+            CompletableFuture.allOf(fetchingInstituteReq, fetchingAvailableCourses).join();
+        } catch (CompletionException ce) {
+            log.error("Async task to fetch institute-requirements/available-courses failed with error: {}", ce.getCause().getMessage(), ce.getCause());
+
             redirectAttributes.addFlashAttribute("internalServerError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR));
             return "redirect:" + StudentEndpoint.HOME_PAGE;
         }
@@ -90,15 +92,15 @@ public class    EnrollmentController {
         String studentId = userDetails.getUsername();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> categoryReqMapping = null;
-        Map<String,List<String>> slotCoursePrefMap=null;
-        List<String> selectedSlotPreferences=null;
+        Map<String, String> categoryReqMapping;
+        Map<String,List<String>> slotCoursePrefMap;
+        List<String> selectedSlotPreferences;
         try {
             categoryReqMapping = objectMapper.readValue(studentRequirements, new TypeReference<>(){});
             slotCoursePrefMap=objectMapper.readValue(coursePreferences,new TypeReference<>(){});
             selectedSlotPreferences=objectMapper.readValue(slotPreferences,new TypeReference<>(){});
         } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
+            log.error("JSON processing to read student enrollment-details failed with error: {}",e.getMessage());
             redirectAttributes.addFlashAttribute("jsonParsingError",new ResponseDto(ResponseStatus.BAD_REQUEST, ResponseMessage.JSON_PARSING_ERROR));
             return "redirect:" + StudentEndpoint.HOME_PAGE;
         }
@@ -147,8 +149,9 @@ public class    EnrollmentController {
 
         try {
             CompletableFuture.allOf(recordingStudentReqs, recordingCoursePrefs, recordingSlotPref).join();
-        } catch (CompletionException completionException) {
-            log.error("e: ", completionException);
+        } catch (CompletionException ce) {
+            log.error("Async task to record student enrollment-details failed with error: {}", ce.getCause().getMessage(), ce.getCause());
+
             redirectAttributes.addFlashAttribute("internalServerError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR));
             return "redirect:" + StudentEndpoint.HOME_PAGE;
         }

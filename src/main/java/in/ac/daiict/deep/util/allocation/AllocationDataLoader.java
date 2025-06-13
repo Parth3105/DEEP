@@ -7,6 +7,7 @@ import in.ac.daiict.deep.util.allocation.model.AllocationStudent;
 import in.ac.daiict.deep.util.allocation.model.CourseOffer;
 import in.ac.daiict.deep.util.allocation.model.InstituteRequirement;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import java.util.concurrent.CompletionException;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class AllocationDataLoader {
     private StudentService studentService;
     private StudentReqService studentReqService;
@@ -41,7 +43,9 @@ public class AllocationDataLoader {
         List<Student> studentData;
         try{
             studentData= fetchingStudentData.join();
-        } catch (CompletionException completionException){
+        } catch (CompletionException ce){
+            log.error("Async task to fetch student-data failed with error: {}", ce.getCause().getMessage(), ce.getCause());
+
             studentData=null;
         }
         if(studentData==null) return null;
@@ -51,7 +55,9 @@ public class AllocationDataLoader {
         List<StudentReq> studentReqs;
         try {
             studentReqs= fetchingStudentReqData.join();
-        } catch (CompletionException exception){
+        } catch (CompletionException ce){
+            log.error("Async task to migrate student-requirements failed with error: {}", ce.getCause().getMessage(), ce.getCause());
+
             return null;
         }
         Map<String,Map<String,Integer>> studentReqMap=new HashMap<>();
@@ -75,7 +81,9 @@ public class AllocationDataLoader {
         List<SlotPref> slotPrefs;
         try {
             slotPrefs=fetchingSlotPref.join();
-        } catch (CompletionException completionException){
+        } catch (CompletionException ce){
+            log.error("Async task to fetch slot-preferences failed with error: {}", ce.getCause().getMessage(), ce.getCause());
+
             return null;
         }
         Map<String,List<String>> studentSlotPrefMap=new HashMap<>();
@@ -94,7 +102,9 @@ public class AllocationDataLoader {
         List<CoursePref> coursePrefs;
         try {
             coursePrefs= fetchingCoursePref.join();
-        } catch (CompletionException completionException){
+        } catch (CompletionException ce){
+            log.error("Async task to fetch course-preferences failed with error: {}", ce.getCause().getMessage(), ce.getCause());
+
             return null;
         }
         Map<String,Map<String,List<String>>> studentCoursePrefMap=new HashMap<>();
