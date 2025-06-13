@@ -13,6 +13,7 @@ import in.ac.daiict.deep.service.AllocationReportService;
 import in.ac.daiict.deep.service.UploadService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import java.io.*;
 
 @Controller
 @AllArgsConstructor
+@Slf4j
 public class DownloadController {
     private AllocationReportService allocationReportService;
     private UploadService uploadService;
@@ -65,7 +67,8 @@ public class DownloadController {
                 httpServletResponse.getOutputStream().write(allocationReport.getFile());
                 httpServletResponse.getOutputStream().flush();
             }
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+            log.error("I/O operation to download file failed: {}", ioe.getMessage(), ioe);
             httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -100,7 +103,8 @@ public class DownloadController {
                 httpServletResponse.getOutputStream().write(uploadData.getFile());
                 httpServletResponse.getOutputStream().flush();
             }
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+            log.error("I/O operation to download file failed: {}", ioe.getMessage(), ioe);
             httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -2,9 +2,6 @@ package in.ac.daiict.deep.util.dataloader.impl;
 
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
-import in.ac.daiict.deep.dto.CourseDto;
-import in.ac.daiict.deep.dto.CourseOfferingDto;
-import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.entity.*;
 import in.ac.daiict.deep.service.AllocationResultService;
 import in.ac.daiict.deep.service.CourseService;
@@ -14,6 +11,7 @@ import in.ac.daiict.deep.util.allocation.model.AllocationStudent;
 import in.ac.daiict.deep.util.allocation.model.CourseOffer;
 import in.ac.daiict.deep.util.dataloader.DataLoader;
 import in.ac.daiict.deep.util.dataloader.headers.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -33,6 +31,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Component
+@Slf4j
 public class ExcelDataLoader implements DataLoader {
     private CourseService courseService;
     private AllocationResultService allocationResultService;
@@ -48,138 +47,149 @@ public class ExcelDataLoader implements DataLoader {
      * Load the STUDENT_DATA from the sheet.
      */
     public ResponseDto getStudentData(InputStream studentData, List<Student> students) {
-        XSSFWorkbook studentWorkbook = null;
-        XSSFSheet studentSheet = null;
         try {
-            studentWorkbook = new XSSFWorkbook(studentData);
-            studentSheet = studentWorkbook.getSheetAt(0);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        DecimalFormat formatStudentID = new DecimalFormat("#");
-        Iterator<Row> studentIterator = studentSheet.rowIterator();
-        StudentSheetHeader studentHeader = new StudentSheetHeader(studentSheet.getRow(studentSheet.getFirstRowNum()));
+            XSSFWorkbook studentWorkbook = new XSSFWorkbook(studentData);
+            XSSFSheet studentSheet = studentWorkbook.getSheetAt(0);
+            DecimalFormat formatStudentID = new DecimalFormat("#");
+            Iterator<Row> studentIterator = studentSheet.rowIterator();
+            StudentSheetHeader studentHeader = new StudentSheetHeader(studentSheet.getRow(studentSheet.getFirstRowNum()));
 
-        // Extracting the Data from the sheet.
-        studentIterator.next();
-        while (studentIterator.hasNext()) {
-            Row studentRow = studentIterator.next();
-            String studentID = formatStudentID.format(studentRow.getCell(studentHeader.STUDENT_ID).getNumericCellValue());
-            String studentName = studentRow.getCell(studentHeader.NAME).getStringCellValue();
-            String program = studentRow.getCell(studentHeader.PROGRAM).getStringCellValue();
-            int semester = (int) studentRow.getCell(studentHeader.SEMESTER).getNumericCellValue();
-            students.add(new Student(studentID, studentName, program, semester));
-        }
-        try {
+            // Extracting the Data from the sheet.
+            studentIterator.next();
+            while (studentIterator.hasNext()) {
+                Row studentRow = studentIterator.next();
+                String studentID = formatStudentID.format(studentRow.getCell(studentHeader.STUDENT_ID).getNumericCellValue());
+                String studentName = studentRow.getCell(studentHeader.NAME).getStringCellValue();
+                String program = studentRow.getCell(studentHeader.PROGRAM).getStringCellValue();
+                int semester = (int) studentRow.getCell(studentHeader.SEMESTER).getNumericCellValue();
+                students.add(new Student(studentID, studentName, program, semester));
+            }
+
             studentWorkbook.close();
-        } catch (IOException e) {
             return new ResponseDto(ResponseStatus.OK, "Student Data Saved Successfully!");
+        } catch (IllegalStateException ise){
+            log.error("Failed to parse Excel sheet with error: {}",ise.getMessage(),ise);
+            return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.EXCEL_PARSING_ERROR);
         }
-        return new ResponseDto(ResponseStatus.OK, "Student Data Saved Successfully!");
+        catch (RuntimeException re){
+            log.error("Unexpected error while parsing Excel sheet: {}",re.getMessage(),re);
+            return new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.EXCEL_PARSING_ERROR);
+        }
+        catch (IOException ioe) {
+            log.error("I/O operation to parse student-data failed: {}", ioe.getMessage(), ioe);
+            return new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * Load the COURSE_DATA from the sheet.
      */
     public ResponseDto getCourseData(InputStream courseData, List<Course> courses) {
-        XSSFWorkbook courseWorkbook;
-        XSSFSheet courseSheet;
         try {
-            courseWorkbook = new XSSFWorkbook(courseData);
-            courseSheet = courseWorkbook.getSheetAt(0);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Iterator<Row> courseIterator = courseSheet.iterator();
-        CourseSheetHeader courseHeader = new CourseSheetHeader(courseSheet.getRow(courseSheet.getFirstRowNum()));
+            XSSFWorkbook courseWorkbook = new XSSFWorkbook(courseData);
+            XSSFSheet courseSheet = courseWorkbook.getSheetAt(0);
+            Iterator<Row> courseIterator = courseSheet.iterator();
+            CourseSheetHeader courseHeader = new CourseSheetHeader(courseSheet.getRow(courseSheet.getFirstRowNum()));
 
-        courseIterator.next();
-        while (courseIterator.hasNext()) {
-            Row row = courseIterator.next();
-            String courseID = row.getCell(courseHeader.COURSE_ID).getStringCellValue();
-            String courseName = row.getCell(courseHeader.COURSE_NAME).getStringCellValue();
-            int credits = (int) row.getCell(courseHeader.CREDITS).getNumericCellValue();
-            String slot = String.valueOf((int) row.getCell(courseHeader.SLOT).getNumericCellValue());
-
-            courses.add(new Course(courseID, courseName, credits, slot));
-        }
-        try {
+            courseIterator.next();
+            while (courseIterator.hasNext()) {
+                Row row = courseIterator.next();
+                String courseID = row.getCell(courseHeader.COURSE_ID).getStringCellValue();
+                String courseName = row.getCell(courseHeader.COURSE_NAME).getStringCellValue();
+                int credits = (int) row.getCell(courseHeader.CREDITS).getNumericCellValue();
+                String slot = String.valueOf((int) row.getCell(courseHeader.SLOT).getNumericCellValue());
+                courses.add(new Course(courseID, courseName, credits, slot));
+            }
             courseWorkbook.close();
-        } catch (IOException e) {
-            return new ResponseDto(ResponseStatus.OK, "Student Data Saved Successfully!");
+            return new ResponseDto(ResponseStatus.OK, "Course Data Saved Successfully!");
+        } catch (IllegalStateException ise){
+            log.error("Failed to parse Excel sheet with error: {}",ise.getMessage(),ise);
+            return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.EXCEL_PARSING_ERROR);
         }
-        return new ResponseDto(ResponseStatus.OK, "Course Data Saved Successfully!");
+        catch (RuntimeException re){
+            log.error("Unexpected error while parsing Excel sheet: {}",re.getMessage(),re);
+            return new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.EXCEL_PARSING_ERROR);
+        }
+        catch (IOException ioe) {
+            log.error("I/O operation to parse course-data failed: {}", ioe.getMessage(), ioe);
+            return new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * Load the institute-requirements from the sheet.
      */
     public ResponseDto getInstituteRequirements(InputStream instReqData, List<InstituteReq> instituteReqs) {
-        XSSFWorkbook instReqWorkbook;
-        XSSFSheet instReqSheet;
         try {
-            instReqWorkbook = new XSSFWorkbook(instReqData);
-            instReqSheet = instReqWorkbook.getSheetAt(0);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Iterator<Row> instituteReqIterator = instReqSheet.rowIterator();
-        InstituteReqSheetHeader instituteReqHeader = new InstituteReqSheetHeader(instReqSheet.getRow(instReqSheet.getFirstRowNum()));
+            XSSFWorkbook instReqWorkbook = new XSSFWorkbook(instReqData);
+            XSSFSheet instReqSheet = instReqWorkbook.getSheetAt(0);
+            Iterator<Row> instituteReqIterator = instReqSheet.rowIterator();
+            InstituteReqSheetHeader instituteReqHeader = new InstituteReqSheetHeader(instReqSheet.getRow(instReqSheet.getFirstRowNum()));
 
-        instituteReqIterator.next();
-        while (instituteReqIterator.hasNext()) {
-            Row row = instituteReqIterator.next();
-            String program = row.getCell(instituteReqHeader.PROGRAM).getStringCellValue();
-            int semester = (int) row.getCell(instituteReqHeader.SEMESTER).getNumericCellValue();
-            String category = row.getCell(instituteReqHeader.CATEGORY).getStringCellValue();
-            int count = (int) row.getCell(instituteReqHeader.COUNT).getNumericCellValue();
-
-            instituteReqs.add(new InstituteReq(program, semester, category, count));
-        }
-        try {
+            instituteReqIterator.next();
+            while (instituteReqIterator.hasNext()) {
+                Row row = instituteReqIterator.next();
+                String program = row.getCell(instituteReqHeader.PROGRAM).getStringCellValue();
+                int semester = (int) row.getCell(instituteReqHeader.SEMESTER).getNumericCellValue();
+                String category = row.getCell(instituteReqHeader.CATEGORY).getStringCellValue();
+                int count = (int) row.getCell(instituteReqHeader.COUNT).getNumericCellValue();
+                instituteReqs.add(new InstituteReq(program, semester, category, count));
+            }
             instReqWorkbook.close();
-        } catch (IOException e) {
-            return new ResponseDto(ResponseStatus.OK, "Student Data Saved Successfully!");
+            return new ResponseDto(ResponseStatus.OK, "Requirements Saved Successfully!");
+        } catch (IllegalStateException ise){
+            log.error("Failed to parse Excel sheet with error: {}",ise.getMessage(),ise);
+            return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.EXCEL_PARSING_ERROR);
         }
-        return new ResponseDto(ResponseStatus.OK, "Requirements Saved Successfully!");
+        catch (RuntimeException re){
+            log.error("Unexpected error while parsing Excel sheet: {}",re.getMessage(),re);
+            return new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.EXCEL_PARSING_ERROR);
+        }
+        catch (IOException ioe) {
+            log.error("I/O operation to parse institute-requirements failed: {}", ioe.getMessage(), ioe);
+            return new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * Load the course-offering Data from the sheet.
      */
     public ResponseDto getCourseForProgram(InputStream offerData, List<CourseOffering> courseOfferings) {
-        XSSFWorkbook offerWorkbook;
-        XSSFSheet offerSheet;
         try {
-            offerWorkbook = new XSSFWorkbook(offerData);
-            offerSheet = offerWorkbook.getSheetAt(0);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        Iterator<Row> courseOfferIterator = offerSheet.iterator();
-        CourseOfferSheetHeader offerHeader = new CourseOfferSheetHeader(offerSheet.getRow(offerSheet.getFirstRowNum()));
+            XSSFWorkbook offerWorkbook = new XSSFWorkbook(offerData);
+            XSSFSheet offerSheet = offerWorkbook.getSheetAt(0);
+            Iterator<Row> courseOfferIterator = offerSheet.iterator();
+            CourseOfferSheetHeader offerHeader = new CourseOfferSheetHeader(offerSheet.getRow(offerSheet.getFirstRowNum()));
 
-        courseOfferIterator.next();
-        while (courseOfferIterator.hasNext()) {
-            Row row = courseOfferIterator.next();
-            String courseID = row.getCell(offerHeader.COURSE_ID).getStringCellValue();
-            String program = row.getCell(offerHeader.PROGRAM).getStringCellValue();
-            int semester = (int) row.getCell(offerHeader.SEMESTER).getNumericCellValue();
-            String category = row.getCell(offerHeader.CATEGORY).getStringCellValue();
-            int seats = (int) row.getCell(offerHeader.SEATS).getNumericCellValue();
+            courseOfferIterator.next();
+            while (courseOfferIterator.hasNext()) {
+                Row row = courseOfferIterator.next();
+                String courseID = row.getCell(offerHeader.COURSE_ID).getStringCellValue();
+                String program = row.getCell(offerHeader.PROGRAM).getStringCellValue();
+                int semester = (int) row.getCell(offerHeader.SEMESTER).getNumericCellValue();
+                String category = row.getCell(offerHeader.CATEGORY).getStringCellValue();
+                int seats = (int) row.getCell(offerHeader.SEATS).getNumericCellValue();
 
-            if (!courseService.isPresent(courseID)) {
-                courseOfferings.clear();
-                return new ResponseDto(ResponseStatus.BAD_REQUEST, ResponseMessage.DB_SAVE_ERROR);
+                if (!courseService.isPresent(courseID)) {
+                    courseOfferings.clear();
+                    return new ResponseDto(ResponseStatus.BAD_REQUEST, ResponseMessage.DB_SAVE_ERROR);
+                }
+                courseOfferings.add(new CourseOffering(program, courseID, semester, category, seats));
             }
-            courseOfferings.add(new CourseOffering(program, courseID, semester, category, seats));
-        }
-        try {
             offerWorkbook.close();
-        } catch (IOException e) {
-            return new ResponseDto(ResponseStatus.OK, "Student Data Saved Successfully!");
+            return new ResponseDto(ResponseStatus.OK, "Course Offerings Data Saved Successfully!");
+        } catch (IllegalStateException ise){
+            log.error("Failed to parse Excel sheet with error: {}",ise.getMessage(),ise);
+            return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.EXCEL_PARSING_ERROR);
         }
-        return new ResponseDto(ResponseStatus.OK, "Course Offerings Data Saved Successfully!");
+        catch (RuntimeException re){
+            log.error("Unexpected error while parsing Excel sheet: {}",re.getMessage(),re);
+            return new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.EXCEL_PARSING_ERROR);
+        }
+        catch (IOException ioe) {
+            log.error("I/O operation to parse course-offerings failed: {}", ioe.getMessage(), ioe);
+            return new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -243,12 +253,9 @@ public class ExcelDataLoader implements DataLoader {
 
         try {
             outputWorkbook.write(byteArrayOutputStream);
-        } catch (IOException e) {
-            return null;
-        }
-        try {
             outputWorkbook.close();
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+            log.error("I/O error occurred while preparing the Excel sheet for student-preferences: {}", ioe.getMessage(), ioe);
             return null;
         }
         return byteArrayOutputStream;
@@ -315,12 +322,9 @@ public class ExcelDataLoader implements DataLoader {
         for (int j = 0; j <= row.getLastCellNum(); j++) resultSheet.autoSizeColumn(j);
         try {
             outputWorkbook.write(byteArrayOutputStream);
-        } catch (IOException e) {
-            return null;
-        }
-        try {
             outputWorkbook.close();
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+            log.error("I/O error occurred while preparing the Excel sheet for allocation-results: {}", ioe.getMessage(), ioe);
             return null;
         }
         return byteArrayOutputStream;
@@ -374,20 +378,15 @@ public class ExcelDataLoader implements DataLoader {
 
         try {
             outputWorkbook.write(byteArrayOutputStream);
-        } catch (IOException e) {
-            return null;
-        }
-        try {
             outputWorkbook.close();
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+            log.error("I/O error occurred while preparing the Excel sheet for seat-summary: {}", ioe.getMessage(), ioe);
             return null;
         }
         return byteArrayOutputStream;
     }
 
     public ByteArrayOutputStream createCourseWiseAllocation(Map<String, AllocationCourse> courses, Map<String, AllocationStudent> students) {
-        int STUDENT_ID = 0, STUDENT_NAME = 1;
-
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
         Set<String> courseIds = courses.keySet();
@@ -426,14 +425,16 @@ public class ExcelDataLoader implements DataLoader {
 
             try {
                 outputWorkbook.close();
-            } catch (IOException e) {
+            } catch (IOException ioe) {
+                log.error("I/O error occurred while closing the course-wise allocation sheet for cid-{}: {}", cid,ioe.getMessage(), ioe);
                 return null;
             }
         }
 
         try {
             zipOutputStream.close();
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+            log.error("I/O error occurred while closing the zip file for course-wise allocation: {}", ioe.getMessage(), ioe);
             return null;
         }
         return byteArrayOutputStream;
@@ -445,8 +446,8 @@ public class ExcelDataLoader implements DataLoader {
             zipOutputStream.putNextEntry(zipEntry);
             workbook.write(zipOutputStream);
             zipOutputStream.closeEntry();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ioe) {
+            log.error("I/O error occurred while creating the zip entry: {}", ioe.getMessage(), ioe);
         }
     }
 }

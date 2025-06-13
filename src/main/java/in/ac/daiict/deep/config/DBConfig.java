@@ -5,6 +5,7 @@ import in.ac.daiict.deep.service.InstanceNameService;
 import in.ac.daiict.deep.service.UserService;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -20,10 +21,11 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Configuration
+@Slf4j
 public class DBConfig {
 
     @Autowired
@@ -90,7 +92,12 @@ public class DBConfig {
 
             return true;
 
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt(); // Restore interrupt
+            log.warn("Thread was interrupted while waiting to complete migration", ie);
+            return false;
+        } catch (ExecutionException | CompletionException ex) {
+            log.error("Async task to migrate instance/user data failed with error: {}", ex.getCause().getMessage(), ex.getCause());
             return false;
         }
     }

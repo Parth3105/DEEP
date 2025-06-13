@@ -26,9 +26,8 @@ public class AllocationStatusServiceImpl implements AllocationStatusService {
     @Override
     public List<AllocationStatusDto> fetchAll() {
         List<AllocationStatus> allocationStatusList=allocationStatusRepo.findAll();
-        if(allocationStatusList==null || allocationStatusList.isEmpty()) return null;
-        List<AllocationStatusDto> allocationStatusDtoList=modelMapper.map(allocationStatusList,new TypeToken<List<AllocationStatusDto>>(){}.getType());
-        return allocationStatusDtoList;
+        if(allocationStatusList.isEmpty()) return null;
+        return modelMapper.map(allocationStatusList,new TypeToken<List<AllocationStatusDto>>(){}.getType());
     }
 
     @Override

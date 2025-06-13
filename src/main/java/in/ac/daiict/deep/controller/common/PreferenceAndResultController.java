@@ -16,6 +16,7 @@ import in.ac.daiict.deep.dto.ResponseDto;
 import in.ac.daiict.deep.util.dataloader.DataLoader;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 
 @Controller
 @AllArgsConstructor
+@Slf4j
 public class PreferenceAndResultController {
     private StudentService studentService;
     private StudentReqService studentReqService;
@@ -57,7 +59,7 @@ public class PreferenceAndResultController {
         return fetchPreferenceSummary(studentId, model, 'A', redirectAttributes);
     }
     @GetMapping(AdminEndpoint.DOWNLOAD_STUDENT_PREFERENCES)
-    public void downloadStudentPreferences(HttpServletResponse httpServletResponse, Model model, @PathVariable("semester") int semester) {
+    public void downloadStudentPreferences(HttpServletResponse httpServletResponse, @PathVariable("semester") int semester) {
         List<CoursePref> coursePrefList = coursePrefService.fetchCoursePrefBySemesterSortedBySlotAndPref(semester);
         List<SlotPref> slotPrefList = slotPrefService.fetchSlotBySemesterSortedBySidAndPref(semester);
 
@@ -73,13 +75,13 @@ public class PreferenceAndResultController {
             else {
                 ByteArrayOutputStream byteArrayOutputStream = dataLoader.createStudentPrefSheet(coursePrefList, slotPrefList);
                 String downloadFilename = "Student Preferences.xlsx";
-
                 httpServletResponse.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                 httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + downloadFilename + "\"");
                 httpServletResponse.getOutputStream().write(byteArrayOutputStream.toByteArray());
                 httpServletResponse.getOutputStream().flush();
             }
-        } catch (IOException e) {
+        } catch (IOException ioe) {
+            log.error("I/O operation to download file failed: {}", ioe.getMessage(), ioe);
             httpServletResponse.setStatus(ResponseStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -113,14 +115,20 @@ public class PreferenceAndResultController {
         CompletableFuture<List<SlotPrefDto>> fetchingSlotPref = CompletableFuture.supplyAsync(() -> slotPrefService.fetchStudentSlotPref(studentId));
 
         CompletableFuture.allOf(fetchingStudentReq, fetchingCoursePref, fetchingSlotPref);
-        List<StudentReqDto> studentReqDtoList= null;
-        List<CoursePrefDto> coursePrefDtoList=null;
-        List<SlotPrefDto> slotPrefDtoList=null;
+        List<StudentReqDto> studentReqDtoList;
+        List<CoursePrefDto> coursePrefDtoList;
+        List<SlotPrefDto> slotPrefDtoList;
         try {
             studentReqDtoList = fetchingStudentReq.get();
             coursePrefDtoList= fetchingCoursePref.get();
             slotPrefDtoList= fetchingSlotPref.get();
         } catch (InterruptedException | ExecutionException e) {
+            if(e instanceof InterruptedException){
+                Thread.currentThread().interrupt(); // Restore interrupt
+                log.warn("Thread was interrupted while waiting for preference data", e);
+            }
+            else log.error("Async task to fetch preference data failed with error: {}", e.getCause().getMessage(), e.getCause());
+
             redirectAttributes.addFlashAttribute("internalServerError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
             if (requester == 'S') return "redirect:" + StudentEndpoint.HOME_PAGE;
             return "redirect:" + AdminEndpoint.STUDENT_PREFERENCE;
@@ -161,11 +169,17 @@ public class PreferenceAndResultController {
         CompletableFuture<String> fetchingResultStatus =CompletableFuture.supplyAsync(() -> systemStatusService.fetchResultStatus());
 
         CompletableFuture.allOf(fetchingAllocationResult, fetchingResultStatus);
-        List<AllocationResultDto> allocationResultDtoList = null;
+        List<AllocationResultDto> allocationResultDtoList;
         String resultStatus=null;
         try {
             allocationResultDtoList = fetchingAllocationResult.get();
         } catch (InterruptedException | ExecutionException e) {
+            if(e instanceof InterruptedException){
+                Thread.currentThread().interrupt(); // Restore interrupt
+                log.warn("Thread was interrupted while waiting for allocation results", e);
+            }
+            else log.error("Async task to fetch allocation result failed with error: {}", e.getCause().getMessage(), e.getCause());
+
             redirectAttributes.addFlashAttribute("internalServerError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
             if (requester == 'S') return "redirect:" + StudentEndpoint.HOME_PAGE;
             return "redirect:" + AdminEndpoint.STUDENT_PREFERENCE;
@@ -174,6 +188,12 @@ public class PreferenceAndResultController {
         try {
             resultStatus= fetchingResultStatus.get();
         } catch (InterruptedException | ExecutionException e) {
+            if(e instanceof InterruptedException){
+                Thread.currentThread().interrupt(); // Restore interrupt
+                log.warn("Thread was interrupted while waiting for result status", e);
+            }
+            else log.error("Async task to fetch result status failed with error: {}", e.getCause().getMessage(), e.getCause());
+
             if(requester=='S'){
                 redirectAttributes.addFlashAttribute("internalServerError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
                 return "redirect:" + StudentEndpoint.HOME_PAGE;
@@ -181,9 +201,14 @@ public class PreferenceAndResultController {
         }
         if (allocationResultDtoList == null || (requester=='S' && (resultStatus==null || resultStatus.equals(ResultStatusEnum.pending.toString())))) {
             // not found any results.
-            redirectAttributes.addFlashAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_FOUND));
-            if(requester=='S') return "redirect:" + StudentEndpoint.HOME_PAGE;
-            else return "redirect:"+AdminEndpoint.ALLOCATION_RESULTS;
+            if(requester=='S'){
+                redirectAttributes.addFlashAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_FOUND_STUDENT));
+                return "redirect:" + StudentEndpoint.HOME_PAGE;
+            }
+            else{
+                redirectAttributes.addFlashAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_FOUND_ADMIN));
+                return "redirect:"+AdminEndpoint.ALLOCATION_RESULTS;
+            }
         }
 
         // send allocation result details

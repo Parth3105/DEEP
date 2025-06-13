@@ -47,20 +47,3 @@ public class DashboardController {
         return "redirect:"+AdminEndpoint.DASHBOARD;
     }
 }
-
-/*
-//debug
-@GetMapping(AdminEndpoint.OPEN_REGISTRATION)
-public String openRegistration(){
-    SystemStatusDto systemStatusDto=new SystemStatusDto(RegistrationStatusEnum.OPEN,LocalDate.of(2025,6,11), UpdateInstanceStatusEnum.NEVER);
-    systemStatusService.updateOnOpeningRegistration(systemStatusDto);
-    return AdminTemplate.DASHBOARD_PAGE;
-}
-
-//debug
-@GetMapping(AdminEndpoint.EXTEND_REGISTRATION_PERIOD)
-public String extendRegistrationPeriod(){
-    SystemStatusDto systemStatusDto=new SystemStatusDto(LocalDate.of(2025,6,9));
-    systemStatusService.updateOnExtendingRegistrationPeriod(systemStatusDto);
-    return AdminTemplate.DASHBOARD_PAGE;
-}*/

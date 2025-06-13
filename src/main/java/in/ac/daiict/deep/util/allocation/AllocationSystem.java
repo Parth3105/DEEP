@@ -11,6 +11,7 @@ import in.ac.daiict.deep.util.allocation.model.AllocationStudent;
 import in.ac.daiict.deep.util.allocation.model.CourseOffer;
 import in.ac.daiict.deep.util.allocation.model.InstituteRequirement;
 import in.ac.daiict.deep.util.dataloader.DataLoader;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 @Component
+@Slf4j
 public class AllocationSystem {
     private AllocationDataLoader allocationDataLoader;
     private DataLoader dataLoader;
@@ -49,31 +51,22 @@ public class AllocationSystem {
     public ResponseDto initiateAllocation(int semester, long[] unmetReqCnt){
         this.semester=semester;
         maxRequirement = new int[1];
-        CompletableFuture<Void> studentLoadFuture=CompletableFuture.runAsync(() -> {
-            students=allocationDataLoader.getStudentData(semester,maxRequirement);
-        });
-        CompletableFuture<Void> courseLoadFuture=CompletableFuture.runAsync(()->{
-            courses=allocationDataLoader.getCourseData();
-        });
+        CompletableFuture<Void> studentLoadFuture=CompletableFuture.runAsync(() -> students=allocationDataLoader.getStudentData(semester,maxRequirement));
+        CompletableFuture<Void> courseLoadFuture=CompletableFuture.runAsync(()-> courses=allocationDataLoader.getCourseData());
         CompletableFuture<Void> openForLoadFuture=CompletableFuture.runAsync(() -> {
             courseCategories = new HashMap<>();
             availableSeats = new HashMap<>();
             openFor=allocationDataLoader.getCourseOffers(semester,courseCategories,availableSeats);
         });
-        CompletableFuture<Void> instReqLoadFuture=CompletableFuture.runAsync(() -> {
-            instituteRequirements=allocationDataLoader.getInstituteRequirements(semester);
-        });
-        priorityGroups = new TreeMap<>(new Comparator<Integer>() {
-            @Override
-            public int compare(Integer i1, Integer i2) {
-                return i2 - i1;
-            }
-        });
+        CompletableFuture<Void> instReqLoadFuture=CompletableFuture.runAsync(() -> instituteRequirements=allocationDataLoader.getInstituteRequirements(semester));
+        priorityGroups = new TreeMap<>((i1, i2) -> i2 - i1);
         pendingRequirements=new ArrayList<>();
 
         try{
             CompletableFuture.allOf(studentLoadFuture,courseLoadFuture,openForLoadFuture,instReqLoadFuture).join();
-        } catch (CompletionException completionException){
+        } catch (CompletionException ce){
+            log.error("Async task to load required data failed with error: {}", ce.getCause().getMessage(), ce.getCause());
+
             return new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR);
         }
         if(students==null) return new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.STUDENT_DATA_NOT_FOUND);
@@ -140,7 +133,6 @@ public class AllocationSystem {
 
             for (int priority : priorities) {
                 for (AllocationStudent student : priorityGroups.get(priority)) {
-//                    System.out.println("Commencing allocation for student: "+student.getSid());
                     courseAllocation(student, isPhaseOne, false);
                 }
             }
@@ -166,12 +158,7 @@ public class AllocationSystem {
         Set<Integer> priorities = priorityGroups.keySet();
         for (int priority : priorities) {
             List<AllocationStudent> studentsByPriority = priorityGroups.getOrDefault(priority, new ArrayList<>());
-            studentsByPriority.sort(new Comparator<AllocationStudent>() {
-                @Override
-                public int compare(AllocationStudent s1, AllocationStudent s2) {
-                    return s2.getCumulativePriority() - s1.getCumulativePriority();
-                }
-            });
+            studentsByPriority.sort((s1, s2) -> s2.getCumulativePriority() - s1.getCumulativePriority());
             priorityGroups.put(priority, studentsByPriority);
         }
     }
@@ -214,7 +201,6 @@ public class AllocationSystem {
                 if(isErrorPhase) printWriter.println(">>> Trying course: "+courseID+" in Slot-"+slot);
 
                 if (canAllocateCourse(student, courseID, isPhaseOne, isErrorPhase)) {
-//                    debug if(student.getSid().equals("202201174")) System.out.println("AllocatingCourse: "+courseID);
                     allocateCourse(student, courseID);
                     student.setPriority(prefIndex + 1);
                     student.setCumulativePriority(student.getCumulativePriority() + student.getPriority());
@@ -274,9 +260,6 @@ public class AllocationSystem {
      * @param courseID: id of the course to be allocated to the student
      */
     private void allocateCourse(AllocationStudent student, String courseID) {
-        //debug
-//        System.out.println("Allocating Course: "+courseID+" to Student: "+student.getSid());
-
         AllocationCourse course = courses.get(courseID);
         student.addAllocatedCourse(courseID);
         student.addAllocatedSlot(course.getSlot());
@@ -317,25 +300,29 @@ public class AllocationSystem {
         // record Allocation Results
         CompletableFuture<Void> recordResultAndCreateSheet=CompletableFuture.runAsync(() -> {
             allocationDataLoader.saveAllocationResult(new ArrayList<>(students.values()));
-            System.out.println("\n\n Allocation Result saved \n\n");
+            log.info("Allocation Result saved successfully!");
+//            System.out.println("\n\n Allocation Result saved \n\n");
             ByteArrayOutputStream byteArrayOutputStream=dataLoader.createCourseWiseAllocation(courses,students);
             if(byteArrayOutputStream!=null){
                 allocationReportService.insertReport(new AllocationReport(AllocationReportNames.COURSE_WISE_ALLOCATION,semester, byteArrayOutputStream.toByteArray()));
-                System.out.println("\n\n Course-wise Allocation data created and saved. \n\n");
+                log.info("Course-wise Allocation data created and saved!");
+//                System.out.println("\n\n Course-wise Allocation data created and saved. \n\n");
             }
         });
 
         // record Seat Summary
         CompletableFuture<Void> recordSeatSummary=CompletableFuture.runAsync(() -> {
             allocationDataLoader.saveSeatSummary(semester, availableSeats);
-            System.out.println("\n\n Seat Summary saved \n\n");
+            log.info("Seat Summary saved!");
+//            System.out.println("\n\n Seat Summary saved \n\n");
         });
 
         // record Failure Log
         CompletableFuture<Void> recordFailureLog=CompletableFuture.runAsync(() -> {
             ByteArrayOutputStream byteArrayOutputStream=getAllocationFailureDetail();
             allocationReportService.insertReport(new AllocationReport(AllocationReportNames.ALLOCATION_FAILURE_LOG,semester,byteArrayOutputStream.toByteArray()));
-            System.out.println("\n\n Failure Log saved \n\n");
+            log.info("Failure Log saved!");
+//            System.out.println("\n\n Failure Log saved \n\n");
         });
 
         // create allocation result sheet
@@ -343,7 +330,8 @@ public class AllocationSystem {
             ByteArrayOutputStream byteArrayOutputStream=dataLoader.createResultSheet(students,courses,courseCategories);
             if(byteArrayOutputStream!=null){
                 allocationReportService.insertReport(new AllocationReport(AllocationReportNames.ALLOCATION_RESULT,semester,byteArrayOutputStream.toByteArray()));
-                System.out.println("\n\n Allocation result sheet created and saved. \n\n");
+                log.info("Allocation result sheet created and saved!");
+//                System.out.println("\n\n Allocation result sheet created and saved. \n\n");
             }
         });
 
@@ -353,14 +341,15 @@ public class AllocationSystem {
             ByteArrayOutputStream byteArrayOutputStream=dataLoader.createSeatSummary(openFor,courses,availableSeats);
             if(byteArrayOutputStream!=null){
                 allocationReportService.insertReport(new AllocationReport(AllocationReportNames.SEAT_SUMMARY,semester,byteArrayOutputStream.toByteArray()));
-                System.out.println("\n\n Seat Summary sheet created and saved. \n\n");
+                log.info("Seat Summary sheet created and saved!");
+//                System.out.println("\n\n Seat Summary sheet created and saved. \n\n");
             }
         });
 
         try {
             CompletableFuture.allOf(recordResultAndCreateSheet, recordSeatSummary, recordFailureLog, createAllocationResultSheet, createSeatSummarySheet).join();
-        } catch (CompletionException completionException) {
-            System.out.println("Error: Saving record...");
+        } catch (CompletionException ce) {
+            log.error("Async task to record result-data failed with error: {}", ce.getCause().getMessage(), ce.getCause());
         }
     }
 
