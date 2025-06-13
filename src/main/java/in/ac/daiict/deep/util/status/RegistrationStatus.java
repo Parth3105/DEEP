@@ -2,7 +2,6 @@ package in.ac.daiict.deep.util.status;
 
 import in.ac.daiict.deep.constant.status.RegistrationStatusEnum;
 import lombok.Getter;
-import lombok.Setter;
 
 public class RegistrationStatus {
     @Getter

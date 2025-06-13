@@ -2,7 +2,6 @@ package in.ac.daiict.deep.util.status;
 
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 

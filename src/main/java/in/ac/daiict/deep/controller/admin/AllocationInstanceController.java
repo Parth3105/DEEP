@@ -12,6 +12,7 @@ import in.ac.daiict.deep.service.*;
 import in.ac.daiict.deep.config.DBConfig;
 import in.ac.daiict.deep.dto.ResponseDto;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
 @AllArgsConstructor
+@Slf4j
 public class AllocationInstanceController {
     private StudentService studentService;
     private CourseService courseService;
@@ -95,7 +97,8 @@ public class AllocationInstanceController {
                     ResponseDto status = studentService.insertAll(studentData.getBytes());
                     if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else cnt.set(cnt.get()+1);
-                } catch (IOException e) {
+                } catch (IOException ioe) {
+                    log.error("I/O operation to upload/parse student-data failed: {}", ioe.getMessage(), ioe);
                     redirectAttributes.addFlashAttribute("internalServerError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
                 }
             }
@@ -114,7 +117,8 @@ public class AllocationInstanceController {
                         cnt.set(cnt.get() + 1);
                         isCoursesUploaded = true;
                     }
-                } catch (IOException e) {
+                } catch (IOException ioe) {
+                    log.error("I/O operation to upload/parse course-data failed: {}", ioe.getMessage(), ioe);
                     redirectAttributes.addFlashAttribute("internalServerError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
                 }
             }
@@ -126,7 +130,8 @@ public class AllocationInstanceController {
                         cnt.set(cnt.get() + 1);
                         isOffersUploaded = true;
                     }
-                } catch (IOException e) {
+                } catch (IOException ioe) {
+                    log.error("I/O operation to upload/parse course-offerings failed: {}", ioe.getMessage(), ioe);
                     redirectAttributes.addFlashAttribute("internalServerError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
                 }
             }
@@ -140,7 +145,8 @@ public class AllocationInstanceController {
                     ResponseDto status = instituteReqService.insertAll(instReqData.getBytes());
                     if(status.getStatus()!= ResponseStatus.OK) errorStatus.set(status);
                     else cnt.set(cnt.get()+1);
-                } catch (IOException e) {
+                } catch (IOException ioe) {
+                    log.error("I/O operation to upload/parse institute-requirements failed: {}", ioe.getMessage(), ioe);
                     redirectAttributes.addFlashAttribute("internalServerError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
                 }
             }
@@ -155,14 +161,16 @@ public class AllocationInstanceController {
                 if(!courseOfferingData.isEmpty()) uploads.add(new Upload(UploadFileNames.OFFERS_DATA,courseOfferingData.getBytes()));
                 if(!instReqData.isEmpty()) uploads.add(new Upload(UploadFileNames.INST_REQ_DATA,instReqData.getBytes()));
                 if(!uploads.isEmpty()) uploadService.insertAll(uploads);
-            } catch (IOException e) {
+            } catch (IOException ioe) {
+                log.error("I/O operation to save uploaded files failed: {}", ioe.getMessage(), ioe);
                 redirectAttributes.addFlashAttribute("uploadError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
             }
         });
 
         try {
             CompletableFuture.allOf(uploadCourseAndOfferingData, uploadInstReqData, uploadStudentData).join();
-        }catch (CompletionException completionException){
+        }catch (CompletionException ce){
+            log.error("Async task to upload all data failed with error: {}", ce.getCause().getMessage(), ce.getCause());
             redirectAttributes.addFlashAttribute("internalServerError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
         }
         if(errorStatus.get()!=null) redirectAttributes.addFlashAttribute("uploadError",errorStatus.get());

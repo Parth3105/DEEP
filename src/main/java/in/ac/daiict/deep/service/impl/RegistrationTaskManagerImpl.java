@@ -47,12 +47,9 @@ public class RegistrationTaskManagerImpl implements RegistrationTaskManager {
             }
         },Duration.ofSeconds(30));*/
 
-        activeRegistrationTask=taskScheduler.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                if(LocalDate.now().isAfter(closingDate)){
-                    closeRegistration();
-                }
+        activeRegistrationTask=taskScheduler.scheduleAtFixedRate(() -> {
+            if(LocalDate.now().isAfter(closingDate)){
+                closeRegistration();
             }
         }, Duration.ofDays(1));
     }

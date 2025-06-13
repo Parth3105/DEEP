@@ -37,7 +37,7 @@ public class NavigationController {
             int finalSem = sem;
             collectDashboardReq.add(CompletableFuture.supplyAsync(() -> new AdminDashboardReqDto(finalSem,studentService.countBySemester(finalSem),studentReqService.submittedPrefCntBySemester(finalSem),allocationStatusService.checkIfExists(finalSem))));
         }
-        // Join all futures before proceeding
+
         CompletableFuture<Void> fetchDashboardReqs = CompletableFuture.allOf(
                 collectDashboardReq.toArray(new CompletableFuture[0])
         );

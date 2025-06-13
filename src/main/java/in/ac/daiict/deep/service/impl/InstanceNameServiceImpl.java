@@ -7,8 +7,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -33,7 +31,7 @@ public class InstanceNameServiceImpl implements InstanceNameService {
     @Override
     public boolean insertNewInstance(String newInstanceName) {
         InstanceName instanceName=instanceNameRepo.save(new InstanceName(newInstanceName));
-        return instanceName != null && instanceName.getInstanceName().equals(newInstanceName);
+        return instanceName.getInstanceName().equals(newInstanceName);
     }
 
     @Override
