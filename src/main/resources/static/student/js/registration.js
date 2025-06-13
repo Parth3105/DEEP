@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('requirementsContainer');
-    console.log(instituteRequirements);
     const filtered = instituteRequirements.filter(obj => obj.courseCnt !== null);
     filtered.sort((a, b) => a.category.localeCompare(b.category));
 
@@ -214,6 +213,11 @@ function updateCourseVisibility() {
 }
 
 function addCourseToSelected(cid, slot, name, program, category, credits) {
+    if (skippedSlots[slot]) {
+        showToast('You have opted out of selecting courses for this slot. Please uncheck the option to select courses again.', statusColors.WARNING);
+        return;
+    }
+
     if (!selectedCoursesBySlot[slot]) {
         selectedCoursesBySlot[slot] = [];
     }
@@ -314,7 +318,7 @@ function validateSlotPreferences() {
         const pref = preferences[i];
 
         if (pref === '') {
-            showToast(`Please fill all ${maxSlot} preferences.`, statusColors.WARNING);
+            showToast(`Please fill all ${maxSlot} preferences.`, statusColors.ERROR);
             return false;
         }
 
@@ -334,25 +338,6 @@ function validateSlotPreferences() {
     }
 
     return true;
-}
-
-function getSlotPrefsToString(slotPrefs) {
-    return slotPrefs.join('$');
-}
-
-function getCoursePrefsToString(coursePrefs) {
-  return Object.entries(coursePrefs)
-    .map(([slotId, courses]) => {
-      const cids = courses.map(course => course.cid).join('$');
-      return `${slotId}:${cids}`;
-    })
-    .join('#');
-}
-
-function getAcadReqToString(obj) {
-  return Object.entries(obj)
-    .map(([key, value]) => `${key}:${value}`)
-    .join('#');
 }
 
 function getCoursePrefsToCourseMap() {
@@ -390,11 +375,10 @@ document.getElementById('confirmSubmit').addEventListener('click', function () {
   document.getElementById('confirmModal').classList.add('hidden');
   document.body.classList.remove('backdrop-blur-md', 'overflow-hidden');
 
-//  const acad = getAcadReqToString(values);
-//  const course = getCoursePrefsToString(selectedCoursesBySlot);
-//  const slot = getSlotPrefsToString(collectPreferences());
-
-
+  const submitButton = document.getElementById('submitButton');
+  submitButton.disabled = true;
+  submitButton.classList.remove('opacity-100', 'cursor-pointer');
+  submitButton.classList.add('opacity-50', 'cursor-not-allowed');
 
   const coursePrefsMapping = getCoursePrefsToCourseMap();
   document.getElementById('studentRequirements').value = JSON.stringify(values);

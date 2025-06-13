@@ -16,4 +16,7 @@ public interface StudentService {
     long countAllStudents();
     Student fetchStudentData(String sid);
     StudentDto fetchStudentDto(String sid);
+    boolean fetchEnrollmentStatusForStudent(String sid);
+    long countEnrolledStudents();
+    void updateEnrollmentStatus(String sid);
 }

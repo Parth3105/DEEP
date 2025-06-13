@@ -6,8 +6,9 @@ if(updateInstanceError) {
     printStatusResponse(updateInstanceError);
 }
 
-if(resultStatus === 'declared') {
+if (resultStatus === 'declared' && sessionStorage.getItem("showDeclareToast") === "true") {
     showToast("Results are successfully declared!", statusColors.OK);
+    sessionStorage.removeItem("showDeclareToast");
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -26,13 +27,20 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+function closeNewRegistrationModal() {
+    const modal = document.getElementById("registrationModal");
+    const toggleRegistration = document.getElementById("toggleRegistration");
+    toggleRegistration.checked = false;
+    modal.classList.add("hidden");
+}
+
 function openRegModal() {
   document.getElementById('closeRegModal').classList.remove('hidden');
 }
 
 function closeRegModal() {
   const toggleRegistration = document.getElementById("toggleRegistration");
-  toggleRegistration.checked = false;
+  toggleRegistration.checked = registrationStatus === 'open';
   document.getElementById('closeRegModal').classList.add('hidden');
 }
 
@@ -137,6 +145,14 @@ form.addEventListener('submit', function (e) {
     submitBtn.disabled = true;
 });
 
+function openDeclareRegModal() {
+    document.getElementById('DeclareRegModal').classList.remove('hidden');
+};
+
+function closeDeclareRegModal() {
+    document.getElementById('DeclareRegModal').classList.add('hidden');
+};
+
 function handleDeclareResult() {
     const pendingSemesters = [];
 
@@ -157,6 +173,7 @@ function handleDeclareResult() {
     }
 
     // Submit the hidden form to trigger POST request
+    sessionStorage.setItem("showDeclareToast", "true");
     document.getElementById("declareResultForm").submit();
 }
 

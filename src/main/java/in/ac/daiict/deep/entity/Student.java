@@ -26,4 +26,14 @@ public class Student {
 
     @Column(nullable = false)
     private int semester;
+
+    @Column(name = "has_enrolled")
+    private boolean hasEnrolled;
+
+    public Student(String sid, String name, String program, int semester) {
+        this.sid = sid;
+        this.name = name;
+        this.program = program;
+        this.semester = semester;
+    }
 }

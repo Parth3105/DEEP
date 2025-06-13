@@ -62,45 +62,43 @@ function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
                 Downloading...`;
             this.disabled = true;
 
-            fetch(downloadUrl)
-              .then(async res => {
+            try {
+                const res = await fetch(downloadUrl);
+
                 if (res.status !== status.OK) {
-                  const errorText = await res.text();
-                  printStatusResponse(res.status, errorText);
-                  return;
-                }
-
-                const blob = await res.blob();
-                const contentDisposition = res.headers.get("Content-Disposition");
-
-                // Try to extract filename from Content-Disposition header
-                let filename = "downloaded_file";
-                if (contentDisposition && contentDisposition.includes("filename=")) {
-                  const match = contentDisposition.match(/filename="?([^"]+)"?/);
-                  if (match && match[1]) filename = match[1];
+                    const errorText = await res.text();
+                    printStatusResponse(res.status, errorText);
                 } else {
-                  filename = downloadUrl.split("/").pop() || filename;
+                    const blob = await res.blob();
+                    const contentDisposition = res.headers.get("Content-Disposition");
+
+                    // Extract filename
+                    let filename = "downloaded_file";
+                    if (contentDisposition && contentDisposition.includes("filename=")) {
+                        const match = contentDisposition.match(/filename="?([^"]+)"?/);
+                        if (match && match[1]) filename = match[1];
+                    } else {
+                        filename = downloadUrl.split("/").pop() || filename;
+                    }
+
+                    // Trigger download
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
                 }
-
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                window.URL.revokeObjectURL(url);
-              })
-              .catch(err => {
+            } catch (err) {
                 console.error("Fetch error:", err);
-                showToast("Something went wrong due to Network Error. Please contact support.");
-              });
-
-            // Restore button
-            setTimeout(() => {
+                showToast("Something went wrong due to Network Error. Please contact support.", statusColors.ERROR);
+            } finally {
+                // Always restore button after fetch resolves or fails
                 this.innerHTML = originalText;
                 this.disabled = false;
-            }, 2000);
+            }
         });
     });
 }
