@@ -33,14 +33,4 @@ public class StudentReqServiceImpl implements StudentReqService {
         if(studentReqList==null || studentReqList.isEmpty()) return null;
         return modelMapper.map(studentReqList, new TypeToken<List<StudentReqDto>>(){}.getType());
     }
-
-    @Override
-    public long submittedPrefCntBySemester(int semester) {
-        return studentReqRepo.countDistinctStudentsBySemester(semester);
-    }
-
-    @Override
-    public boolean isExist(String sid) {
-        return studentReqRepo.existsBySid(sid);
-    }
 }

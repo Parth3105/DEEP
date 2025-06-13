@@ -35,7 +35,7 @@ public class NavigationController {
         List<CompletableFuture<AdminDashboardReqDto>> collectDashboardReq=new ArrayList<>();
         for(int sem=5;sem<=8;sem++){
             int finalSem = sem;
-            collectDashboardReq.add(CompletableFuture.supplyAsync(() -> new AdminDashboardReqDto(finalSem,studentService.countBySemester(finalSem),studentReqService.submittedPrefCntBySemester(finalSem),allocationStatusService.checkIfExists(finalSem))));
+            collectDashboardReq.add(CompletableFuture.supplyAsync(() -> new AdminDashboardReqDto(finalSem,studentService.countBySemester(finalSem),studentService.countEnrolledStudents(),allocationStatusService.checkIfExists(finalSem))));
         }
 
         CompletableFuture<Void> fetchDashboardReqs = CompletableFuture.allOf(

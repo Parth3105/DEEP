@@ -26,7 +26,7 @@
                     <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-2">Sign in</h2>
                     <p class="text-gray-600 text-sm mb-8">Please login to continue to your account.</p>
 
-                    <form class="space-y-6" th:action="@{/login/authenticate}" method="post">
+                    <form class="space-y-6" th:action="@{/login/authenticate}" method="post" onsubmit="handleLoginSubmit(event)">
                         <!-- UserName Input -->
                         <div class="relative z-0 w-full mb-5 group">
                             <input
@@ -94,12 +94,19 @@
                             </button>
                         </div>
 
-                        <!-- Sign In Button -->
+                        <!-- Sign In Button with inline Spinner -->
                         <button
+                                id="signInBtn"
                                 type="submit"
-                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg cursor-pointer"
+                                class="flex justify-center items-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg cursor-pointer"
                         >
-                            Sign In
+                            <svg id="spinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <span id="signInText">Sign In</span>
                         </button>
 
                         <!-- Forgot Password -->
