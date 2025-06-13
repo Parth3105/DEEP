@@ -21,7 +21,7 @@ function updateAllocationSummary(sem) {
 
     const status = data.allocationstatus;
 
-    const showToastForSemester = sessionStorage.getItem(`showToastForSemester`) === "true";
+    const showToastForSemester = sessionStorage.getItem(`showToastForSemester_${sem}`) === "true";
     switch (status) {
         case 200:
         case "200":
@@ -44,20 +44,18 @@ function updateAllocationSummary(sem) {
                 showToast("Data upload failed: Missing or invalid data detected. Please ensure that student-data for the selected semester, course-data and course-offerings is valid.", statusColors.BAD_REQUEST);
             }
             break;
-        case 204:
-        case "204":
         default:
             statusDiv.className = "bg-yellow-500 text-white px-7 py-2 rounded-xl font-medium text-lg";
             statusText.textContent = "Yet to run";
             if (showToastForSemester) {
-                showToast("Something went wrong! Please contact support.", statusColors.INTERNAL_SERVER_ERROR);
+                showToast("Something went wrong! Please contact support.", statusColors.ERROR);
             }
             break;
     }
 
     allocatedDiv.textContent = data.allocated;
     unallocatedDiv.textContent = data.unallocated;
-    sessionStorage.removeItem(`showToastForSemester`);
+    sessionStorage.removeItem(`showToastForSemester_${sem}`);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -95,7 +93,24 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
             openCloseRegModal();
         } else {
+
+            const spinner = document.getElementById('spinner');
+            const executeBtn = document.getElementById('executeBtn');
+            const executeIcon = document.getElementById('executeIcon');
+
+            // Show toast flag
+            sessionStorage.setItem(`showToastForSemester_${hiddenInput.value}`, "true");
+
             this.setAttribute('action', `/admin/execute-allocation/${hiddenInput.value}`);
+
+            // Show spinner and hide icon
+            spinner.classList.remove('hidden');
+            if (executeIcon) executeIcon.classList.add('hidden');
+
+            // Disable the button to prevent multiple submissions
+            executeBtn.disabled = true;
+            executeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            executeBtn.classList.remove('opacity-100', 'cursor-pointer');
         }
     });
 });
@@ -114,10 +129,25 @@ function handleExecuteConfirmation() {
 
     const form = document.getElementById('allocationForm');
     const semester = document.getElementById('selectedSemester').value;
+    const spinner = document.getElementById('spinner');
+    const executeBtn = document.getElementById('executeBtn');
+    const executeIcon = document.getElementById('executeIcon');
 
-    // Mark that toast should show for this semester
-    sessionStorage.setItem(`showToastForSemester`, "true");
+    // Show toast flag
+    sessionStorage.setItem(`showToastForSemester_${semester}`, "true");
 
+    // Set action based on selected semester
     form.setAttribute('action', `/admin/execute-allocation/${semester}`);
+
+    // Show spinner and hide icon
+    spinner.classList.remove('hidden');
+    if (executeIcon) executeIcon.classList.add('hidden');
+
+    // Disable the button to prevent multiple submissions
+    executeBtn.disabled = true;
+    executeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    executeBtn.classList.remove('opacity-100', 'cursor-pointer');
+
+    // Submit the form
     form.submit();
 }

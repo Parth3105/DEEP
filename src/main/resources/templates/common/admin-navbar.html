@@ -43,7 +43,7 @@
             <!-- CSRF token will be automatically added by Spring Security if using Thymeleaf -->
             <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <button type="submit"
-                    class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">
+                    class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200 cursor-pointer">
                 Logout
             </button>
         </form>

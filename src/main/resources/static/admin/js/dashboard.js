@@ -27,6 +27,13 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+function closeNewRegistrationModal() {
+    const modal = document.getElementById("registrationModal");
+    const toggleRegistration = document.getElementById("toggleRegistration");
+    toggleRegistration.checked = false;
+    modal.classList.add("hidden");
+}
+
 function openRegModal() {
   document.getElementById('closeRegModal').classList.remove('hidden');
 }

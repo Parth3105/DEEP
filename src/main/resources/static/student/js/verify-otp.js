@@ -3,30 +3,92 @@ if(otpVerificationResponse) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    let timeLeft = 2 * 60; // 2 minutes
-    const countdownEl = document.getElementById("countdown");
-    const timerMessage = document.getElementById("timerMessage");
-    const resendLink = document.getElementById("resendLink");
+  const STORAGE_KEY = "otpCountdownExpiry";
+  localStorage.removeItem(STORAGE_KEY);
 
-    const timer = setInterval(() => {
+  const resendLink = document.getElementById("resendLink");
+  const timerContainer = document.getElementById("timerContainer");
+  const TIMER_DURATION = 2 * 60; // 2 minutes
+
+  function insertTimerMessage() {
+    timerContainer.innerHTML = `
+      <div id="timerMessage" class="text-gray-500 mb-2">
+        You can request to resend the OTP after
+        <span id="countdown" class="font-semibold text-blue-600">2:00</span>
+      </div>`;
+  }
+
+  function updateCountdownDisplay(timeLeft) {
+    const countdownEl = document.getElementById("countdown");
+    if (countdownEl) {
       const minutes = Math.floor(timeLeft / 60);
       const seconds = timeLeft % 60;
       countdownEl.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    }
+  }
+
+  function showResendLink() {
+    timerContainer.innerHTML = ""; // remove timer
+    resendLink.style.display = "inline-block";
+    resendLink.textContent = "Resend OTP";
+    resendLink.classList.remove("text-gray-500", "cursor-not-allowed", "pointer-events-none");
+    resendLink.classList.add("text-blue-600", "hover:text-blue-700", "cursor-pointer");
+  }
+
+  function startTimer(duration) {
+    const expiryTime = Date.now() + duration * 1000;
+    localStorage.setItem(STORAGE_KEY, expiryTime.toString());
+
+    insertTimerMessage(); // restore UI
+    let timeLeft = duration;
+    updateCountdownDisplay(timeLeft);
+
+    const timer = setInterval(() => {
+      timeLeft--;
+      updateCountdownDisplay(timeLeft);
 
       if (timeLeft <= 0) {
         clearInterval(timer);
-
-        // Remove timer message
-        timerMessage.remove();
-
-        // Enable resend link
-        resendLink.classList.remove("text-blue-400", "cursor-not-allowed", "pointer-events-none");
-        resendLink.classList.add("text-blue-600", "hover:text-blue-700", "cursor-pointer");
-        resendLink.removeAttribute("style");
+        localStorage.removeItem(STORAGE_KEY);
+        showResendLink();
       }
-
-      timeLeft--;
     }, 1000);
+  }
+
+  function resumeTimer() {
+    const expiry = localStorage.getItem(STORAGE_KEY);
+    if (expiry) {
+      const remaining = Math.floor((parseInt(expiry) - Date.now()) / 1000);
+      if (remaining > 0) {
+        resendLink.style.display = "none";
+        startTimer(remaining);
+      } else {
+        showResendLink();
+      }
+    } else {
+      resendLink.style.display = "none";
+      startTimer(TIMER_DURATION);
+    }
+  }
+
+  // Resend handler — triggered on form submit
+  window.handleResendClick = function (event) {
+    resendLink.onclick = null;
+
+    resendLink.textContent = "Resend request sent";
+    resendLink.classList.remove("hover:text-blue-700", "cursor-pointer");
+    resendLink.classList.add("text-gray-500", "cursor-not-allowed", "pointer-events-none");
+
+    const form = document.getElementById("resendForm");
+    form.submit();
+
+    setTimeout(() => {
+      resendLink.style.display = "none";
+      startTimer(TIMER_DURATION);
+    }, 10000);
+  };
+
+  resumeTimer();
 });
 
 const otpInputs = document.querySelectorAll('.otp-input');

@@ -69,12 +69,17 @@ public class LoginController {
         otpVerificationService.generateOtpAndSendMail(user.getUsername(), user.getEmail());
         session.setAttribute("forgotPasswordSession", new SessionAttribute<>(username, Duration.ofMinutes(Deadline.FORGOT_PASSWORD_SESSION_DURATION_MINUTES)));
         session.setAttribute("userEmail", new SessionAttribute<>(user.getEmail(), Duration.ofMinutes(Deadline.FORGOT_PASSWORD_SESSION_DURATION_MINUTES)));
+        return "redirect:" + CommonEndPoint.VERIFY_OTP;
+    }
+
+    @GetMapping(CommonEndPoint.VERIFY_OTP)
+    public String renderOtpVerificationPage(HttpSession session){
+        if (session.getAttribute("forgotPasswordSession") == null) return "redirect:" + CommonEndPoint.LOGIN;
         return CommonTemplate.VERIFY_OTP_PAGE;
     }
 
     @PostMapping(CommonEndPoint.RESEND_OTP)
-    public String resendOtp(@RequestParam("token") String randomInput, @PathVariable("random") String randomVariable, RedirectAttributes redirectAttributes, HttpSession session) {
-        if (!randomInput.equals(randomVariable)) return "redirect:" + CommonEndPoint.LOGIN;
+    public String resendOtp(RedirectAttributes redirectAttributes, HttpSession session) {
         String username, email;
         if (session.getAttribute("forgotPasswordSession") == null) return "redirect:" + CommonEndPoint.LOGIN;
         else {
@@ -88,7 +93,7 @@ public class LoginController {
             }
         }
         otpVerificationService.generateOtpAndSendMail(username, email);
-        return CommonTemplate.VERIFY_OTP_PAGE;
+        return "redirect:" + CommonEndPoint.VERIFY_OTP;
     }
 
     @PostMapping(CommonEndPoint.VERIFY_OTP)

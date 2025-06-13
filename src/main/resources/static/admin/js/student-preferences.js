@@ -67,7 +67,7 @@ function HandleDownloadButtonClick(downloadBtns) {
             try {
                 const res = await fetch(downloadUrl);
 
-                if (res.status !== 200) {
+                if (res.status !== status.OK) {
                     const errorText = await res.text();
                     printStatusResponse(res.status, errorText);
                 } else {
@@ -95,7 +95,7 @@ function HandleDownloadButtonClick(downloadBtns) {
                 }
             } catch (err) {
                 console.error("Fetch error:", err);
-                showToast("Something went wrong due to Network Error. Please contact support.");
+                showToast("Something went wrong due to Network Error. Please contact support.", statusColors.ERROR);
             } finally {
                 // Always restore button after fetch resolves or fails
                 this.innerHTML = originalText;

@@ -214,6 +214,11 @@ function updateCourseVisibility() {
 }
 
 function addCourseToSelected(cid, slot, name, program, category, credits) {
+    if (skippedSlots[slot]) {
+        showToast('You have opted out of selecting courses for this slot. Please uncheck the option to select courses again.', statusColors.WARNING);
+        return;
+    }
+
     if (!selectedCoursesBySlot[slot]) {
         selectedCoursesBySlot[slot] = [];
     }
@@ -314,7 +319,7 @@ function validateSlotPreferences() {
         const pref = preferences[i];
 
         if (pref === '') {
-            showToast(`Please fill all ${maxSlot} preferences.`, statusColors.WARNING);
+            showToast(`Please fill all ${maxSlot} preferences.`, statusColors.ERROR);
             return false;
         }
 
