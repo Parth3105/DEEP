@@ -1,12 +1,13 @@
 package in.ac.daiict.deep.controller.student;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import in.ac.daiict.deep.constant.response.ResponseMessage;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.constant.endpoints.StudentEndpoint;
 import in.ac.daiict.deep.constant.status.RegistrationStatusEnum;
 import in.ac.daiict.deep.constant.template.StudentTemplate;
-import in.ac.daiict.deep.dto.AvailableCourseDto;
-import in.ac.daiict.deep.dto.InstituteReqDto;
 import in.ac.daiict.deep.entity.CoursePref;
 import in.ac.daiict.deep.entity.SlotPref;
 import in.ac.daiict.deep.entity.Student;
@@ -15,6 +16,7 @@ import in.ac.daiict.deep.security.auth.CustomUserDetails;
 import in.ac.daiict.deep.service.*;
 import in.ac.daiict.deep.dto.ResponseDto;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,10 +27,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
+@Slf4j
 @Controller
 @AllArgsConstructor
-public class EnrollmentController {
+public class    EnrollmentController {
     private StudentService studentService;
     private CourseService courseService;
     private InstituteReqService instituteReqService;
@@ -38,111 +44,114 @@ public class EnrollmentController {
     private SystemStatusService systemStatusService;
 
     @GetMapping(StudentEndpoint.ENROLL)
-    public String renderEnrollmentForm(String studentId, Model model) {
-        CustomUserDetails userDetails= (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public String renderEnrollmentForm(String studentId, Model model, RedirectAttributes redirectAttributes) {
+        if (!systemStatusService.fetchRegistrationStatus().equals(RegistrationStatusEnum.open.toString()))
+            return "redirect:" + StudentEndpoint.HOME_PAGE;
+        else if (studentReqService.isExist(studentId)) return "redirect:" + StudentEndpoint.PREFERENCE_SUMMARY;
+
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         // Send the semester & program of students and institute requirements.
         Student student = studentService.fetchStudentData(userDetails.getUsername());
         if (student == null) {
             // not found student.
             model.addAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.USER_NOT_FOUND));
-            return "redirect:"+StudentEndpoint.HOME_PAGE;
+            return "redirect:" + StudentEndpoint.HOME_PAGE;
         }
         model.addAttribute("semester", student.getSemester());
         model.addAttribute("program", student.getProgram());
-        List<InstituteReqDto> instituteReqDto = instituteReqService.findInstituteReq(student.getProgram(), student.getSemester());
-        model.addAttribute("instituteRequirements", instituteReqDto);
+
+        CompletableFuture<Void> fetchingInstitutePref = CompletableFuture.supplyAsync(() -> instituteReqService.findInstituteReq(student.getProgram(), student.getSemester()))
+                .thenAccept(instituteReqDtoList -> model.addAttribute("instituteRequirements", instituteReqDtoList));
 
         // Send the available courses to Student with required information
-        List<AvailableCourseDto> availableCourses = courseService.fetchAvailableCourses(student.getProgram(), student.getSemester());
+        CompletableFuture<Void> fetchingAvailableCourses = CompletableFuture.supplyAsync(() -> courseService.fetchAvailableCourses(student.getProgram(), student.getSemester()))
+                .thenAccept(availableCourseDtoList -> model.addAttribute("availableCourses", availableCourseDtoList));
 
-        //debug
-        // for(AvailableCourseDto availableCourse: availableCourses) System.out.println(availableCourse.getSlot()+"\t"+availableCourse.getCid()+"\t"+availableCourse.getName()+"\t\t\t"+availableCourse.getProgram()+"\t"+availableCourse.getCategory()+"\t"+availableCourse.getCredits());
-
-        model.addAttribute("availableCourses", availableCourses);
+        try {
+            CompletableFuture.allOf(fetchingInstitutePref, fetchingAvailableCourses).join();
+        } catch (CompletionException completionException) {
+            redirectAttributes.addFlashAttribute("internalServerError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR));
+            return "redirect:" + StudentEndpoint.HOME_PAGE;
+        }
         return StudentTemplate.ENROLLMENT_FORM_PAGE;
     }
 
     @PostMapping(StudentEndpoint.SUBMIT_PREFERENCE)
-    public String loadSubmittedPreferences(@RequestParam String studentRequirements, @RequestParam String coursePreferences, @RequestParam String slotPreferences, RedirectAttributes redirectAttributes){
-        if(systemStatusService.fetchRegistrationStatus().equals(RegistrationStatusEnum.close.toString())){
-            redirectAttributes.addFlashAttribute("preferenceSubmissionResponse", new ResponseDto(ResponseStatus.FORBIDDEN,ResponseMessage.LATE_SUBMISSION));
-            return "redirect:"+StudentEndpoint.HOME_PAGE;
+    public String loadSubmittedPreferences(@RequestParam String studentRequirements, @RequestParam String coursePreferences, @RequestParam String slotPreferences, RedirectAttributes redirectAttributes) {
+        if(studentRequirements ==null || coursePreferences ==null || slotPreferences ==null){
+            redirectAttributes.addFlashAttribute("preferenceMissing",new ResponseDto(ResponseStatus.BAD_REQUEST,ResponseMessage.PREFERENCE_MISSING));
+            return "redirect:" + StudentEndpoint.HOME_PAGE;
         }
-        CustomUserDetails userDetails= (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String studentId=userDetails.getUsername();
-        Thread recordStudentRequirements=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(studentRequirements!=null) {
-                    List<StudentReq> studentReqs = new ArrayList<>();
-                    String[] categoryCountMap = studentRequirements.split("#");
-                    for (String keyValue : categoryCountMap)
-                        studentReqs.add(new StudentReq(studentId, keyValue.split(":", 2)[0], Integer.parseInt(keyValue.split(":", 2)[1])));
+        if (!systemStatusService.fetchRegistrationStatus().equals(RegistrationStatusEnum.open.toString())) {
+            redirectAttributes.addFlashAttribute("preferenceSubmissionResponse", new ResponseDto(ResponseStatus.FORBIDDEN, ResponseMessage.LATE_SUBMISSION));
+            return "redirect:" + StudentEndpoint.HOME_PAGE;
+        }
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String studentId = userDetails.getUsername();
 
-                    studentReqService.insertAll(studentReqs);
-
-                    /*
-                    // debug
-                    for(StudentReq studentReq:studentReqs) System.out.println(studentReq.getCategory()+": "+studentReq.getCourse_cnt());
-                    System.out.println("\n");
-                     */
-                }
-            }
-        });
-
-        Thread recordCoursePreferences=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(coursePreferences!=null) {
-                    List<CoursePref> coursePrefs = new ArrayList<>();
-                    String[] slotCourseListMap = coursePreferences.split("#");
-                    for (String slotCourseList : slotCourseListMap) {
-                        String slot = slotCourseList.split(":", 2)[0];
-                        String[] courseList = slotCourseList.split(":", 2)[1].split("\\$");
-                        for(int j=0;j<courseList.length;j++) coursePrefs.add(new CoursePref(studentId,slot,j+1,courseList[j]));
-                        System.out.println("\n");
-                    }
-
-                    coursePrefService.insertAll(coursePrefs);
-
-                    /*
-                    // debug
-                    for(CoursePref coursePref:coursePrefs) System.out.println(coursePref.getSlot()+": "+coursePref.getPref()+": "+coursePref.getCid());
-                     */
-                }
-
-            }
-        });
-
-        Thread recordSlotPreferences=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(slotPreferences!=null){
-                    List<SlotPref> slotPrefs = new ArrayList<>();
-                    String[] slotList=slotPreferences.split("\\$");
-                    for(int j=0;j<slotList.length;j++) slotPrefs.add(new SlotPref(studentId,j+1,slotList[j]));
-
-                    slotPrefService.insertAll(slotPrefs);
-
-                    /*
-                    // debug
-                    for(SlotPref slotPref: slotPrefs) System.out.println(slotPref.getPref()+": "+slotPref.getSlot());
-                    System.out.println("\n");
-                     */
-                }
-            }
-        });
-
-        recordStudentRequirements.start();
-        recordCoursePreferences.start();
-        recordSlotPreferences.start();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> categoryReqMapping = null;
+        Map<String,List<String>> slotCoursePrefMap=null;
+        List<String> selectedSlotPreferences=null;
         try {
-            recordStudentRequirements.join();
-            recordCoursePreferences.join();
-            recordSlotPreferences.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            categoryReqMapping = objectMapper.readValue(studentRequirements, new TypeReference<>(){});
+            slotCoursePrefMap=objectMapper.readValue(coursePreferences,new TypeReference<>(){});
+            selectedSlotPreferences=objectMapper.readValue(slotPreferences,new TypeReference<>(){});
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+            redirectAttributes.addFlashAttribute("jsonParsingError",new ResponseDto(ResponseStatus.BAD_REQUEST, ResponseMessage.JSON_PARSING_ERROR));
+            return "redirect:" + StudentEndpoint.HOME_PAGE;
         }
-        return "redirect:"+ StudentEndpoint.PREFERENCE_SUMMARY;
+
+        // record Student Requirements.
+        Map<String, String> finalCategoryReqMapping = categoryReqMapping;
+        CompletableFuture<Void> recordingStudentReqs = CompletableFuture.runAsync(() -> {
+            List<StudentReq> studentReqs = new ArrayList<>();
+            for (Map.Entry<String, String> entry : finalCategoryReqMapping.entrySet()) {
+                studentReqs.add(new StudentReq(studentId, entry.getKey(), Integer.parseInt(entry.getValue())));
+            }
+            studentReqService.insertAll(studentReqs);
+
+            /*// debug
+            for (StudentReq studentReq : studentReqs)
+                System.out.println(studentReq.getCategory() + ": " + studentReq.getCourseCnt());
+            System.out.println("\n");*/
+        });
+
+        // record Course Preferences.
+        Map<String, List<String>> finalSlotCoursePrefMap = slotCoursePrefMap;
+        CompletableFuture<Void> recordingCoursePrefs = CompletableFuture.runAsync(() -> {
+            List<CoursePref> coursePrefs = new ArrayList<>();
+            for(Map.Entry<String,List<String>> entry: finalSlotCoursePrefMap.entrySet()){
+                String slot=entry.getKey();
+                List<String> courseList=entry.getValue();
+                for(int pref=0;pref<courseList.size();pref++) coursePrefs.add(new CoursePref(studentId, slot, pref + 1, courseList.get(pref)));
+            }
+            coursePrefService.insertAll(coursePrefs);
+
+            /*// debug
+            for(CoursePref coursePref:coursePrefs) System.out.println(coursePref.getSlot()+": "+coursePref.getPref()+": "+coursePref.getCid());*/
+        });
+
+        // record Slot Preferences
+        List<String> finalSelectedSlotPreferences = selectedSlotPreferences;
+        CompletableFuture<Void> recordingSlotPref = CompletableFuture.runAsync(() -> {
+            List<SlotPref> slotPrefs = new ArrayList<>();
+            for(int pref = 0; pref< finalSelectedSlotPreferences.size(); pref++) slotPrefs.add(new SlotPref(studentId, pref + 1, finalSelectedSlotPreferences.get(pref)));
+            slotPrefService.insertAll(slotPrefs);
+
+            /*// debug
+            for(SlotPref slotPref: slotPrefs) System.out.println(slotPref.getPref()+": "+slotPref.getSlot());
+            System.out.println("\n");*/
+        });
+
+        try {
+            CompletableFuture.allOf(recordingStudentReqs, recordingCoursePrefs, recordingSlotPref).join();
+        } catch (CompletionException completionException) {
+            log.error("e: ", completionException);
+            redirectAttributes.addFlashAttribute("internalServerError", new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR, ResponseMessage.INTERNAL_SERVER_ERROR));
+            return "redirect:" + StudentEndpoint.HOME_PAGE;
+        }
+        return "redirect:" + StudentEndpoint.PREFERENCE_SUMMARY;
     }
 }

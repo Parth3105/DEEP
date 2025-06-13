@@ -8,6 +8,7 @@ public interface SystemStatusService {
     void updateOnExtendingRegistrationPeriod(SystemStatusDto systemStatusDto);
     void updateOnClosingRegistration();
     void autoCloseRegistration();
+    void updateOnDeclaringResults(SystemStatusDto systemStatusDto);
     SystemStatusDto fetchAllStatus();
     String fetchRegistrationStatus();
     String fetchResultStatus();

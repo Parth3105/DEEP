@@ -46,7 +46,7 @@
               Registration Closed
             </button>
 
-            <form id="declareResultForm" method="POST" action="/admin/declare-results" th:csrf="true" style="display: none;"></form>
+            <form id="declareResultForm" method="POST" th:action="@{/admin/declare-results}" th:csrf="true" style="display: none;"></form>
             <!-- Case 1: result_status == 'Pending'-->
             <button th:if="${resultStatus == 'pending'}"
                     onclick="handleDeclareResult()"
@@ -131,8 +131,8 @@
           <!-- Close Date Display (Visible After Submit) -->
           <div th:if="${registrationCloseDate != null}" class="flex flex-col space-y-4 justify-center items-center text-sm font-semibold text-[#1E3C72]">
             <div class="flex flex-row space-y-2 space-x-2 sm:flex-col sm:space-y-2 sm:space-x-0 lg:flex-row lg:space-y-2 lg:space-x-2">
-              <span th:if="${registrationStatus != 'close'}">Registration closes on: </span>
-              <span th:text="${registrationStatus == 'close'} ? 'Registration closed' : registrationCloseDate"></span>
+              <span th:if="${registrationStatus == 'open'}">Registration closes on: </span>
+              <span th:text="${registrationStatus != 'open'} ? 'Registration closed' : ${registrationCloseDate}"></span>
             </div>
 
             <!-- Extend Button -->

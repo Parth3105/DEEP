@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @AllArgsConstructor
@@ -26,8 +27,9 @@ public class OtpVerificationServiceImpl implements OtpVerificationService {
     public void generateOtpAndSendMail(String username, String email) {
         String otp=generateOtp();
         while(otpVerificationRepo.existsByOtp(otp)) otp=generateOtp();
-        otpVerificationRepo.save(new OtpVerification(username,otp, LocalDateTime.now().plusMinutes(Deadline.OTP_EXPIRATION_MINUTES)));
-        emailService.sendOtp(email,otp);
+        String finalOtp = otp;
+        CompletableFuture.runAsync(() -> otpVerificationRepo.save(new OtpVerification(username, finalOtp, LocalDateTime.now().plusMinutes(Deadline.OTP_EXPIRATION_MINUTES))));
+        CompletableFuture.runAsync(() -> emailService.sendOtp(username,email,finalOtp));
     }
 
     private String generateOtp(){

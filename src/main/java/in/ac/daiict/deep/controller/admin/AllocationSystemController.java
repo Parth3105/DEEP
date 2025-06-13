@@ -4,7 +4,6 @@ import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
 import in.ac.daiict.deep.constant.response.ResponseStatus;
 import in.ac.daiict.deep.constant.status.RegistrationStatusEnum;
 import in.ac.daiict.deep.constant.template.AdminTemplate;
-import in.ac.daiict.deep.dto.AllocationStatusDto;
 import in.ac.daiict.deep.entity.AllocationStatus;
 import in.ac.daiict.deep.service.AllocationStatusService;
 import in.ac.daiict.deep.service.StudentService;
@@ -20,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Controller
 @AllArgsConstructor
@@ -32,20 +31,23 @@ public class AllocationSystemController {
 
     @GetMapping(AdminEndpoint.RUN_ALLOCATION)
     public String renderRunAllocationPage(Model model){
-        model.addAttribute("registrationStatus",systemStatusService.fetchRegistrationStatus());
-        List<AllocationStatusDto> allocationStatusDtoList=allocationStatusService.fetchAll();
-        model.addAttribute("allocationStatus",allocationStatusDtoList);
+        CompletableFuture<Void> statusFetchFuture=CompletableFuture.supplyAsync(() -> systemStatusService.fetchRegistrationStatus())
+                .thenAccept(registrationStatus -> model.addAttribute("registrationStatus",registrationStatus));
+        CompletableFuture<Void> allStatusFetchFuture=CompletableFuture.supplyAsync(() -> allocationStatusService.fetchAll())
+                .thenAccept(allocationStatusDtoList -> model.addAttribute("allocationStatus",allocationStatusDtoList));
+        CompletableFuture<Void> resultStatusFetchFuture=CompletableFuture.supplyAsync(() -> systemStatusService.fetchResultStatus())
+                        .thenAccept(resultStatus -> model.addAttribute("resultStatus",resultStatus));
+
+        CompletableFuture.allOf(statusFetchFuture,allStatusFetchFuture,resultStatusFetchFuture).join();
         return AdminTemplate.RUN_ALLOCATION_PAGE;
     }
 
     @PostMapping(AdminEndpoint.EXECUTE_ALLOCATION)
     public String initiateAllocation(@PathVariable("semester") int semester, @RequestParam("registrationStatus") String registrationStatus, RedirectAttributes redirectAttributes){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if(registrationStatus.equals(RegistrationStatusEnum.open.toString())) systemStatusService.updateOnClosingRegistration();
-            }
-        }).start();
+        CompletableFuture.runAsync(() -> {
+            if (registrationStatus.equals(RegistrationStatusEnum.open.toString()))
+                systemStatusService.updateOnClosingRegistration();
+        });
 
         long[] unmetReqCnt=new long[1];
         ResponseDto allocationResponse=allocationSystem.initiateAllocation(semester,unmetReqCnt);

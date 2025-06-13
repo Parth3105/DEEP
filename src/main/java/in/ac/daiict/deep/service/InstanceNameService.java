@@ -6,4 +6,5 @@ public interface InstanceNameService {
     boolean checkIfNewInstanceExists(String newInstanceName);
     boolean insertNewInstance(String newInstanceName);
     boolean migrateInstances();
+    void deleteInstance(String instanceName);
 }

@@ -6,6 +6,7 @@ public class AdminEndpoint {
     public static final String OPEN_REGISTRATION=ADMIN_BASE+"/open-registration";
     public static final String EXTEND_REGISTRATION_PERIOD=ADMIN_BASE+"/extend-period";
     public static final String CLOSE_REGISTRATION=ADMIN_BASE+"/close-registration";
+    public static final String DECLARE_RESULTS=ADMIN_BASE+"/declare-results";
     public static final String CREATE_ALLOCATION_INSTANCE=ADMIN_BASE+"/create-instance";
     public static final String UPDATE_INSTANCE=ADMIN_BASE+"/update-instance";
     public static final String UPLOAD_FILE=ADMIN_BASE+"/upload/{type}";

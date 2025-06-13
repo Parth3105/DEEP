@@ -26,6 +26,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 @AllArgsConstructor
@@ -102,14 +104,27 @@ public class PreferenceAndResultController {
         }
 
         // Fetch the student requirements of the student.
-        List<StudentReqDto> studentReqDtoList = studentReqService.fetchStudentRequirements(studentId);
+        CompletableFuture<List<StudentReqDto>> fetchingStudentReq = CompletableFuture.supplyAsync(() -> studentReqService.fetchStudentRequirements(studentId));
 
         // Fetch the course preferences slot-wise.
-        List<CoursePrefDto> coursePrefDtoList = coursePrefService.fetchStudentCoursePref(studentId);
+        CompletableFuture<List<CoursePrefDto>> fetchingCoursePref = CompletableFuture.supplyAsync(() -> coursePrefService.fetchStudentCoursePref(studentId));
 
         // Fetch the slot preferences.
-        List<SlotPrefDto> slotPrefDtoList = slotPrefService.fetchStudentSlotPref(studentId);
+        CompletableFuture<List<SlotPrefDto>> fetchingSlotPref = CompletableFuture.supplyAsync(() -> slotPrefService.fetchStudentSlotPref(studentId));
 
+        CompletableFuture.allOf(fetchingStudentReq, fetchingCoursePref, fetchingSlotPref);
+        List<StudentReqDto> studentReqDtoList= null;
+        List<CoursePrefDto> coursePrefDtoList=null;
+        List<SlotPrefDto> slotPrefDtoList=null;
+        try {
+            studentReqDtoList = fetchingStudentReq.get();
+            coursePrefDtoList= fetchingCoursePref.get();
+            slotPrefDtoList= fetchingSlotPref.get();
+        } catch (InterruptedException | ExecutionException e) {
+            redirectAttributes.addFlashAttribute("internalServerError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+            if (requester == 'S') return "redirect:" + StudentEndpoint.HOME_PAGE;
+            return "redirect:" + AdminEndpoint.STUDENT_PREFERENCE;
+        }
         if (studentReqDtoList == null || coursePrefDtoList == null || slotPrefDtoList == null) {
             // not found preferences.
             if (requester == 'S')
@@ -139,11 +154,32 @@ public class PreferenceAndResultController {
             else
                 redirectAttributes.addFlashAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.STUDENT_NOT_FOUND));
             if (requester == 'S') return "redirect:" + StudentEndpoint.HOME_PAGE;
-            return "redirect:" + AdminEndpoint.ALLOCATION_RESULTS;
+            else return "redirect:" + AdminEndpoint.ALLOCATION_RESULTS;
         }
 
-        List<AllocationResultDto> allocationResultDtoList = allocationResultService.fetchAllocationResult(studentId, studentDto.getProgram());
-        if (allocationResultDtoList == null || (requester=='S' && (systemStatusService.fetchResultStatus()==null || systemStatusService.fetchResultStatus().equals(ResultStatusEnum.pending.toString())))) {
+        CompletableFuture<List<AllocationResultDto>> fetchingAllocationResult =CompletableFuture.supplyAsync(() -> allocationResultService.fetchAllocationResult(studentId, studentDto.getProgram()));
+        CompletableFuture<String> fetchingResultStatus =CompletableFuture.supplyAsync(() -> systemStatusService.fetchResultStatus());
+
+        CompletableFuture.allOf(fetchingAllocationResult, fetchingResultStatus);
+        List<AllocationResultDto> allocationResultDtoList = null;
+        String resultStatus=null;
+        try {
+            allocationResultDtoList = fetchingAllocationResult.get();
+        } catch (InterruptedException | ExecutionException e) {
+            redirectAttributes.addFlashAttribute("internalServerError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+            if (requester == 'S') return "redirect:" + StudentEndpoint.HOME_PAGE;
+            return "redirect:" + AdminEndpoint.STUDENT_PREFERENCE;
+        }
+
+        try {
+            resultStatus= fetchingResultStatus.get();
+        } catch (InterruptedException | ExecutionException e) {
+            if(requester=='S'){
+                redirectAttributes.addFlashAttribute("internalServerError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+                return "redirect:" + StudentEndpoint.HOME_PAGE;
+            }
+        }
+        if (allocationResultDtoList == null || (requester=='S' && (resultStatus==null || resultStatus.equals(ResultStatusEnum.pending.toString())))) {
             // not found any results.
             redirectAttributes.addFlashAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_FOUND));
             if(requester=='S') return "redirect:" + StudentEndpoint.HOME_PAGE;

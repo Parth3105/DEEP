@@ -1,6 +1,7 @@
 package in.ac.daiict.deep.service.impl;
 
 import in.ac.daiict.deep.constant.status.RegistrationStatusEnum;
+import in.ac.daiict.deep.constant.status.UpdateInstanceStatusEnum;
 import in.ac.daiict.deep.dto.SystemStatusDto;
 import in.ac.daiict.deep.entity.SystemStatus;
 import in.ac.daiict.deep.repository.SystemStatusRepo;
@@ -13,6 +14,7 @@ import in.ac.daiict.deep.util.status.UpdateInstanceStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,12 +27,19 @@ public class SystemStatusServiceImpl implements SystemStatusService {
     @Override
     public void updateOnOpeningRegistration(SystemStatusDto systemStatusDto) {
         List<SystemStatus> systemStatusList=new ArrayList<>();
-        systemStatusList.add(new SystemStatus(RegistrationStatus.getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
         systemStatusList.add(new SystemStatus(RegistrationCloseDate.getStatusName(),systemStatusDto.getRegistrationCloseDate().getStringCloseDate()));
-        systemStatusList.add(new SystemStatus(UpdateInstanceStatus.getStatusName(),systemStatusDto.getUpdateInstanceStatus().getStatusValue()));
-        registrationTaskManager.updateCloseRegistrationDate(systemStatusDto.getRegistrationCloseDate().getCloseDate());
-        registrationTaskManager.startRegistration();
+        systemStatusList.add(new SystemStatus(UpdateInstanceStatus.getStatusName(), UpdateInstanceStatusEnum.never.toString()));
+        boolean isOpen=false;
+        if(LocalDate.now().isAfter(systemStatusDto.getRegistrationCloseDate().getCloseDate())) systemStatusList.add(new SystemStatus(RegistrationStatus.getStatusName(),RegistrationStatusEnum.close.toString()));
+        else{
+            isOpen=true;
+            systemStatusList.add(new SystemStatus(RegistrationStatus.getStatusName(),RegistrationStatusEnum.open.toString()));
+        }
         systemStatusRepo.saveAll(systemStatusList);
+        if(isOpen) {
+            registrationTaskManager.updateCloseRegistrationDate(systemStatusDto.getRegistrationCloseDate().getCloseDate());
+            registrationTaskManager.startRegistration();
+        }
     }
 
     @Override
@@ -38,7 +47,8 @@ public class SystemStatusServiceImpl implements SystemStatusService {
         SystemStatusDto systemStatusDtoCheck=new SystemStatusDto(RegistrationStatusEnum.open);
         SystemStatus systemStatus=systemStatusRepo.findById(RegistrationStatus.getStatusName()).orElse(null);
         if(systemStatus==null || !systemStatus.getStatusValue().equals(systemStatusDtoCheck.getRegistrationStatus().getStatusValue())) return;
-        registrationTaskManager.updateCloseRegistrationDate(systemStatusDto.getRegistrationCloseDate().getCloseDate());
+        if(LocalDate.now().isAfter(systemStatusDto.getRegistrationCloseDate().getCloseDate())) registrationTaskManager.closeRegistration();
+        else registrationTaskManager.updateCloseRegistrationDate(systemStatusDto.getRegistrationCloseDate().getCloseDate());
         systemStatusRepo.save(new SystemStatus(RegistrationCloseDate.getStatusName(),systemStatusDto.getRegistrationCloseDate().getStringCloseDate()));
     }
 
@@ -54,6 +64,14 @@ public class SystemStatusServiceImpl implements SystemStatusService {
     }
 
     @Override
+    public void updateOnDeclaringResults(SystemStatusDto systemStatusDto) {
+        List<SystemStatus> systemStatusList=new ArrayList<>();
+        systemStatusList.add(new SystemStatus(RegistrationStatus.getStatusName(),systemStatusDto.getRegistrationStatus().getStatusValue()));
+        systemStatusList.add(new SystemStatus(ResultStatus.getStatusName(),systemStatusDto.getResultStatus().getStatusValue()));
+        systemStatusRepo.saveAll(systemStatusList);
+    }
+
+    @Override
     public SystemStatusDto fetchAllStatus() {
         List<SystemStatus> systemStatusList = systemStatusRepo.findAll();
         SystemStatusDto systemStatusDto=new SystemStatusDto();
@@ -63,7 +81,6 @@ public class SystemStatusServiceImpl implements SystemStatusService {
             else if(systemStatus.getStatusName().equals(ResultStatus.getStatusName())) systemStatusDto.setResultStatus(systemStatus.getStatusValue());
             else if(systemStatus.getStatusName().equals(UpdateInstanceStatus.getStatusName())) systemStatusDto.setUpdateInstanceStatus(systemStatus.getStatusValue());
         }
-
         return systemStatusDto;
     }
 

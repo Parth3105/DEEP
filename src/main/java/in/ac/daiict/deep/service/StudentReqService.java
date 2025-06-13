@@ -10,4 +10,5 @@ public interface StudentReqService {
     void insertAll(List<StudentReq> studentReqList);
     List<StudentReqDto> fetchStudentRequirements(String sid);
     long submittedPrefCntBySemester(int semester);
+    boolean isExist(String sid);
 }

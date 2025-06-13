@@ -3,7 +3,6 @@ package in.ac.daiict.deep.controller.admin;
 import in.ac.daiict.deep.constant.endpoints.AdminEndpoint;
 import in.ac.daiict.deep.constant.template.AdminTemplate;
 import in.ac.daiict.deep.dto.AdminDashboardReqDto;
-import in.ac.daiict.deep.dto.SystemStatusDto;
 import in.ac.daiict.deep.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Controller
 @AllArgsConstructor
@@ -23,16 +24,26 @@ public class NavigationController {
 
     @GetMapping(AdminEndpoint.DASHBOARD)
     public String renderDashboardPage(Model model){
-        SystemStatusDto systemStatusDto=systemStatusService.fetchAllStatus();
-        if(systemStatusDto.getRegistrationStatus()!=null) model.addAttribute("registrationStatus",systemStatusDto.getRegistrationStatus().getStatusValue());
-        if(systemStatusDto.getUpdateInstanceStatus()!=null) model.addAttribute("updateInstanceStatus",systemStatusDto.getUpdateInstanceStatus().getStatusValue());
-        if(systemStatusDto.getResultStatus()!=null) model.addAttribute("resultStatus",systemStatusDto.getResultStatus().getStatusValue());
-        if(systemStatusDto.getRegistrationCloseDate()!=null) model.addAttribute("registrationCloseDate",systemStatusDto.getRegistrationCloseDate().getCloseDate());
+        CompletableFuture<Void> fetchAllStatus =CompletableFuture.supplyAsync(() -> systemStatusService.fetchAllStatus())
+                .thenAccept(systemStatusDto -> {
+                    if(systemStatusDto.getRegistrationStatus()!=null) model.addAttribute("registrationStatus",systemStatusDto.getRegistrationStatus().getStatusValue());
+                    if(systemStatusDto.getUpdateInstanceStatus()!=null) model.addAttribute("updateInstanceStatus",systemStatusDto.getUpdateInstanceStatus().getStatusValue());
+                    if(systemStatusDto.getResultStatus()!=null) model.addAttribute("resultStatus",systemStatusDto.getResultStatus().getStatusValue());
+                    if(systemStatusDto.getRegistrationCloseDate()!=null) model.addAttribute("registrationCloseDate",systemStatusDto.getRegistrationCloseDate().getCloseDate());
+                });
 
-        List<AdminDashboardReqDto> adminDashboardReqDtoList=new ArrayList<>();
-        for(int j=5;j<=8;j++){
-            adminDashboardReqDtoList.add(new AdminDashboardReqDto(j,studentService.countBySemester(j),studentReqService.submittedPrefCntBySemester(j),allocationStatusService.checkIfExists(j)));
+        List<CompletableFuture<AdminDashboardReqDto>> collectDashboardReq=new ArrayList<>();
+        for(int sem=5;sem<=8;sem++){
+            int finalSem = sem;
+            collectDashboardReq.add(CompletableFuture.supplyAsync(() -> new AdminDashboardReqDto(finalSem,studentService.countBySemester(finalSem),studentReqService.submittedPrefCntBySemester(finalSem),allocationStatusService.checkIfExists(finalSem))));
         }
+        // Join all futures before proceeding
+        CompletableFuture<Void> fetchDashboardReqs = CompletableFuture.allOf(
+                collectDashboardReq.toArray(new CompletableFuture[0])
+        );
+
+        CompletableFuture.allOf(fetchAllStatus, fetchDashboardReqs).join();
+        List<AdminDashboardReqDto> adminDashboardReqDtoList=collectDashboardReq.stream().map(CompletableFuture::join).collect(Collectors.toList());
 
         model.addAttribute("dashboardRequirement",adminDashboardReqDtoList);
         return AdminTemplate.DASHBOARD_PAGE;
