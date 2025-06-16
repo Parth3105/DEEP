@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DEEP - Update Instance</title>
-    <link rel="icon" href="/admin/images/DEEP Logo.png" type="image/png">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
+    <link th:href="@{/css/output.css}" rel="stylesheet">
 </head>
 
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
@@ -30,7 +30,7 @@
         <!-- Submission Status -->
         <section class="bg-[#B8D7FF] rounded-2xl px-8 py-4 mb-4" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
             <div class="flex items-center gap-3 mb-6 lg:mb-8">
-                <img src="/admin/images/external-link.png" alt="Link Img" class="w-5 h-5 lg:w-5 lg:h-5">
+                <img th:src="@{/admin/images/external-link.png}" alt="Link Img" class="w-5 h-5 lg:w-5 lg:h-5">
                 <h2 class="text-xl lg:text-2xl font-bold text-[#1E3C72]">Submission Status</h2>
             </div>
 
@@ -39,7 +39,7 @@
                 <!-- Semester Status -->
                 <div th:each="entry : ${uploadStatus.entrySet()}" class="flex flex-col items-center text-center space-y-3 lg:mb-0">
                     <div th:classappend="${entry.value == 0} ? 'bg-[#D9D9D9]' : 'bg-[#3DE382]'" class="w-20 h-20 lg:w-25 lg:h-25 rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
-                        <img src="/admin/images/open-book.png" alt="Checkmark" class="w-10 h-10 lg:w-12 lg:h-12">
+                        <img th:src="@{/admin/images/open-book.png}" alt="Checkmark" class="w-10 h-10 lg:w-12 lg:h-12">
                     </div>
                     <div>
                         <div class="font-bold text-gray-800 text-lg lg:text-2xl" th:text="${entry.key}"></div>
@@ -56,7 +56,7 @@
             <div class="bg-[#B8D7FF] rounded-3xl grid grid-cols-1 md:grid-cols-2 place-items-center gap-6 md:gap-10 mb-4 p-8 md:px-[6rem] md:py-[3rem]" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
                 <!-- Student Data -->
                 <div class="border-2 w-11/12 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
-                    <img src="/admin/images/uploading.png" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">
+                    <img th:src="@{/admin/images/uploading.png}" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">
                     <h3 class="text-xl font-semibold text-gray-800 mb-6">Student Data</h3>
 
                     <!-- File Input -->
@@ -66,7 +66,7 @@
                                 class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                         >
                                 <span id="fileLabel-student-data">
-                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
+                                    <img th:src="@{/admin/images/file-xlsx.png}" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
                                 </span>
                         </label>
                         <input
@@ -85,7 +85,7 @@
 
                 <!-- Institute Requirements -->
                 <div class="border-2 w-11/12 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
-                    <img src="/admin/images/uploading.png" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">
+                    <img th:src="@{/admin/images/uploading.png}" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">
                     <h3 class="text-xl font-semibold text-gray-800 mb-6">Institute Requirements</h3>
 
                     <!-- File Input -->
@@ -95,7 +95,7 @@
                                 class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                         >
                                 <span id="fileLabel-institute-requirements">
-                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
+                                    <img th:src="@{/admin/images/file-xlsx.png}" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
                                 </span>
                         </label>
                         <input
@@ -113,7 +113,7 @@
 
                 <!-- Course Data -->
                 <div class="border-2 w-11/12 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
-                    <img src="/admin/images/uploading.png" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">
+                    <img th:src="@{/admin/images/uploading.png}" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">
                     <h3 class="text-xl font-semibold text-gray-800 mb-6">Course Data</h3>
 
                     <!-- File Input -->
@@ -123,7 +123,7 @@
                                 class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                         >
                                 <span id="fileLabel-course-data">
-                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
+                                    <img th:src="@{/admin/images/file-xlsx.png}" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
                                 </span>
                         </label>
                         <input
@@ -141,7 +141,7 @@
 
                 <!-- Course Offerings -->
                 <div class="border-2 w-11/12 border-dashed border-black rounded-2xl p-8 text-center bg-gray-50/50 hover:border-indigo-500 transition-all duration-300 group">
-                    <img src="/admin/images/uploading.png" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">
+                    <img th:src="@{/admin/images/uploading.png}" alt="Student Icon" class="w-10 h-10 mx-auto mb-6">
                     <h3 class="text-xl font-semibold text-gray-800 mb-6">Course Offerings</h3>
 
                     <!-- File Input -->
@@ -151,7 +151,7 @@
                                 class="block w-full bg-blue-100 border-2 border-dashed border-blue-300 text-blue-600 rounded-lg p-4 text-center text-sm cursor-pointer hover:bg-blue-200"
                         >
                                 <span id="fileLabel-course-offerings">
-                                    <img src="/admin/images/file-xlsx.png" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
+                                    <img th:src="@{/admin/images/file-xlsx.png}" alt="Upload Icon" class="inline-block w-6 h-6 mr-1"> Max upload size: 5MB
                                 </span>
                         </label>
                         <input
@@ -189,12 +189,12 @@
     const uploadError = [[${uploadError}]];
     const uploadWarning = [[${uploadWarning}]];
     const uploadSuccess = [[${uploadSuccess}]];
-    const internalServerError=[[${internalServerError}]];
+    const internalServerError = [[${internalServerError}]];
 </script>
 
-<script src="/common/js/general-utility.js"></script>
-<script src="/common/js/navbar.js"></script>
-<script src="/common/js/status-response.js"></script>
-<script src="/admin/js/update-instance.js"></script>
+<script th:src="@{/common/js/general-utility.js}"></script>
+<script th:src="@{/common/js/navbar.js}"></script>
+<script th:src="@{/common/js/status-response.js}"></script>
+<script th:src="@{/admin/js/update-instance.js}"></script>
 </body>
 </html>

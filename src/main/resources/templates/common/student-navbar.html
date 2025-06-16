@@ -16,7 +16,7 @@
   <div class="flex justify-between items-center">
     <!-- Logo -->
     <div class="flex items-center gap-3">
-      <img src="/admin/images/DEEP Logo.png" alt="DEEP Logo" class="w-8 h-8 md:w-12 md:h-12">
+      <img th:src="@{/admin/images/DEEP Logo.png}" alt="DEEP Logo" class="w-8 h-8 md:w-12 md:h-12">
       <div>
         <h1 class="text-xl lg:text-2xl font-bold text-gray-800 mb-[-3px]">DEEP</h1>
         <p class="text-[0.7rem] text-[#021C9F]">DAIICT Elective Enrollment Portal</p>
@@ -41,7 +41,7 @@
         <!-- CSRF token will be automatically added by Spring Security if using Thymeleaf -->
         <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <button type="submit"
-                class="text-xs sm:text-base md:text-sm bg-[#3F0F83] text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition duration-300 transform hover:scale-105 hover:shadow-lg">
+                class="text-xs sm:text-base md:text-sm bg-[#3F0F83] text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition duration-300 transform hover:scale-105 hover:shadow-lg cursor-pointer">
           Logout
         </button>
       </form>
@@ -59,7 +59,7 @@
       <!-- CSRF token will be automatically added by Spring Security if using Thymeleaf -->
       <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
       <button type="submit"
-              class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">
+              class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200 cursor-pointer">
         Logout
       </button>
     </form>
@@ -71,7 +71,7 @@
   <div class="flex justify-between items-center">
     <!-- Logo -->
     <div class="flex items-center gap-3">
-      <img src="/admin/images/DEEP Logo.png" alt="DEEP Logo" class="w-8 h-8 md:w-12 md:h-12">
+      <img th:src="@{/admin/images/DEEP Logo.png}" alt="DEEP Logo" class="w-8 h-8 md:w-12 md:h-12">
       <div>
         <h1 class="text-xl lg:text-2xl font-bold text-gray-800 mb-[-3px]">DEEP</h1>
         <p class="text-[0.7rem] text-[#021C9F]">DAIICT Elective Enrollment Portal</p>
@@ -87,6 +87,7 @@
 
     <!-- Desktop Nav -->
     <nav class="hidden md:flex items-center gap-2 md:gap-4 lg:gap-8">
+      <a href="/student/home-page" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Home</a>
       <a href="/student/contact" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Contact</a>
       <a href="/student/help" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Help | FAQs</a>
     </nav>
@@ -94,6 +95,7 @@
 
   <!-- Mobile Nav (Dropdown) -->
   <div id="menu" class="md:hidden hidden absolute right-8 top-12 mt-2 bg-white rounded-lg shadow-lg p-4 w-56 z-50 animate-fade-in">
+    <a href="/student/home-page" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Home</a>
     <a href="/student/contact" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Contact</a>
     <a href="/student/help" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Help | FAQs</a>
   </div>

@@ -34,7 +34,7 @@ import java.util.concurrent.CompletionException;
 @Slf4j
 @Controller
 @AllArgsConstructor
-public class    EnrollmentController {
+public class EnrollmentController {
     private StudentService studentService;
     private CourseService courseService;
     private InstituteReqService instituteReqService;
@@ -44,12 +44,13 @@ public class    EnrollmentController {
     private SystemStatusService systemStatusService;
 
     @GetMapping(StudentEndpoint.ENROLL)
-    public String renderEnrollmentForm(String studentId, Model model, RedirectAttributes redirectAttributes) {
-        if (!systemStatusService.fetchRegistrationStatus().equals(RegistrationStatusEnum.open.toString()))
-            return "redirect:" + StudentEndpoint.HOME_PAGE;
-        else if (studentReqService.isExist(studentId)) return "redirect:" + StudentEndpoint.PREFERENCE_SUMMARY;
-
+    public String renderEnrollmentForm(Model model, RedirectAttributes redirectAttributes) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!systemStatusService.fetchRegistrationStatus().equals(RegistrationStatusEnum.open.toString())) {
+            return "redirect:" + StudentEndpoint.HOME_PAGE;
+        }
+        else if (studentService.fetchEnrollmentStatusForStudent(userDetails.getUsername())) return "redirect:" + StudentEndpoint.PREFERENCE_SUMMARY;
+
         // Send the semester & program of students and institute requirements.
         Student student = studentService.fetchStudentData(userDetails.getUsername());
         if (student == null) {
@@ -149,6 +150,7 @@ public class    EnrollmentController {
 
         try {
             CompletableFuture.allOf(recordingStudentReqs, recordingCoursePrefs, recordingSlotPref).join();
+            studentService.updateEnrollmentStatus(studentId);
         } catch (CompletionException ce) {
             log.error("Async task to record student enrollment-details failed with error: {}", ce.getCause().getMessage(), ce.getCause());
 

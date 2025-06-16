@@ -50,6 +50,10 @@ public class PreferenceAndResultController {
 
     @GetMapping(StudentEndpoint.ALLOCATION_RESULT)
     public String loadMyAllocationResult(Model model, RedirectAttributes redirectAttributes) {
+        if(!systemStatusService.fetchResultStatus().equals(ResultStatusEnum.declared.toString())){
+            redirectAttributes.addFlashAttribute("renderResponse", new ResponseDto(ResponseStatus.NOT_FOUND, ResponseMessage.RESULTS_NOT_DECLARED));
+            return "redirect:"+StudentEndpoint.HOME_PAGE;
+        }
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return fetchAllocationResult(userDetails.getUsername(), model, 'S', redirectAttributes);
     }

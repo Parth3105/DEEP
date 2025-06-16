@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DEEP - Login</title>
-    <link rel="icon" href="/admin/images/DEEP Logo.png" type="image/png">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
+    <link th:href="@{/css/output.css}" rel="stylesheet">
 </head>
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
 
@@ -17,16 +17,16 @@
     <div th:replace="~{common/student-navbar::student-authenticate-navbar}"></div>
 </div>
 
-<main class="flex items-center justify-center min-h-[calc(100vh-60px)] p-5">
-    <div class="w-full max-w-5xl bg-[#8EB4FF] rounded-4xl shadow-2xl overflow-hidden">
+<main class="flex items-center justify-center min-h-screen-minus-60 p-5">
+    <div class="w-full max-w-5xl bg-8EB4FF rounded-4xl shadow-2xl overflow-hidden">
         <div class="flex flex-col sm:flex-row min-h-[600px]">
             <!-- Left Side - Sign In Form -->
-            <div class="flex-5 form-gradient p-8 lg:p-12 flex flex-col justify-center">
+            <div class="flex-5 p-8 lg:p-12 flex flex-col justify-center">
                 <div class="max-w-sm mx-auto w-full">
                     <h2 class="text-3xl lg:text-4xl font-bold text-gray-800 mb-2">Sign in</h2>
                     <p class="text-gray-600 text-sm mb-8">Please login to continue to your account.</p>
 
-                    <form class="space-y-6" th:action="@{/login/authenticate}" method="post">
+                    <form class="space-y-6" th:action="@{/login/authenticate}" method="post" onsubmit="handleLoginSubmit(event)">
                         <!-- UserName Input -->
                         <div class="relative z-0 w-full mb-5 group">
                             <input
@@ -45,10 +45,10 @@
                             <label
                                     for="floating_username"
                                     class="absolute left-4 top-2 z-10 origin-[0] -translate-y-5 scale-75 transform text-sm font-semibold text-black transition-all duration-300
-                                  bg-[#8eb4ff] px-1
+                                  bg-8EB4FF px-1
                                   peer-placeholder-shown:top-4 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100
                                   peer-focus:top-1 peer-focus:-translate-y-[15px] peer-focus:scale-75 peer-focus:text-blue-600
-                                  dark:text-black dark:peer-focus:text-black dark:bg-[#8eb4ff]"
+                                  dark:text-black dark:peer-focus:text-black dark:bg-8EB4FF"
                             >
                                 Username
                             </label>
@@ -71,10 +71,10 @@
                             <label
                                     for="floating_password"
                                     class="absolute left-4 top-2 z-10 origin-[0] -translate-y-5 scale-75 transform text-sm font-semibold text-black transition-all duration-300
-                                  bg-[#8eb4ff] px-1
+                                  bg-8EB4FF px-1
                                   peer-placeholder-shown:top-4 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100
                                   peer-focus:top-1 peer-focus:-translate-y-[15px] peer-focus:scale-75 peer-focus:text-blue-600
-                                  dark:text-black dark:peer-focus:text-black dark:bg-[#8eb4ff]"
+                                  dark:text-black dark:peer-focus:text-black dark:bg-8EB4FF"
                             >
                                 Password
                             </label>
@@ -87,19 +87,26 @@
                             >
                                 <img
                                         id="passwordToggleIcon"
-                                        src="/student/images/close-eye.svg"
+                                        th:src="@{/student/images/close-eye.svg}"
                                         alt="Toggle visibility"
                                         class="w-5 h-5"
                                 />
                             </button>
                         </div>
 
-                        <!-- Sign In Button -->
+                        <!-- Sign In Button with inline Spinner -->
                         <button
+                                id="signInBtn"
                                 type="submit"
-                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg cursor-pointer"
+                                class="flex justify-center items-center gap-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg cursor-pointer"
                         >
-                            Sign In
+                            <svg id="spinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <span id="signInText">Sign In</span>
                         </button>
 
                         <!-- Forgot Password -->
@@ -114,8 +121,8 @@
             </div>
 
             <!-- Right Side - Security Illustration -->
-            <div class="hidden sm:flex relative flex-3 bg-[linear-gradient(to_bottom,_#3F6498_0%,_#212F89_50%,_#06007B_100%)] p-8 lg:p-12 flex items-center justify-center relative overflow-hidden">
-                <img src="/student/images/Login.svg " alt="login img" class="relative scale-125 sm:scale-150 transition-transform duration-500">
+            <div class="hidden sm:flex relative flex-3 bg-login-gradient p-8 lg:p-12 flex items-center justify-center relative overflow-hidden">
+                <img th:src="@{/student/images/Login.svg}" alt="login img" class="relative scale-125 sm:scale-150 transition-transform duration-500">
             </div>
         </div>
     </div>
@@ -128,8 +135,8 @@
     /*]]>*/
 </script>
 
-<script src="/common/js/general-utility.js"></script>
-<script src="/common/js/status-response.js"></script>
-<script src="/student/js/login-page.js"></script>
+<script th:src="@{/common/js/general-utility.js}"></script>
+<script th:src="@{/common/js/status-response.js}"></script>
+<script th:src="@{/student/js/login-page.js}"></script>
 </body>
 </html>

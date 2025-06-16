@@ -77,7 +77,7 @@ public class LoginController {
     }
 
     @PostMapping(CommonEndPoint.RESEND_OTP)
-    public String resendOtp(@PathVariable("random") String randomVariable, RedirectAttributes redirectAttributes, HttpSession session) {
+    public String resendOtp(RedirectAttributes redirectAttributes, HttpSession session) {
         String username, email;
         if (session.getAttribute("forgotPasswordSession") == null) return "redirect:" + CommonEndPoint.LOGIN;
         else {
