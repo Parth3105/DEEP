@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DEEP - Student Preferences</title>
-  <link rel="icon" href="/admin/images/DEEP Logo.png" type="image/png">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+  <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
+  <link th:href="@{/css/output.css}" rel="stylesheet">
+  <script th:src="@{https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js}"></script>
 </head>
 
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
@@ -31,7 +31,7 @@
       <div class="flex-1 bg-white rounded-2xl shadow-md p-6 mb-6" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
         <!-- Card Header -->
         <div class="flex items-center mb-6">
-          <img src="/admin/images/link-blue.svg" alt="Link Icon" class="w-5 h-5 mt-[-13px] mr-3">
+          <img th:src="@{/admin/images/link-blue.svg}" alt="Link Icon" class="w-5 h-5 mt-[-13px] mr-3">
           <div>
             <h2 class="text-xl font-bold text-[#1E3C72]">Export Preferences</h2>
             <p class="text-xs text-gray-500">Export Excel report of Preferences</p>
@@ -60,7 +60,7 @@
             <input type="hidden" name="name" value="preferences">
             <button type="submit" class="download-btn bg-gradient-to-r from-[#27AE60] to-[#2ECC71] max-w-44 sm:max-w-auto text-white px-3 py-2 rounded-lg font-medium flex justify-center items-center cursor-not-allowed opacity-50"
                     disabled>
-              <img src="/admin/images/excel-file.svg" alt="Excel Icon" class="w-5 h-5 mr-2">
+              <img th:src="@{/admin/images/excel-file.svg}" alt="Excel Icon" class="w-5 h-5 mr-2">
               Export to Excel
             </button>
           </form>
@@ -70,7 +70,7 @@
       <div class="flex-1 bg-white rounded-2xl shadow-md p-6 mb-6" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
         <!-- Card Header -->
         <div class="flex items-center mb-6">
-          <img src="/admin/images/filter-and-search.svg" alt="Filter Icon" class="w-5 h-5 mt-[-13px] mr-3">
+          <img th:src="@{/admin/images/filter-and-search.svg}" alt="Filter Icon" class="w-5 h-5 mt-[-13px] mr-3">
           <div>
             <h2 class="text-xl font-bold text-[#1E3C72]">Filter and Search</h2>
             <p class="text-xs text-gray-500">View Preference summary of Individual Student</p>
@@ -98,7 +98,7 @@
                     type="submit"
                     class="bg-[#1E3C72] text-white px-5 py-2 rounded-lg font-medium flex text-base items-center cursor-pointer"
             >
-              <img src="/admin/images/search.svg" alt="Search Icon" class="w-4 h-4 mr-2">
+              <img th:src="@{/admin/images/search.svg}" alt="Search Icon" class="w-4 h-4 mr-2">
               Search
             </button>
           </div>
@@ -187,10 +187,10 @@
   /*]]>*/
 </script>
 
-<script src="/common/js/general-utility.js"></script>
-<script src="/common/js/navbar.js"></script>
-<script src="/common/js/status-response.js"></script>
-<script src="/admin/js/student-preferences.js"></script>
+<script th:src="@{/common/js/general-utility.js}"></script>
+<script th:src="@{/common/js/navbar.js}"></script>
+<script th:src="@{/common/js/status-response.js}"></script>
+<script th:src="@{/admin/js/student-preferences.js}"></script>
 
 </body>
 </html>

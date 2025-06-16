@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DEEP - Forgot Password</title>
-  <link rel="icon" href="/admin/images/DEEP Logo.png" type="image/png">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
+  <link th:href="@{/css/output.css}" rel="stylesheet">
 </head>
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
 
@@ -18,10 +18,10 @@
 </div>
 
 <main class="flex items-center justify-center min-h-[calc(100vh-60px)] p-5">
-  <div class="w-full max-w-5xl bg-[#8EB4FF] rounded-4xl shadow-2xl overflow-hidden">
+  <div class="w-full max-w-5xl bg-8EB4FF rounded-4xl shadow-2xl overflow-hidden">
     <div class="flex flex-col sm:flex-row min-h-[600px]">
       <!-- Left Side - forgot Password Form -->
-      <div class="flex-5 form-gradient p-8 lg:p-12 flex flex-col justify-center">
+      <div class="flex-5 p-8 lg:p-12 flex flex-col justify-center">
         <div class="max-w-sm mx-auto w-full">
           <h2 class="text-center text-3xl lg:text-4xl font-bold text-gray-800 mb-2">OTP Verification</h2>
           <p class="text-center text-gray-600 text-xs mb-1">We have sent an OTP to your DAU E-mail.</p>
@@ -137,8 +137,8 @@
       </div>
 
       <!-- Right Side - Security Illustration -->
-      <div class="hidden sm:flex relative flex-3 bg-[linear-gradient(to_bottom,_#3F6498_0%,_#212F89_50%,_#06007B_100%)] p-8 lg:p-12 flex items-center justify-center relative overflow-hidden">
-        <img src="/student/images/verify-otp.svg " alt="otp img" class="relative scale-125 sm:scale-120 transition-transform duration-500">
+      <div class="hidden sm:flex relative flex-3 bg-login-gradient p-8 lg:p-12 flex items-center justify-center relative overflow-hidden">
+        <img th:src="@{/student/images/verify-otp.svg}" alt="otp img" class="relative scale-125 sm:scale-120 transition-transform duration-500">
       </div>
     </div>
   </div>
@@ -150,8 +150,8 @@
   /*]]>*/
 </script>
 
-<script src="/common/js/general-utility.js"></script>
-<script src="/common/js/status-response.js"></script>
-<script src="/student/js/verify-otp.js"></script>
+<script th:src="@{/common/js/general-utility.js}"></script>
+<script th:src="@{/common/js/status-response.js}"></script>
+<script th:src="@{/student/js/verify-otp.js}"></script>
 </body>
 </html>
