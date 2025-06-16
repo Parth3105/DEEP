@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DEEP - Allocation Result</title>
-  <link rel="icon" href="/admin/images/DEEP Logo.png" type="image/png">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
+  <link th:href="@{/css/output.css}" rel="stylesheet">
 </head>
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
 
@@ -108,8 +108,8 @@
   </div>
 </main>
 
-<script src="/common/js/general-utility.js"></script>
-<script src="/common/js/navbar.js"></script>
-<script src="/student/js/my-allocation-result.js"></script>
+<script th:src="@{/common/js/general-utility.js}"></script>
+<script th:src="@{/common/js/navbar.js}"></script>
+<script th:src="@{/student/js/my-allocation-result.js}"></script>
 </body>
 </html>

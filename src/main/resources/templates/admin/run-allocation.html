@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DEEP - Run Allocation</title>
-    <link rel="icon" href="/admin/images/DEEP Logo.png" type="image/png">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
+    <link th:href="@{/css/output.css}" rel="stylesheet">
+    <script th:src="@{https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js}"></script>
 </head>
 
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
@@ -35,7 +35,7 @@
                 <div class="flex-1 bg-white rounded-2xl shadow-md px-4 py-6 md:p-6" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
                     <!-- Card Header -->
                     <div class="flex items-center mb-6">
-                        <img src="/admin/images/allocate-courses.svg" alt="Allocate Courses Icon" class="w-7 h-7 mt-[-13px] mr-1">
+                        <img th:src="@{/admin/images/allocate-courses.svg}" alt="Allocate Courses Icon" class="w-7 h-7 mt-[-13px] mr-1">
                         <div>
                             <h2 class="text-xl font-bold text-[#1E3C72]">Allocate Courses</h2>
                             <p class="text-xs text-gray-500">Initiate the course allocation</p>
@@ -85,7 +85,7 @@
                                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                             </svg>
 
-                            <img src="/admin/images/execute-allocation.svg" alt="Execute Icon" class="w-7 h-7 mr-2" id="executeIcon">
+                            <img th:src="@{/admin/images/execute-allocation.svg}" alt="Execute Icon" class="w-7 h-7 mr-2" id="executeIcon">
                             Execute Allocation
                         </button>
                     </form>
@@ -124,7 +124,7 @@
                 <div class="flex-2 bg-white rounded-2xl shadow-md px-4 py-6 sm:px-6 sm:py-5" style="box-shadow: 0px 2px 27px -5px rgba(0,0,0,0.2);">
                     <!-- Card Header -->
                     <div class="flex items-center mb-6">
-                        <img src="/admin/images/allocation-summary.svg" alt="Allocation Summary Icon" class="w-6 h-6 mt-1 mr-1">
+                        <img th:src="@{/admin/images/allocation-summary.svg}" alt="Allocation Summary Icon" class="w-6 h-6 mt-1 mr-1">
                         <h2 class="text-xl font-bold text-[#1E3C72]">Allocation Summary</h2>
                     </div>
 
@@ -136,7 +136,7 @@
                                 <span class="text-xl font-bold text-black">Allocation Status</span>
                             </div>
                             <div id="allocation-status" class="text-white px-7 py-2 rounded-xl font-medium text-lg">
-                                <span id="allocation-status-text">--</span>
+                                <span id="allocation-status-text mb-2">Yet to Run</span>
                             </div>
                         </div>
 
@@ -145,7 +145,7 @@
                             <div class="mb-4">
                                 <span class="text-xl font-bold text-black">Students Successfully Allocated</span>
                             </div>
-                            <div id="allocated-count" class="text-5xl font-bold text-gray-800">0</div>
+                            <div id="allocated-count" class="text-5xl font-bold text-gray-800 mb-2">--</div>
                         </div>
 
                         <!-- Students Not Allocated -->
@@ -153,7 +153,7 @@
                             <div class="mb-4">
                                 <span class="text-xl font-bold text-black">Students Unsuccessfully Allocated</span>
                             </div>
-                            <div id="unallocated-count" class="text-5xl font-bold text-gray-800">0</div>
+                            <div id="unallocated-count" class="text-5xl font-bold text-gray-800 mb-2">--</div>
                         </div>
                     </div>
                 </div>
@@ -162,7 +162,7 @@
             <!-- Download Reports Button -->
             <div class="mb-6 flex justify-center sm:block">
                 <button onclick="HandleAdminRoute('download-reports')" class="bg-[#1E3C72] text-white px-4 py-3 rounded-lg font-medium flex text-md items-center cursor-pointer">
-                    <img src="/admin/images/link.svg" alt="Download Icon" class="w-6 h-6 mr-2">
+                    <img th:src="@{/admin/images/link.svg}" alt="Download Icon" class="w-6 h-6 mr-2">
                     Download Reports
                 </button>
             </div>
@@ -176,9 +176,9 @@
     const registrationStatus = [[${registrationStatus}]];
 </script>
 
-<script src="/common/js/general-utility.js"></script>
-<script src="/common/js/navbar.js"></script>
-<script src="/common/js/status-response.js"></script>
-<script src="/admin/js/run-allocation.js"></script>
+<script th:src="@{/common/js/general-utility.js}"></script>
+<script th:src="@{/common/js/navbar.js}"></script>
+<script th:src="@{/common/js/status-response.js}"></script>
+<script th:src="@{/admin/js/run-allocation.js}"></script>
 </body>
 </html>
