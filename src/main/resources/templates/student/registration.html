@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DEEP - Registration</title>
-  <link rel="icon" href="/admin/images/DEEP Logo.png" type="image/png">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
+  <link th:href="@{/css/output.css}" rel="stylesheet">
 </head>
 <body class="min-h-screen" style="background: linear-gradient(to bottom, #FFFFFF, #D4DFED);">
 
@@ -105,7 +105,7 @@
     <div class="flex justify-center mt-8">
       <button onclick="nextStep()" class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
         <span>Proceed to Next Page</span>
-        <img src="/student/images/right-arrow.svg" alt="Right Arrow" class="w-4 h-4">
+        <img th:src="@{/student/images/right-arrow.svg}" alt="Right Arrow" class="w-4 h-4">
       </button>
     </div>
   </div>
@@ -203,7 +203,7 @@
     <div class="flex justify-center items-center gap-6">
       <div class="flex justify-center mt-8">
         <button onclick="prevStep()" class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
-          <img src="/student/images/left-arrow.svg" alt="Left Arrow" class="w-5 h-5 md:w-4 md:h-4">
+          <img th:src="@{/student/images/left-arrow.svg}" alt="Left Arrow" class="w-5 h-5 md:w-4 md:h-4">
           <span class="text-sm md:text-md">Proceed to Previous Page</span>
         </button>
       </div>
@@ -211,7 +211,7 @@
       <div class="flex justify-center mt-8">
         <button onclick="nextStep()" class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
           <span class="text-sm md:text-md">Proceed to Next Page</span>
-          <img src="/student/images/right-arrow.svg" alt="Right Arrow" class="w-5 h-5 md:w-4 md:h-4">
+          <img th:src="@{/student/images/right-arrow.svg}" alt="Right Arrow" class="w-5 h-5 md:w-4 md:h-4">
         </button>
       </div>
     </div>
@@ -246,7 +246,7 @@
     <div class="flex gap-6">
       <div class="flex justify-center mt-2">
         <button onclick="prevStep()" class="bg-[#684EA4] text-white px-6 py-2 rounded-full font-semibold text-md flex items-center space-x-2 transition-colors duration-200 shadow-lg">
-          <img src="/student/images/left-arrow.svg" alt="Left Arrow" class="w-5 h-5 md:w-4 md:h-4">
+          <img th:src="@{/student/images/left-arrow.svg}" alt="Left Arrow" class="w-5 h-5 md:w-4 md:h-4">
           <span class="text-sm md:text-md">Proceed to Previous Page</span>
         </button>
       </div>
@@ -267,7 +267,7 @@
 
       <!-- Confirmation Modal -->
       <div id="confirmModal"
-           class="fixed inset-0 z-[100] hidden bg-black/40 backdrop-blur-sm flex items-center justify-center">
+           class="fixed inset-0 z-[100] hidden bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center">
         <div class="bg-white rounded-xl p-6 max-w-sm w-full shadow-2xl border-l-10 border-yellow-300">
           <h2 class="text-xl font-bold text-yellow-600 mb-4 flex items-center gap-2">
             ⚠️ Final Submission!
@@ -290,9 +290,9 @@
   </div>
 </main>
 
-<script src="/common/js/general-utility.js"></script>
-<script src="/common/js/navbar.js"></script>
-<script src="/common/js/status-response.js"></script>
-<script src="/student/js/registration.js"></script>
+<script th:src="@{/common/js/general-utility.js}"></script>
+<script th:src="@{/common/js/navbar.js}"></script>
+<script th:src="@{/common/js/status-response.js}"></script>
+<script th:src="@{/student/js/registration.js}"></script>
 </body>
 </html>
