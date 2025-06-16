@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="context-path" th:content="@{/}" />
     <title>DEEP - Update Instance</title>
     <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
     <link th:href="@{/css/output.css}" rel="stylesheet">
@@ -75,10 +76,12 @@
                                 name="student-data"
                                 accept=".xlsx"
                                 class="hidden"
-                                onchange="document.getElementById('fileLabel-student-data').innerHTML = this.files[0]?.name
-                                ?  this.files[0].name
-                                : '<img src=&quot;/admin/images/file-xlsx.png&quot; alt=&quot;Upload Icon&quot; class=&quot;inline-block w-6 h-6 mr-1&quot;> Max upload size: 5MB';"
-
+                                onchange="
+                                            const ctx = document.querySelector('meta[name=context-path]').getAttribute('content');
+                                            const fileName = this.files[0]?.name;
+                                            const label = document.getElementById('fileLabel-student-data');
+                                            label.innerHTML = fileName ? fileName : `<img src='${ctx}admin/images/file-xlsx.png' alt='Upload Icon' class='inline-block w-6 h-6 mr-1'> Max upload size: 5MB`;
+                                         "
                         />
                     </div>
                 </div>
@@ -104,9 +107,12 @@
                                 name="institute-requirements"
                                 accept=".xlsx"
                                 class="hidden"
-                                onchange="document.getElementById('fileLabel-institute-requirements').innerHTML = this.files[0]?.name
-                                ?  this.files[0].name
-                                : '<img src=&quot;/admin/images/file-xlsx.png&quot; alt=&quot;Upload Icon&quot; class=&quot;inline-block w-6 h-6 mr-1&quot;> Max upload size: 5MB';"
+                                onchange="
+                                            const ctx = document.querySelector('meta[name=context-path]').getAttribute('content');
+                                            const fileName = this.files[0]?.name;
+                                            const label = document.getElementById('fileLabel-institute-requirements');
+                                            label.innerHTML = fileName ? fileName : `<img src='${ctx}admin/images/file-xlsx.png' alt='Upload Icon' class='inline-block w-6 h-6 mr-1'> Max upload size: 5MB`;
+                                         "
                         />
                     </div>
                 </div>
@@ -132,9 +138,12 @@
                                 name="course-data"
                                 accept=".xlsx"
                                 class="hidden"
-                                onchange="document.getElementById('fileLabel-course-data').innerHTML = this.files[0]?.name
-                                ?  this.files[0].name
-                                : '<img src=&quot;/admin/images/file-xlsx.png&quot; alt=&quot;Upload Icon&quot; class=&quot;inline-block w-6 h-6 mr-1&quot;> Max upload size: 5MB';"
+                                onchange="
+                                            const ctx = document.querySelector('meta[name=context-path]').getAttribute('content');
+                                            const fileName = this.files[0]?.name;
+                                            const label = document.getElementById('fileLabel-course-data');
+                                            label.innerHTML = fileName ? fileName : `<img src='${ctx}admin/images/file-xlsx.png' alt='Upload Icon' class='inline-block w-6 h-6 mr-1'> Max upload size: 5MB`;
+                                         "
                         />
                     </div>
                 </div>
@@ -160,9 +169,12 @@
                                 name="course-offerings"
                                 accept=".xlsx"
                                 class="hidden"
-                                onchange="document.getElementById('fileLabel-course-offerings').innerHTML = this.files[0]?.name
-                                ?  this.files[0].name
-                                : '<img src=&quot;/admin/images/file-xlsx.png&quot; alt=&quot;Upload Icon&quot; class=&quot;inline-block w-6 h-6 mr-1&quot;> Max upload size: 5MB';"
+                                onchange="
+                                            const ctx = document.querySelector('meta[name=context-path]').getAttribute('content');
+                                            const fileName = this.files[0]?.name;
+                                            const label = document.getElementById('fileLabel-course-offerings');
+                                            label.innerHTML = fileName ? fileName : `<img src='${ctx}admin/images/file-xlsx.png' alt='Upload Icon' class='inline-block w-6 h-6 mr-1'> Max upload size: 5MB`;
+                                         "
                         />
                     </div>
                 </div>

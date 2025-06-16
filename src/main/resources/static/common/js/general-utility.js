@@ -44,9 +44,11 @@ const customColors = {
 };
 
 function HandleStudentRoute(url) {
-    window.location.href = `/student/${url}`;
+    const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
+    window.location.href = `${contextPath}student/${url}`;
 }
 
 function HandleAdminRoute(url) {
-    window.location.href = `/admin/${url}`;
+    const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
+    window.location.href = `${contextPath}admin/${url}`;
 }

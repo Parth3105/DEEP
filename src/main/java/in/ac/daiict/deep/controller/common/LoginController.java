@@ -77,7 +77,7 @@ public class LoginController {
     }
 
     @PostMapping(CommonEndPoint.RESEND_OTP)
-    public String resendOtp(@PathVariable("random") String randomVariable, RedirectAttributes redirectAttributes, HttpSession session) {
+    public String resendOtp(RedirectAttributes redirectAttributes, HttpSession session) {
         String username, email;
         if (session.getAttribute("forgotPasswordSession") == null) return "redirect:" + CommonEndPoint.LOGIN;
         else {
@@ -107,7 +107,10 @@ public class LoginController {
             }
         }
         ResponseDto response = otpVerificationService.verifyOtp(username, otp);
-        if (response.getStatus() != ResponseStatus.OK) return "redirect:"+CommonEndPoint.LOGIN;
+        if (response.getStatus() != ResponseStatus.OK) {
+            redirectAttributes.addFlashAttribute("otpVerificationResponse",response);
+            return "redirect:"+CommonEndPoint.VERIFY_OTP;
+        }
         session.setAttribute("resetSession", new SessionAttribute<>(username, Duration.ofMinutes(Deadline.RESET_SESSION_DURATION_MINUTES)));
         return CommonTemplate.RESET_PASSWORD_PAGE;
     }
