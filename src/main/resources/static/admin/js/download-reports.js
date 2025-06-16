@@ -51,9 +51,10 @@ function HandleDownloadButtonClick(downloadBtns, checkforSemester = true) {
             const form = this.closest('form');
             const name = form.querySelector('input[name="name"]').value;
             const semester = checkforSemester ? selectedSemester : '';
+            const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
             const downloadUrl = checkforSemester
-                ? `/admin/download-reports/${semester}/${name}`
-                : `/admin/download-reports/${name}`;
+                ? `${contextPath}admin/download-reports/${semester}/${name}`
+                : `${contextPath}admin/download-reports/${name}`;
 
             // Show loading state
             const originalText = this.innerHTML;

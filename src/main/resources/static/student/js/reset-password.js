@@ -13,19 +13,23 @@ function validatePasswords() {
 function togglePasswordVisibility() {
   const input = document.getElementById('floating_password');
   const icon = document.getElementById('passwordToggleIcon');
+  const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
+
 
   const isPassword = input.type === 'password';
   input.type = isPassword ? 'text' : 'password';
-  icon.src = isPassword ? '/student/images/view.svg' : '/student/images/close-eye.svg';
+  icon.src = isPassword ? `${contextPath}student/images/view.svg` : `${contextPath}student/images/close-eye.svg`;
   icon.alt = isPassword ? 'Hide password' : 'Show password';
 }
 
 function toggleConfirmPasswordVisibility() {
   const input = document.getElementById('floating_confirm_password');
   const icon = document.getElementById('confirmPasswordToggleIcon');
+  const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
+
 
   const isPassword = input.type === 'password';
   input.type = isPassword ? 'text' : 'password';
-  icon.src = isPassword ? '/student/images/view.svg' : '/student/images/close-eye.svg';
+  icon.src = isPassword ? `${contextPath}student/images/view.svg` : `${contextPath}student/images/close-eye.svg`;
   icon.alt = isPassword ? 'Hide password' : 'Show password';
 }

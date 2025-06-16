@@ -35,6 +35,8 @@ public class SecurityConfig {
                                 .requestMatchers(AdminEndpoint.ADMIN_BASE+"/**").hasRole(Roles.ADMIN)
                                 .requestMatchers(StudentEndpoint.STUDENT_BASE+"/**").hasRole(Roles.STUDENT)
                                 .anyRequest().authenticated())
+                .exceptionHandling((handle) ->
+                        handle.accessDeniedPage("/error"))
 
                 .formLogin((login) ->
                         login.loginPage(CommonEndPoint.LOGIN)

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="context-path" th:content="@{/}" />
     <title>DEEP - Login</title>
     <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
     <link th:href="@{/css/output.css}" rel="stylesheet">
@@ -112,7 +113,7 @@
                         <!-- Forgot Password -->
                         <div class="text-center">
                             <span class="text-gray-600">Forgot Password? </span>
-                            <a href="/forgot-password" class="text-blue-600 hover:text-blue-700 font-semibold underline transition-colors duration-300">
+                            <a th:href="@{/forgot-password}" class="text-blue-600 hover:text-blue-700 font-semibold underline transition-colors duration-300">
                                 Click Here
                             </a>
                         </div>

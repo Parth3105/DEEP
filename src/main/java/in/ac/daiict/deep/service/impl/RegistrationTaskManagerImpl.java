@@ -27,7 +27,6 @@ public class RegistrationTaskManagerImpl implements RegistrationTaskManager {
 
     @Override
     public void updateCloseRegistrationDate(LocalDate closingDate) {
-        System.out.println("Updating date to: "+closingDate);
         this.closingDate=closingDate;
     }
 
@@ -56,13 +55,11 @@ public class RegistrationTaskManagerImpl implements RegistrationTaskManager {
 
     @Override
     public void closeRegistration() {
-        System.out.println("Closing the registration");
         if(activeRegistrationTask!=null && !activeRegistrationTask.isCancelled()){
             activeRegistrationTask.cancel(false);
         }
         activeRegistrationTask=null;
         closingDate=null;
-        System.out.println("auto closing started...");
         systemStatusService.autoCloseRegistration();
     }
 }

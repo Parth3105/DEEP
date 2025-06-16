@@ -70,7 +70,8 @@ function handleOpenRegistration(event) {
 
   // Set the action with query param
   const form = event.target;
-  form.action = `/admin/open-registration?close-date=${encodeURIComponent(formattedDate)}`;
+  const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
+  form.action = `${contextPath}admin/open-registration?close-date=${encodeURIComponent(formattedDate)}`;
   form.submit();
 }
 
@@ -105,7 +106,8 @@ function handleExtend(event) {
     const formattedDate = `${year}-${month}-${day}`;
 
     const form = event.target;
-    form.action = `/admin/extend-period?close-date=${encodeURIComponent(formattedDate)}`;
+    const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
+    form.action = `${contextPath}admin/extend-period?close-date=${encodeURIComponent(formattedDate)}`;
     form.submit();
 }
 
