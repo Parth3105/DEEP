@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="context-path" th:content="@{/}" />
   <title>DEEP - Forgot Password</title>
   <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
   <link th:href="@{/css/output.css}" rel="stylesheet">
@@ -27,7 +28,7 @@
           <p class="text-center text-gray-600 text-xs mb-1">We have sent an OTP to your DAU E-mail.</p>
           <p class="text-center text-gray-600 text-xs mb-8">Check Your E-mail and Get Started!</p>
 
-          <form class="space-y-6" action="/verify-otp" method="post">
+          <form class="space-y-6" th:action="@{/verify-otp}" method="post">
             <!-- Hidden Username Input -->
             <input type="hidden" name="username" value="test_user" />
 

@@ -55,7 +55,8 @@ function HandleDownloadButtonClick(downloadBtns) {
             const form = this.closest('form');
             const name = form.querySelector('input[name="name"]').value;
             const semester = selectedSemester;
-            const downloadUrl = `/admin/student-preferences/download/${semester}`;
+            const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
+            const downloadUrl = `${contextPath}admin/student-preferences/download/${semester}`;
 
             // Show loading state
             const originalText = this.innerHTML;
@@ -120,8 +121,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function submitWithPath(event) {
     event.preventDefault();
     const sid = document.getElementById("studentId").value.trim();
+    const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
     if (sid) {
-        window.location.href = `/admin/student-preferences/${encodeURIComponent(sid)}`;
+        window.location.href = `${contextPath}admin/student-preferences/${encodeURIComponent(sid)}`;
     }
 }
 

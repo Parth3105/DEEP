@@ -97,11 +97,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const spinner = document.getElementById('spinner');
             const executeBtn = document.getElementById('executeBtn');
             const executeIcon = document.getElementById('executeIcon');
+            const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
 
             // Show toast flag
             sessionStorage.setItem(`showToastForSemester_${hiddenInput.value}`, "true");
 
-            this.setAttribute('action', `/admin/execute-allocation/${hiddenInput.value}`);
+            this.setAttribute('action', `${contextPath}admin/execute-allocation/${hiddenInput.value}`);
 
             // Show spinner and hide icon
             spinner.classList.remove('hidden');
@@ -132,12 +133,14 @@ function handleExecuteConfirmation() {
     const spinner = document.getElementById('spinner');
     const executeBtn = document.getElementById('executeBtn');
     const executeIcon = document.getElementById('executeIcon');
+    const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
+
 
     // Show toast flag
     sessionStorage.setItem(`showToastForSemester_${semester}`, "true");
 
     // Set action based on selected semester
-    form.setAttribute('action', `/admin/execute-allocation/${semester}`);
+    form.setAttribute('action', `${contextPath}admin/execute-allocation/${semester}`);
 
     // Show spinner and hide icon
     spinner.classList.remove('hidden');
