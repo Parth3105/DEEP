@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
         labelSpan.textContent = label;
 
         const colonSpan = document.createElement("span");
-        colonSpan.className = "mr-3";
+        colonSpan.className = "mr-3 ml-2";
         colonSpan.textContent = ":";
 
         leftDiv.appendChild(labelSpan);
@@ -72,14 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render each slot group
     sortedSlots.forEach(slot => {
         const slotGroup = grouped[slot];
-
+        const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
         const wrapper = document.createElement('div');
 
         wrapper.innerHTML = `
             <div class="mb-4">
                 <div class="bg-blue-200 rounded-t-xl px-6 py-2 text-base font-bold text-gray-800 flex justify-between items-center cursor-pointer toggle-header">
                     <span>Slot-${slot}</span>
-                    <img th:src="@{/student/images/close.svg}" alt="Toggle" class="w-4 h-4 rotate-icon">
+                    <img src="${contextPath}student/images/close.svg" alt="Toggle" class="w-4 h-4 rotate-icon">
                 </div>
                 <div class="course-list bg-blue-50 px-6 py-3 text-sm md:text-base space-y-1 rounded-b-xl">
                     ${slotGroup.map(cp => `

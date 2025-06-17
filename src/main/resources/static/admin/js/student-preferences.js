@@ -8,11 +8,14 @@ function HandleSemesterSelection(semesterBtns, downloadBtns, semesterInputs) {
         btn.addEventListener('click', function () {
             // Remove active state from all buttons
             semesterBtns.forEach(b => {
-                b.style.backgroundColor = customColors.COBALT_BLUE;
+                b.classList.remove('bg-2D9D5D');
+                b.classList.add('bg-1E3C72');
             });
 
-            // Set active state for clicked button
-            this.style.backgroundColor = customColors.DARK_GREEN;
+            // Add active state to clicked button
+            this.classList.remove('bg-1E3C72');
+            this.classList.add('bg-2D9D5D');
+
             selectedSemester = this.dataset.sem;
 
             // Update all hidden semester inputs
@@ -148,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
         labelSpan.textContent = label;
 
         const colonSpan = document.createElement("span");
-        colonSpan.className = "mr-3";
+        colonSpan.className = "mr-3 ml-2";
         colonSpan.textContent = ":";
 
         leftDiv.appendChild(labelSpan);
@@ -175,10 +178,12 @@ document.addEventListener('DOMContentLoaded', function() {
         slot.addEventListener('click', function() {
             const arrow = this.querySelector('img');
             const content = this.nextElementSibling;
+            const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
+
             if (content && content.classList.contains('course-list')) {
                 this.classList.contains('rounded-b-xl') ? this.classList.remove('rounded-b-xl') : this.classList.add('rounded-b-xl');
                 content.style.display = content.style.display === 'none' ? 'block' : 'none';
-                arrow.src = arrow.src.includes('close.svg') ? '/student/images/open.svg' : '/student/images/close.svg';
+                arrow.src = arrow.src.includes('close.svg') ? `${contextPath}student/images/open.svg` : `${contextPath}student/images/close.svg`;
             }
         });
     });
@@ -201,18 +206,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render each slot group
     sortedSlots.forEach(slot => {
         const slotGroup = grouped[slot];
-
+        const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
         const wrapper = document.createElement('div');
 
         wrapper.innerHTML = `
             <div class="mb-4">
                 <div class="bg-blue-200 rounded-t-xl px-6 py-2 text-base font-bold text-gray-800 flex justify-between items-center cursor-pointer toggle-header">
                     <span>Slot-${slot}</span>
-                    <img src="/student/images/close.svg" alt="Toggle" class="w-4 h-4 rotate-icon">
+                    <img src="${contextPath}student/images/close.svg" alt="Toggle" class="w-4 h-4 rotate-icon">
                 </div>
                 <div class="course-list bg-blue-50 px-6 py-3 text-sm md:text-base space-y-1 rounded-b-xl">
                     ${slotGroup.map(cp => `
-                        <div class="border-b border-gray-200 pb-2">Preference - ${cp.pref} : ${cp.cname} (${cp.cid})</div>
+                        <div>Preference - ${cp.pref} : ${cp.cname} (${cp.cid})</div>
                     `).join('')}
                 </div>
             </div>

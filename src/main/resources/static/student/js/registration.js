@@ -55,8 +55,8 @@ function showStep(step) {
         const progressLine = document.getElementById(`line-${i}`);
 
         if (progressEL) {
-            progressEL.classList.toggle('bg-[' + customColors.DARK_BLUE + ']', i < step);
-            progressEL.classList.toggle('bg-[' + customColors.LIGHT_BLUE + ']', i > step);
+            progressEL.classList.toggle('bg-1321EA', i < step);
+            progressEL.classList.toggle('bg-ACCEFF', i > step);
 
             if (i === step) {
                 progressEL.style.boxShadow = 'inset 0 0 0 5px #1321EA';
@@ -66,8 +66,8 @@ function showStep(step) {
         }
 
         if(progressLine) {
-            progressLine.classList.toggle('bg-[' + customColors.DARK_BLUE + ']', i <= step);
-            progressLine.classList.toggle('bg-[' + customColors.LIGHT_BLUE + ']', i > step);
+            progressLine.classList.toggle('bg-1321EA', i <= step);
+            progressLine.classList.toggle('bg-ACCEFF', i > step);
         }
 
         if (el) {

@@ -36,13 +36,6 @@ const categoryLabels = {
     'HASSE': 'Humanities and Social Sciences Electives'
 };
 
-const customColors = {
-    DARK_BLUE: '#1321EA',
-    LIGHT_BLUE: '#ACCEFF',
-    COBALT_BLUE: '#1E3C72',
-    DARK_GREEN: '#2D9D5D'
-};
-
 function HandleStudentRoute(url) {
     const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
     window.location.href = `${contextPath}student/${url}`;
