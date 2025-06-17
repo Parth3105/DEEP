@@ -39,7 +39,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-y-7 md:gap-y-6 gap-x-2 md:gap-x-6 mb-4">
                 <!-- Semester Status -->
                 <div th:each="entry : ${uploadStatus.entrySet()}" class="flex flex-col items-center text-center space-y-3 lg:mb-0">
-                    <div th:classappend="${entry.value == 0} ? 'bg-[#D9D9D9]' : 'bg-[#3DE382]'" class="w-20 h-20 lg:w-25 lg:h-25 rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
+                    <div th:classappend="${entry.value == 0} ? 'bg-[#D9D9D9]' : 'bg-[#3DE382]'" class="w-20 h-20 lg:w-24 lg:h-24 rounded-full flex items-center justify-center text-white text-2xl shadow-lg">
                         <img th:src="@{/admin/images/open-book.png}" alt="Checkmark" class="w-10 h-10 lg:w-12 lg:h-12">
                     </div>
                     <div>

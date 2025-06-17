@@ -41,7 +41,7 @@ function updateAllocationSummary(sem) {
             statusDiv.className = "bg-red-500 text-white px-7 py-2 rounded-xl font-medium text-lg";
             statusText.textContent = "Failed";
             if (showToastForSemester) {
-                showToast("Data upload failed: Missing or invalid data detected. Please ensure that student-data for the selected semester, course-data and course-offerings is valid.", statusColors.BAD_REQUEST);
+                showToast("Data upload failed: Missing or invalid data detected. Please ensure that student-data for the selected semester, course-data and course-offerings is valid.", statusColors.ERROR);
             }
             break;
         default:
@@ -71,23 +71,35 @@ document.addEventListener('DOMContentLoaded', function () {
     // Style semester buttons based on selection
     buttons.forEach(btn => {
         const sem = parseInt(btn.getAttribute('data-sem'));
-        btn.style.backgroundColor = sem === selectedSemester ? customColors.DARK_GREEN : customColors.COBALT_BLUE;
+
+        // Highlight initially selected semester
+        if (sem === selectedSemester) {
+            btn.classList.remove('bg-1E3C72');
+            btn.classList.add('bg-2D9D5D');
+        }
 
         btn.addEventListener('click', () => {
             selectedSemester = sem;
             hiddenInput.value = sem;
 
-            buttons.forEach(b => b.style.backgroundColor = customColors.COBALT_BLUE);
-            btn.style.backgroundColor = customColors.DARK_GREEN;
+            // Reset all buttons
+            buttons.forEach(b => {
+                b.classList.remove('bg-2D9D5D');
+                b.classList.add('bg-1E3C72');
+            });
+
+            // Highlight selected button
+            btn.classList.remove('bg-1E3C72');
+            btn.classList.add('bg-2D9D5D');
 
             updateAllocationSummary(sem);
         });
     });
 
-    // ✅ Show allocation summary for selected semester on page load
+    // Show allocation summary for selected semester on page load
     updateAllocationSummary(selectedSemester);
 
-    // ✅ Intercept form submission if needed
+    // Intercept form submission if needed
     form.addEventListener('submit', function (e) {
         if (registrationStatus === 'open') {
             e.preventDefault();

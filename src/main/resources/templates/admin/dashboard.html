@@ -7,6 +7,7 @@
   <title>DEEP - Admin Dashboard</title>
   <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
   <link th:href="@{/css/output.css}" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script th:src="@{https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js}"></script>
 </head>
 
@@ -74,7 +75,7 @@
       <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-blue-100">
         <h2 class="text-xl font-bold text-[#1E3C72] mb-2 text-center">Confirm Action</h2>
         <p class="text-sm text-gray-600 text-center mb-2">Are you sure you want to declare the Results?</p>
-        <p class="font-semibold text-red-600 text-center text-sm mb-4">After opening registration, you cannot edit the instance.</p>
+        <p class="font-semibold text-red-600 text-center text-sm mb-4">After Declaring Results you won't be able to re-open the registration.</p>
 
         <div class="flex justify-center space-x-3">
           <!-- Cancel Button -->
@@ -240,7 +241,7 @@
 
     <!-- Registration Modal Form -->
     <div id="registrationModal" class="hidden fixed inset-0 z-40 backdrop-blur-sm bg-black/30 flex justify-center items-center px-4">
-      <div class="bg-gradient-to-br from-[#E6F0FF] to-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-blue-100 z-50">
+      <div class="bg-soft-blue-to-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-blue-100 z-50">
         <h2 class="text-2xl font-bold text-[#1E3C72] mb-3 text-center">Confirm Registration Opening</h2>
 
         <div class="text-sm text-gray-700 mb-6 text-center space-y-1">
@@ -292,7 +293,7 @@
 
       <!-- Modal -->
       <div id="create-instance-modal" class="hidden fixed inset-0 z-40 backdrop-blur-sm bg-black/30 flex justify-center items-center px-4">
-        <div class="bg-gradient-to-br from-[#E6F0FF] to-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-blue-100 z-50 transition-all">
+        <div class="bg-soft-blue-to-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-blue-100 z-50 transition-all">
           <h2 class="text-2xl font-bold text-[#1E3C72] mb-1 text-center">Create Allocation Instance</h2>
           <p class="text-sm text-gray-600 text-center mb-6">Fill in the details to create a new Instance</p>
 

@@ -4,11 +4,14 @@ function HandleSemesterSelection(semesterBtns, downloadBtns, semesterInputs) {
         btn.addEventListener('click', function () {
             // Remove active state from all buttons
             semesterBtns.forEach(b => {
-                b.style.backgroundColor = customColors.COBALT_BLUE;
+                b.classList.remove('bg-2D9D5D');
+                b.classList.add('bg-1E3C72');
             });
 
-            // Set active state for clicked button
-            this.style.backgroundColor = customColors.DARK_GREEN;
+            // Add active state to clicked button
+            this.classList.remove('bg-1E3C72');
+            this.classList.add('bg-2D9D5D');
+
             selectedSemester = this.dataset.sem;
 
             // Update all hidden semester inputs
