@@ -71,7 +71,7 @@
                     <div class="flex" th:each="sp : ${slotPreferences}">
                         <div class="flex justify-between">
                             <span class="w-24 md:w-28" th:text="'Preference - ' + ${sp.pref}"></span>
-                            <span class="mr-3"></span>
+                            <span class="mr-3">:</span>
                         </div>
                         <span th:text="'Slot - ' + ${sp.slot}"></span>
                     </div>
