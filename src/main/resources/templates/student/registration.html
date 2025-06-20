@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="context-path" th:content="@{/}" />
-  <title>DEEP - Registration</title>
+  <title>DEEP - Preference Submission</title>
   <link rel="icon" th:href="@{/admin/images/DEEP Logo.png}" type="image/png">
   <link th:href="@{/css/output.css}" rel="stylesheet">
 </head>
@@ -116,7 +116,7 @@
     <div class="max-w-7xl mx-auto bg-[#c4d8f5] rounded-2xl shadow-lg overflow-hidden">
       <div class="flex flex-col lg:flex-row">
         <!-- Left Sidebar - Dynamic Slots -->
-        <div id="slotContainer" class="grid grid-cols-4 gap-y-4 md:grid-cols-7 gap-x-4 md:gap-y-0 lg:block lg:w-32 bg-blue-200 p-4 lg:p-5 lg:space-y-3">
+        <div id="slotContainer" class="grid grid-cols-4 gap-y-4 md:grid-cols-8 gap-x-4 md:gap-y-0 lg:block lg:w-32 bg-blue-200 p-4 lg:p-5 lg:space-y-3">
           <!-- Extract and Sort Unique Slots -->
           <th:block th:with="uniqueSlots=${#sets.toSet(availableCourses.![slot])}, sortedSlots=${#lists.sort(uniqueSlots)}">
             <div th:each="slot, iterStat : ${sortedSlots}"
@@ -133,8 +133,9 @@
           <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Table Header -->
             <div class="bg-blue-500 text-white">
-              <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm font-semibold">
+              <div class="grid grid-cols-8 gap-0 text-xxs md:text-xs lg:text-sm font-semibold">
                 <div class="p-1 lg:p-3 text-center border-r border-blue-300">ACTION</div>
+                <div class="p-1 lg:p-3 text-center border-r border-blue-300">PRIORITY</div>
                 <div class="p-1 lg:p-3 text-center border-r border-blue-300">COURSE CODE</div>
                 <div class="p-1 lg:p-3 text-center border-r border-blue-300 col-span-2">COURSE NAME</div>
                 <div class="p-1 lg:p-3 text-center border-r border-blue-300">PROGRAM</div>
@@ -160,21 +161,22 @@
 
                     <div th:each="course : ${availableCourses}"
                          th:if="${course.slot == slot}"
-                         class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 course-row"
+                         class="grid grid-cols-8 gap-0 text-xxs md:text-xs lg:text-sm border-b border-gray-300 course-row"
                          th:data-course-id="${course.cid}"
                          th:data-slot="${course.slot}">
 
                       <div class="p-2 lg:p-3 flex justify-center items-center">
-                        <button class="course-btn w-4 h-4 md:w-6 md:h-6 bg-green-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-green-600 transition-colors"
+                        <button class="course-btn text-white bg-blue-600 hover:bg-blue-700 px-1 py-1 md:px-2 md:py-1 rounded-md text-xxs md:text-xs lg:text-sm font-semibold transition-colors"
                                 th:data-cid="${course.cid}"
                                 th:data-slot="${course.slot}"
                                 th:data-name="${course.name}"
                                 th:data-program="${course.program}"
                                 th:data-category="${course.category}"
                                 th:data-credits="${course.credits}">
-                          +
+                          ADD
                         </button>
                       </div>
+                      <div class="p-2 lg:p-3 text-center font-medium">-</div>
                       <div class="p-2 lg:p-3 text-center font-medium" th:text="${course.cid}">Course Code</div>
                       <div class="p-2 lg:p-3 col-span-2 font-medium" th:text="${course.name}">Course Name</div>
                       <div class="p-2 lg:p-3 text-center font-medium" th:text="${course.program}">Program</div>

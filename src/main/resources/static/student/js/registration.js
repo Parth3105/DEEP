@@ -251,15 +251,16 @@ function updateSelectedCoursesDisplay() {
     }
 
     let html = '<div class="h-4"></div>';
-    courses.forEach(course => {
+    courses.forEach((course, index) => {
         html += `
-            <div class="grid grid-cols-7 gap-0 text-[8px] md:text-xs lg:text-sm border-b border-gray-300 bg-green-100">
+            <div class="grid grid-cols-8 gap-0 text-xxs md:text-xs lg:text-sm border-b border-gray-300 bg-green-100">
                 <div class="p-2 lg:p-3 flex justify-center items-center">
-                    <button class="w-4 h-4 md:w-6 md:h-6 bg-red-500 pb-[1px] md:pb-1 rounded-full flex items-center justify-center text-white cursor-pointer font-bold hover:bg-red-600 transition-colors"
+                    <button class="text-white bg-blue-600 hover:bg-blue-700 px-1 py-1 md:px-2 md:py-1 rounded-md text-xxs md:text-xs lg:text-sm font-semibold transition-colors"
                             onclick="removeCourseFromSelected('${course.cid}')">
-                        -
+                        REMOVE
                     </button>
                 </div>
+                <div class="p-2 lg:p-3 text-center font-medium">${index + 1}</div>
                 <div class="p-2 lg:p-3 text-center font-medium">${course.cid}</div>
                 <div class="p-2 lg:p-3 col-span-2 font-medium">${course.name}</div>
                 <div class="p-2 lg:p-3 text-center font-medium">${course.program}</div>

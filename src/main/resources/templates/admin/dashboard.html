@@ -26,26 +26,26 @@
       <div class="flex flex-col sm:flex-row justify-between items-start lg:items-center gap-4">
         <div class="flex-1">
           <h2 class="text-4xl font-bold text-[#1E3C72] mb-1">Welcome, Admin</h2>
-          <p class="text-[#666666] mb-6 text-sm lg:text-md">Manage student registrations, run allocations, and track results.</p>
+          <p class="text-[#666666] mb-6 text-sm lg:text-md">Capture student Preferences, run allocations, and track results.</p>
 
           <div class="flex flex-col space-y-4 sm:space-y-0 sm:flex-row justify-between items-center w-full">
             <button th:if="${registrationStatus == 'open'}"
                     class="text-white text-md md:text-md font-bold align-center px-4 lg:px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg"
                     style="background: linear-gradient(to right, #4CAF50, #45A049);">
               <img th:src="@{/admin/images/tick.svg}" alt="tick Icon" class="inline-block w-4 h-4 mr-2 mb-1">
-              Registration Open
+              Open for Preference Capturing
             </button>
             <button th:if="${registrationStatus != 'open' and registrationCloseDate == null}"
                     class="text-white text-md md:text-md font-bold align-center px-4 lg:px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg"
                     style="background: linear-gradient(to right, #e74b48, #d63e3e);">
               <img th:src="@{/admin/images/cross.svg}" alt="cross Icon" class="inline-block w-4 h-4 mr-2 mb-1">
-              Registration yet to Open
+              Preference Capture Not Started
             </button>
             <button th:if="${registrationStatus != 'open' and registrationCloseDate != null}"
                     class="text-white text-md md:text-md font-bold align-center px-4 lg:px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg"
                     style="background: linear-gradient(to right, #e74b48, #d63e3e);">
               <img th:src="@{/admin/images/cross.svg}" alt="cross Icon" class="inline-block w-4 h-4 mr-2 mb-1">
-              Registration Closed
+              Preference Capturing Closed
             </button>
 
             <form id="declareResultForm" method="POST" th:action="@{/admin/declare-results}" th:csrf="true" style="display: none;"></form>
@@ -75,7 +75,7 @@
       <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-blue-100">
         <h2 class="text-xl font-bold text-[#1E3C72] mb-2 text-center">Confirm Action</h2>
         <p class="text-sm text-gray-600 text-center mb-2">Are you sure you want to declare the Results?</p>
-        <p class="font-semibold text-red-600 text-center text-sm mb-4">After Declaring Results you won't be able to re-open the registration.</p>
+        <p class="font-semibold text-red-600 text-center text-sm mb-4">After Declaring Results you won't be able to re-open Preference Capturing window.</p>
 
         <div class="flex justify-center space-x-3">
           <!-- Cancel Button -->
@@ -104,8 +104,8 @@
           <!-- Left Section -->
           <div class="flex flex-col items-center justify-center text-center mr-4">
             <div class="mb-8">
-              <h3 class="text-2xl font-bold text-[#1E3C72]">Registration Status</h3>
-              <p class="text-xs text-[#666666]">Monitor student registration and allocation status</p>
+              <h3 class="text-2xl font-bold text-[#1E3C72]">Preferences Status</h3>
+              <p class="text-xs text-[#666666]">Monitor student Preferences and allocation status</p>
             </div>
 
             <!-- Fixed Semester Buttons -->
@@ -154,14 +154,14 @@
             <div class="relative w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
           </label>
 
-          <h3 class="text-xl font-bold text-[#1E3C72] mb-1">Open/Close Registration</h3>
-          <p class="text-xs text-gray-600 mb-4 text-center">Manually toggle registration window</p>
+          <h3 class="text-xl font-bold text-[#1E3C72] mb-1">Open/Close Preference Capture</h3>
+          <p class="text-xs text-gray-600 mb-4 text-center">Manually toggle Capturing window</p>
 
           <!-- Close Date Display (Visible After Submit) -->
           <div th:if="${registrationCloseDate != null}" class="flex flex-col space-y-4 justify-center items-center text-sm font-semibold text-[#1E3C72]">
             <div class="flex flex-row space-y-0 space-x-2 sm:flex-col sm:space-y-2 sm:space-x-0 lg:flex-row lg:space-y-0 lg:space-x-2">
-              <span th:if="${registrationStatus == 'open'}">Registration closes on: </span>
-              <span th:text="${registrationStatus != 'open'} ? 'Registration closed' : ${registrationCloseDate}"></span>
+              <span th:if="${registrationStatus == 'open'}">Preference Capturing closes on: </span>
+              <span th:text="${registrationStatus != 'open'} ? 'Preference collection closed' : ${registrationCloseDate}"></span>
             </div>
 
             <!-- Extend Button -->
@@ -180,7 +180,7 @@
          class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center items-center px-4">
       <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-blue-100">
         <h2 class="text-xl font-bold text-[#1E3C72] mb-2 text-center">Confirm Action</h2>
-        <p class="text-sm text-gray-600 text-center mb-4">Are you sure you want to close registration?</p>
+        <p class="text-sm text-gray-600 text-center mb-4">Are you sure you want to close Capturing window?</p>
 
         <form th:action="@{/admin/close-registration}" method="post" class="flex justify-end gap-4 pt-2 w-full">
           <!-- CSRF Token -->
@@ -205,8 +205,8 @@
     <!-- Extend Modal -->
     <div id="extendModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex justify-center items-center px-4">
       <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl border border-blue-100">
-        <h2 class="text-xl font-bold text-[#1E3C72] mb-2 text-center">Extend Registration Period</h2>
-        <p class="text-sm text-gray-600 text-center mb-4">Select a new close date for registration.</p>
+        <h2 class="text-xl font-bold text-[#1E3C72] mb-2 text-center">Extend Preference Capturing Period</h2>
+        <p class="text-sm text-gray-600 text-center mb-4">Select a new close date for Capturing window.</p>
 
         <form onsubmit="handleExtend(event)" method="post" class="space-y-4">
           <div class="flex justify-start items-center space-x-4">
@@ -242,11 +242,11 @@
     <!-- Registration Modal Form -->
     <div id="registrationModal" class="hidden fixed inset-0 z-40 backdrop-blur-sm bg-black/30 flex justify-center items-center px-4">
       <div class="bg-soft-blue-to-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-blue-100 z-50">
-        <h2 class="text-2xl font-bold text-[#1E3C72] mb-3 text-center">Confirm Registration Opening</h2>
+        <h2 class="text-2xl font-bold text-[#1E3C72] mb-3 text-center">Confirm Preference Capture Opening</h2>
 
         <div class="text-sm text-gray-700 mb-6 text-center space-y-1">
           <p>📌 Please ensure that a new instance has been created and all required data is filled.</p>
-          <p class="font-semibold text-red-600">⚠️ After opening registration, you cannot edit the instance.</p>
+          <p class="font-semibold text-red-600">⚠️ After opening collection window, you cannot edit the instance.</p>
         </div>
 
         <!-- Close Date Field -->
