@@ -154,6 +154,39 @@ public class EmailServiceImpl implements EmailService {
                           border-top: 1px solid rgba(25, 118, 210, 0.06);
                           text-align: center;
                         }
+                        @media (max-width: 600px) {
+                          .email-header, .email-content, .footer {
+                            padding: 20px;
+                          }
+                          .email-logo img {
+                            width: 28px;
+                            height: 28px;
+                          }
+                          .email-logo-text {
+                            font-size: 20px;
+                          }
+                          .email-logo-sub {
+                            font-size: 10px;
+                          }
+                          .email-content h1 {
+                            font-size: 18px;
+                          }
+                          .email-content p {
+                            font-size: 13px;
+                          }
+                          .otp-box {
+                            font-size: 28px;
+                            padding: 14px 22px;
+                            letter-spacing: 4px;
+                          }
+                          .note, .security {
+                            font-size: 12px;
+                            padding: 10px;
+                          }
+                          .footer {
+                            font-size: 10px;
+                          }
+                        }
                     </style>
                 </head>
                 <body>
@@ -185,11 +218,14 @@ public class EmailServiceImpl implements EmailService {
                             </div>
                             <div class="security">
                                 <p>If you did not request a password reset, please ignore this email and your password will remain unchanged.</p>
-                                <p>For security concerns, do not share this OTP with anyone.</p>
+                                <p style="margin: 0px">For security concerns, do not share this OTP with anyone.</p>
                             </div>
                         </div>
                         <div class="footer">
                             This is an automated message. Please do not reply to this email.
+                            <span style="display: none; font-size: 1px; color: #fff;">
+                              _DEEP_UNIQUE_MARKER_RANDOM_001_
+                            </span>
                         </div>
                     </div>
                 </div>
