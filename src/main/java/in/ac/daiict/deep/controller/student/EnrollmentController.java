@@ -43,7 +43,7 @@ public class EnrollmentController {
     private SlotPrefService slotPrefService;
     private SystemStatusService systemStatusService;
 
-    @GetMapping(StudentEndpoint.ENROLL)
+    @GetMapping(StudentEndpoint.PREFERENCE_FORM)
     public String renderEnrollmentForm(Model model, RedirectAttributes redirectAttributes) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!systemStatusService.fetchRegistrationStatus().equals(RegistrationStatusEnum.open.toString())) {
