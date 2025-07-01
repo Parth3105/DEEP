@@ -71,7 +71,7 @@ function handleOpenRegistration(event) {
   // Set the action with query param
   const form = event.target;
   const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content');
-  form.action = `${contextPath}admin/open-registration?close-date=${encodeURIComponent(formattedDate)}`;
+  form.action = `${contextPath}admin/begin-collection?close-date=${encodeURIComponent(formattedDate)}`;
   form.submit();
 }
 
