@@ -7,4 +7,5 @@ public class AdminTemplate {
     public static final String DOWNLOAD_REPORTS_PAGE="admin/download-reports";
     public static final String STUDENTS_PREFERENCES_PAGE="admin/student-preferences";
     public static final String ALLOCATION_RESULTS_PAGE="admin/allocation-results";
+    public static final String FAQ_PAGE="admin/admin-faqs";
 }

@@ -11,10 +11,10 @@ public class ResponseMessage {
     public static final String RESET_SUCCESS="Your password has been reset successfully.";
     public static final String INTERNAL_SERVER_ERROR="There's a temporary problem with the service. Please try again. If you continue to get this message, try again later.";
     public static final String USER_NOT_FOUND = "Your information is currently unavailable. Please try again later or contact support.";
-    public static final String STUDENT_NOT_FOUND="Student information not found. Ensure the student is registered or data has been uploaded.";
+    public static final String STUDENT_NOT_FOUND="Student information not found. Ensure that the student's data has been uploaded.";
     public static final String ALLOCATION_INSTANCE_NOT_FOUND="No instance found to update. Please create an instance to continue.";
-    public static final String USER_NOT_REGISTERED = "Your enrollment status is incomplete. Submission of the preferences is necessary to proceed.";
-    public static final String STUDENT_NOT_REGISTERED = "The student appears to be unregistered or has not completed the enrollment process.";
+    public static final String USER_NOT_REGISTERED = "Your preference submission status is incomplete. Please submit your preferences in order to proceed.";
+    public static final String STUDENT_NOT_REGISTERED = "The student's data appears to be missing or the student has not completed the preference submission process.";
     public static final String UPLOAD_OFFERS = "Course Data has been updated. Please re-upload Course Offering file to avoid data loss.";
     public static final String DB_SAVE_ERROR="Some entries refer to non-existing course in course-offerings. Please verify your data.";
     public static final String RESULTS_NOT_DECLARED = "Results have not been declared yet. Please try again soon.";
@@ -28,7 +28,7 @@ public class ResponseMessage {
     public static final String DOWNLOADING_ERROR="Download failed due to a server error. Please check system logs for more details.";
     public static final String STUDENT_PREFERENCES_NOT_FOUND="No student preferences are available. Please ensure students have submitted their preferences before downloading.";
     public static final String UPLOAD_DATA_NOT_FOUND="Required data files are missing. Please upload all necessary data before running the allocation.";
-    public static final String LATE_SUBMISSION="Registration is closed. Submissions are no longer accepted.";
+    public static final String LATE_SUBMISSION="Preference Collection period has ended. Submissions are no longer accepted.";
     public static final String PREFERENCE_MISSING="Preferences expected from user, but missing.";
     public static final String JSON_PARSING_ERROR="Something went wrong while submitting your form. Please try again.";
     public static final String EXCEL_PARSING_ERROR="An unexpected error occurred while processing the Excel sheet. Please ensure the data is in the correct format and try again. If the problem persists, please check the logs.";

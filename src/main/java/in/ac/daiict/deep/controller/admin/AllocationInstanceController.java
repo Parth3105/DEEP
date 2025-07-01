@@ -40,9 +40,9 @@ public class AllocationInstanceController {
     private DBConfig instanceSetupConfig;
 
     @PostMapping(AdminEndpoint.CREATE_ALLOCATION_INSTANCE)
-    public String initiateSetup(@RequestParam String season, @RequestParam String Year, RedirectAttributes redirectAttributes){
+    public String initiateSetup(@RequestParam String season, @RequestParam String Year, @RequestParam String version, RedirectAttributes redirectAttributes){
         String latestInstanceName=instanceNameService.fetchLatestInstance();
-        String newInstanceName=(season+"_"+Year).toLowerCase();
+        String newInstanceName=(season+"_"+Year+"_"+version).toLowerCase();
         if(instanceNameService.checkIfNewInstanceExists(newInstanceName)){
             redirectAttributes.addFlashAttribute("instanceCreationError",new ResponseDto(ResponseStatus.CONFLICT, ResponseMessage.INSTANCE_ALREADY_EXISTS));
             return "redirect:"+AdminEndpoint.DASHBOARD;

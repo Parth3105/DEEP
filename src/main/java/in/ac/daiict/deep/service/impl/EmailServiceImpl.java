@@ -8,6 +8,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -198,7 +200,7 @@ public class EmailServiceImpl implements EmailService {
                         <div class="email-header">
                                 <div>
                                     <div class="email-logo-text">DEEP</div>
-                                    <div class="email-logo-sub">DAIICT Electives Enrollment Portal</div>
+                                    <div class="email-logo-sub">DAU Electives Enrollment Portal</div>
                                 </div>
                             <div class="gradient-divider"></div>
                         </div>
@@ -226,13 +228,13 @@ public class EmailServiceImpl implements EmailService {
                         <div class="footer">
                             This is an automated message. Please do not reply to this email.
                             <span style="display: none; font-size: 1px; color: #fff;">
-                              _DEEP_UNIQUE_MARKER_RANDOM_001_
+                              _DEEP_UNIQUE_MARKER_RANDOM_%d_
                             </span>
                         </div>
                     </div>
                 </div>
                 </body>
                 </html>
-                """.formatted(username, otp);
+                """.formatted(username, otp, new Random().nextInt());
     }
 }
