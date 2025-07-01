@@ -35,8 +35,8 @@
       <a th:href="@{/student/home-page}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Home</a>
       <a th:href="@{/student/my-preferences}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">View Preferences</a>
       <a th:href="@{/student/my-allocation-result}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Allocation Result</a>
-      <a th:href="@{/student/contact}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Contact</a>
-      <a th:href="@{/student/help}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Help | FAQs</a>
+      <a th:href="@{#contact-section}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Contact</a>
+      <a th:href="@{/student/faqs}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">FAQs</a>
       <form method="post" th:action="@{/logout}" style="display: inline;">
         <!-- CSRF token will be automatically added by Spring Security if using Thymeleaf -->
         <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -53,8 +53,8 @@
     <a th:href="@{/student/home-page}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Home</a>
     <a th:href="@{/student/my-preferences}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">View Preferences</a>
     <a th:href="@{/student/my-allocation-result}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Allocation Result</a>
-    <a th:href="@{/student/contact}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Contact</a>
-    <a th:href="@{/student/help}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Help | FAQs</a>
+    <a th:href="@{#contact-section}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Contact</a>
+    <a th:href="@{/student/faqs}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">FAQs</a>
     <form method="post" th:action="@{/logout}" style="display: inline;">
       <!-- CSRF token will be automatically added by Spring Security if using Thymeleaf -->
       <input type="hidden" th:if="${_csrf}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -88,15 +88,15 @@
     <!-- Desktop Nav -->
     <nav class="hidden md:flex items-center gap-2 md:gap-4 lg:gap-8">
       <a th:href="@{/student/home-page}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Home</a>
-      <a th:href="@{/student/contact}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Contact</a>
-      <a th:href="@{/student/help}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Help | FAQs</a>
+      <a th:href="@{#contact-section}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">Contact</a>
+      <a th:href="@{/student/faqs}" class="text-xs sm:text-base md:text-sm text-[#080049] hover:text-indigo-600 font-medium transition duration-300">FAQs</a>
     </nav>
   </div>
 
   <!-- Mobile Nav (Dropdown) -->
   <div id="menu" class="md:hidden hidden absolute right-8 top-12 mt-2 bg-white rounded-lg shadow-lg p-4 w-56 z-50 animate-fade-in">
     <a th:href="@{/student/home-page}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Home</a>
-    <a th:href="@{/student/contact}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Contact</a>
-    <a th:href="@{/student/help}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Help | FAQs</a>
+    <a th:href="@{#contact-section}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">Contact</a>
+    <a th:href="@{/student/faqs}" class="block text-[#080049] text-base font-medium py-1 hover:text-indigo-600 transition duration-200">FAQs</a>
   </div>
 </header>
