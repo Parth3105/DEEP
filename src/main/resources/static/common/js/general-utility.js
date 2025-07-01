@@ -82,7 +82,7 @@ const adminFAQs = [
   },
   {
     question: "Will updating the instance append the reuploaded data?",
-    answer: "In case of student data, yes — the reuploaded unique student data will be appended and the previous one remains unchanged. For other data, the previous content will be replaced. ⚠️ Reuploading one dataset may affect another, and such cases will be flagged when required."
+    answer: "In case of student data, yes — the reuploaded unique student data will be appended and the previous one remains unchanged. For other data, the previous content will be replaced. Reuploading one dataset may affect another, and such cases will be flagged when required."
   },
   {
     question: "Can I export the list of students submitted preferences?",
@@ -90,7 +90,7 @@ const adminFAQs = [
   },
   {
     question: "Will students be notified automatically after running the allocation algorithm?",
-    answer: "No. Results are only visible to students once you declare them. ⚠️ Once declared, you cannot run the allocation algorithm again."
+    answer: "No. Results are only visible to students once you declare them. Once declared, you cannot run the allocation algorithm again."
   },
   {
     question: "Can I undeclare results after declaring them?",
