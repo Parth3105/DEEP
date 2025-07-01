@@ -63,4 +63,9 @@ public class NavigationController {
     public String renderAllocationResultsPage(){
         return AdminTemplate.ALLOCATION_RESULTS_PAGE;
     }
+
+    @GetMapping(AdminEndpoint.FAQ)
+    public String renderFaqPage(){
+        return AdminTemplate.FAQ_PAGE;
+    }
 }

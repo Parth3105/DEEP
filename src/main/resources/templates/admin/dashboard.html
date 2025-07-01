@@ -161,7 +161,7 @@
           <div th:if="${registrationCloseDate != null}" class="flex flex-col space-y-4 justify-center items-center text-sm font-semibold text-[#1E3C72]">
             <div class="flex flex-row space-y-0 space-x-2 sm:flex-col sm:space-y-2 sm:space-x-0 lg:flex-row lg:space-y-0 lg:space-x-2">
               <span th:if="${registrationStatus == 'open'}">Preference Collection Ends on: </span>
-              <span th:text="${registrationStatus != 'open'} ? 'Preference collection closed' : ${registrationCloseDate}"></span>
+              <span th:text="${registrationStatus != 'open'} ? 'Preference collection Ended' : ${registrationCloseDate}"></span>
             </div>
 
             <!-- Extend Button -->
@@ -320,6 +320,23 @@
                         required
                         maxlength="4"
                         oninput="this.value = this.value.slice(0, 4)"
+                        class="no-spinner w-full border border-blue-200 focus:ring-2 focus:ring-blue-400 focus:outline-none p-2 rounded-lg text-[#1E3C72] appearance-none
+                  [&::-webkit-outer-spin-button]:appearance-none
+                  [&::-webkit-inner-spin-button]:appearance-none"/>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <div class="flex-1">
+                <label class="block text-sm font-medium text-[#1E3C72] mb-1">Version</label>
+                <input
+                        type="number"
+                        name="version"
+                        placeholder="e.g. 1"
+                        required
+                        maxlength="1"
+                        value="1"
+                        oninput="this.value = this.value.slice(0, 1)"
                         class="no-spinner w-full border border-blue-200 focus:ring-2 focus:ring-blue-400 focus:outline-none p-2 rounded-lg text-[#1E3C72] appearance-none
                   [&::-webkit-outer-spin-button]:appearance-none
                   [&::-webkit-inner-spin-button]:appearance-none"/>

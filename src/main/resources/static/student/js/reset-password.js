@@ -3,7 +3,7 @@ function validatePasswords() {
     const confirmPassword = document.getElementById('floating_confirm_password').value;
 
     if (password !== confirmPassword) {
-      showToast('Passwords do not match! Please verify it.');
+      showToast('Passwords do not match! Please verify it.',statusColors.ERROR);
       return false;
     }
 
