@@ -96,6 +96,7 @@ public class EmailServiceImpl implements EmailService {
                           color: #0D47A1;
                         }
                         .email-content h1 {
+                          color: #1565C0;
                           font-size: 24px;
                           font-weight: 600;
                           margin: 0 0 10px;
@@ -169,6 +170,7 @@ public class EmailServiceImpl implements EmailService {
                             font-size: 10px;
                           }
                           .email-content h1 {
+                            color: #1565C0;
                             font-size: 18px;
                           }
                           .email-content p {
