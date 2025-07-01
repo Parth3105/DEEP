@@ -20,6 +20,6 @@ public class AdminEndpoint {
     public static final String STUDENT_PREFERENCE_FILTER=ADMIN_BASE+"/student-preferences/{sid}";
     public static final String ALLOCATION_RESULTS=ADMIN_BASE+"/allocation-results";
     public static final String ALLOCATION_RESULTS_FILTER=ADMIN_BASE+"/allocation-results/{sid}";
-    public static final String FAQ=ADMIN_BASE+"/admin/faq";
+    public static final String FAQ=ADMIN_BASE+"/faqs";
 
 }
