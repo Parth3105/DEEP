@@ -41,7 +41,7 @@ function updateAllocationSummary(sem) {
             statusDiv.className = "bg-red-500 text-white px-7 py-2 rounded-xl font-medium text-lg";
             statusText.textContent = "Failed";
             if (showToastForSemester) {
-                showToast("Allocation failed! Please ensure that student-data for the selected semester, course-data and course-offerings are uploaded and valid.", statusColors.ERROR);
+                showToast("Data upload failed: Missing or invalid data detected. Please ensure that student-data for the selected semester, course-data and course-offerings is valid.", statusColors.ERROR);
             }
             break;
         default:
