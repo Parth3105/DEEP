@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @AllArgsConstructor
@@ -17,12 +19,15 @@ import java.sql.Timestamp;
 @Setter
 @Entity
 @Table(name = "instance_names")
-public class InstanceName {
+public class InstanceName implements Serializable {
     @Id
     @Column(name = "instance_name",length = 20)
     private String instanceName;
     @Column(name = "created_at", insertable = false, updatable = false)
     private Timestamp createdAt;
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     public InstanceName(String instanceName) {
         this.instanceName = instanceName;
