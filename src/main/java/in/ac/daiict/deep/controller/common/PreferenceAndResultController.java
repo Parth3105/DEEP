@@ -64,11 +64,25 @@ public class PreferenceAndResultController {
     }
     @GetMapping(AdminEndpoint.DOWNLOAD_STUDENT_PREFERENCES)
     public void downloadStudentPreferences(HttpServletResponse httpServletResponse, @PathVariable("semester") int semester) {
-        List<CoursePref> coursePrefList = coursePrefService.fetchCoursePrefBySemesterSortedBySlotAndPref(semester);
-        List<SlotPref> slotPrefList = slotPrefService.fetchSlotBySemesterSortedBySidAndPref(semester);
+        CompletableFuture<List<CoursePref>> fetchingCoursePref = CompletableFuture.supplyAsync(() -> coursePrefService.fetchCoursePrefBySemesterSortedBySlotAndPref(semester));
+        CompletableFuture<List<SlotPref>> fetchingSlotPref = CompletableFuture.supplyAsync(() -> slotPrefService.fetchSlotBySemesterSortedBySidAndPref(semester));
+
+        List<CoursePref> coursePrefList=null;
+        List<SlotPref> slotPrefList=null;
+        try {
+            CompletableFuture.allOf(fetchingCoursePref, fetchingSlotPref).join();
+            coursePrefList=fetchingCoursePref.get();
+            slotPrefList=fetchingSlotPref.get();
+        } catch (ExecutionException | InterruptedException e) {
+            if(e instanceof InterruptedException){
+                Thread.currentThread().interrupt(); // Restore interrupt
+                log.warn("Thread was interrupted while waiting for allocation results", e);
+            }
+            else log.error("Async task to fetch allocation result failed with error: {}", e.getCause().getMessage(), e.getCause());
+        }
 
         try {
-            if (coursePrefList.isEmpty() || slotPrefList.isEmpty()) {
+            if (coursePrefList==null || slotPrefList==null || coursePrefList.isEmpty() || slotPrefList.isEmpty()) {
                 httpServletResponse.setStatus(ResponseStatus.NOT_FOUND);
                 httpServletResponse.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
                 httpServletResponse.setHeader("Pragma", "no-cache");
@@ -118,7 +132,7 @@ public class PreferenceAndResultController {
         // Fetch the slot preferences.
         CompletableFuture<List<SlotPrefDto>> fetchingSlotPref = CompletableFuture.supplyAsync(() -> slotPrefService.fetchStudentSlotPref(studentId));
 
-        CompletableFuture.allOf(fetchingStudentReq, fetchingCoursePref, fetchingSlotPref);
+        CompletableFuture.allOf(fetchingStudentReq, fetchingCoursePref, fetchingSlotPref).join();
         List<StudentReqDto> studentReqDtoList;
         List<CoursePrefDto> coursePrefDtoList;
         List<SlotPrefDto> slotPrefDtoList;

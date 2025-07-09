@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class NavigationController {
     private SystemStatusService systemStatusService;
     private StudentService studentService;
-    private StudentReqService studentReqService;
     private AllocationStatusService allocationStatusService;
 
     @GetMapping(AdminEndpoint.DASHBOARD)
@@ -35,7 +34,12 @@ public class NavigationController {
         List<CompletableFuture<AdminDashboardReqDto>> collectDashboardReq=new ArrayList<>();
         for(int sem=5;sem<=8;sem++){
             int finalSem = sem;
-            collectDashboardReq.add(CompletableFuture.supplyAsync(() -> new AdminDashboardReqDto(finalSem,studentService.countBySemester(finalSem),studentService.countEnrolledStudents(),allocationStatusService.checkIfExists(finalSem))));
+            CompletableFuture<Long> fetchingNumberOfStudents=CompletableFuture.supplyAsync(() -> studentService.countBySemester(finalSem));
+            CompletableFuture<Long> fetchingEnrolledStudentCount=CompletableFuture.supplyAsync(() -> studentService.countEnrolledStudents());
+            CompletableFuture<Boolean> checkingExistence=CompletableFuture.supplyAsync(() -> allocationStatusService.checkIfExists(finalSem));
+            collectDashboardReq.add(fetchingNumberOfStudents.thenCombine(fetchingEnrolledStudentCount, (totalStudents, enrolledStudents) -> new Long[]{totalStudents,enrolledStudents}).
+                    thenCombine(checkingExistence, (firstTwoTasks, isExist) -> new AdminDashboardReqDto(finalSem,firstTwoTasks[0],firstTwoTasks[1],isExist))
+            );
         }
 
         CompletableFuture<Void> fetchDashboardReqs = CompletableFuture.allOf(

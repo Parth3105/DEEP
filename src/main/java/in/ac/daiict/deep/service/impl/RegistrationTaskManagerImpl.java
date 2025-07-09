@@ -5,10 +5,11 @@ import in.ac.daiict.deep.service.SystemStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDate;
+import java.util.TimeZone;
 import java.util.concurrent.ScheduledFuture;
 
 @Service
@@ -46,11 +47,11 @@ public class RegistrationTaskManagerImpl implements RegistrationTaskManager {
             }
         },Duration.ofSeconds(30));*/
 
-        activeRegistrationTask=taskScheduler.scheduleAtFixedRate(() -> {
+        activeRegistrationTask=taskScheduler.schedule(() -> {
             if(LocalDate.now().isAfter(closingDate)){
                 closeRegistration();
             }
-        }, Duration.ofDays(1));
+        }, new CronTrigger("0 1 0 * * *", TimeZone.getTimeZone("Asia/Kolkata")));
     }
 
     @Override
