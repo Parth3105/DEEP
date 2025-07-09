@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -38,6 +39,7 @@ public class AllocationInstanceController {
     private UploadService uploadService;
     private InstanceNameService instanceNameService;
     private DBConfig instanceSetupConfig;
+    private UserService userService;
 
     @PostMapping(AdminEndpoint.CREATE_ALLOCATION_INSTANCE)
     public String initiateSetup(@RequestParam String season, @RequestParam String Year, @RequestParam String version, RedirectAttributes redirectAttributes){
@@ -54,6 +56,18 @@ public class AllocationInstanceController {
         }
         if(latestInstanceName !=null) {
             if(!instanceSetupConfig.createSchemaAndSwitch(latestInstanceName,DBConstants.WORKING_INSTANCE_NAME)){
+                CompletableFuture.runAsync(() -> instanceNameService.deleteInstance(newInstanceName));
+                redirectAttributes.addFlashAttribute("instanceCreationError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
+                return "redirect:"+AdminEndpoint.DASHBOARD;
+            }
+            File dir=new File("./src/main/java/in/ac/daiict/deep/tmp/");
+            CompletableFuture<Boolean> insertInstanceNames=CompletableFuture.supplyAsync(() -> instanceNameService.insertFromFile(dir));
+            CompletableFuture<Boolean> insertUsers=CompletableFuture.supplyAsync(() -> userService.insertFromFile(dir));
+            boolean isSuccessInstanceMigration = insertInstanceNames.join();
+            boolean isSuccessUserMigration = insertUsers.join();
+            dir.delete();
+
+            if (!isSuccessInstanceMigration || !isSuccessUserMigration) {
                 CompletableFuture.runAsync(() -> instanceNameService.deleteInstance(newInstanceName));
                 redirectAttributes.addFlashAttribute("instanceCreationError",new ResponseDto(ResponseStatus.INTERNAL_SERVER_ERROR,ResponseMessage.INTERNAL_SERVER_ERROR));
                 return "redirect:"+AdminEndpoint.DASHBOARD;

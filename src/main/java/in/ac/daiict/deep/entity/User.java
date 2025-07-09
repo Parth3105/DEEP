@@ -9,13 +9,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
     @Id
     @Column(length = 12)
     private String username;
@@ -25,4 +28,7 @@ public class User {
     private String email;
     @Column(length = 50)
     private String role;
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 }

@@ -18,6 +18,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -64,25 +65,19 @@ public class DBConfig {
     }
 
     public boolean createSchemaAndSwitch(String latestInstanceName, String workingInstance) {
-        CompletableFuture<Boolean> instanceMigrationFuture = CompletableFuture.supplyAsync(() ->
-                instanceNameService.migrateInstances()
+        File dir=new File("./src/main/java/in/ac/daiict/deep/tmp/");
+        if(!dir.exists()) dir.mkdirs();
+        CompletableFuture<Void> instanceMigrationFuture = CompletableFuture.runAsync(() ->
+                instanceNameService.migrateInstances(dir)
         );
-
-        CompletableFuture<Boolean> userMigrationFuture = CompletableFuture.supplyAsync(() ->
-                userService.migrateUserData()
+        CompletableFuture<Void> userMigrationFuture = CompletableFuture.runAsync(() ->
+                userService.migrateUserData(dir)
         );
 
         CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(instanceMigrationFuture, userMigrationFuture);
 
         try {
             combinedFuture.join();
-
-            boolean isSuccessInstanceMigration = instanceMigrationFuture.get();
-            boolean isSuccessUserMigration = userMigrationFuture.get();
-
-            if (!isSuccessInstanceMigration || !isSuccessUserMigration) {
-                return false;
-            }
 
             String sql = String.format("ALTER SCHEMA %s RENAME TO %s", workingInstance, latestInstanceName);
             jdbcTemplate.execute(sql);
@@ -92,11 +87,7 @@ public class DBConfig {
 
             return true;
 
-        } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt(); // Restore interrupt
-            log.warn("Thread was interrupted while waiting to complete migration", ie);
-            return false;
-        } catch (ExecutionException | CompletionException ex) {
+        } catch (CompletionException ex) {
             log.error("Async task to migrate instance/user data failed with error: {}", ex.getCause().getMessage(), ex.getCause());
             return false;
         }
