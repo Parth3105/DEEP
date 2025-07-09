@@ -1,0 +1,293 @@
+@startuml
+
+actor admin
+
+boundary dashboardTemplate
+boundary updateInstanceTemplate
+
+control "AIC.IS" as AllocationInstanceController.initiateSetup
+control "AIC.RUP" as AllocationInstanceController.renderUploadPage
+control "AIC.SUF" as AllocationInstanceController.saveUploadedFiles
+control "NC.RDP" as NavigationController.renderDashboardPage
+
+participant StudentService
+participant CourseService
+participant InstituteReqService
+participant CourseOfferingService
+participant UploadService
+participant DBConfig
+participant InstanceNameService
+participant UserService
+
+participant StudentRepo
+participant CourseRepo
+participant InstituteReqRepo
+participant CourseOfferingRepo
+participant UploadRepo
+participant InstanceNameRepo
+participant UserRepo
+
+participant DataLoader
+
+
+activate admin
+
+/' Create Instance part '/
+
+admin -> dashboardTemplate : Create Instance and enters Instance-name
+activate dashboardTemplate
+dashboardTemplate -> AllocationInstanceController.initiateSetup : POST /admin/create-instance
+activate AllocationInstanceController.initiateSetup
+AllocationInstanceController.initiateSetup -> InstanceNameService : fetchLatestInstance() 
+activate InstanceNameService
+InstanceNameService -> InstanceNameRepo : findTopByOrderByCreatedAtDesc()
+activate InstanceNameRepo
+InstanceNameRepo --> InstanceNameService : return instance-name  
+deactivate InstanceNameRepo
+InstanceNameService --> AllocationInstanceController.initiateSetup : return instance-name
+deactivate InstanceNameService
+
+AllocationInstanceController.initiateSetup -> InstanceNameService : checkIfNewInstanceExists()
+activate InstanceNameService
+InstanceNameService -> InstanceNameRepo : existsById()
+activate InstanceNameRepo
+InstanceNameRepo --> InstanceNameService : return existance status
+deactivate InstanceNameRepo
+InstanceNameService --> AllocationInstanceController.initiateSetup : return existance status
+deactivate InstanceNameService
+
+opt if new instance exists
+  AllocationInstanceController.initiateSetup -> NavigationController.renderDashboardPage : redirect:/admin/admin-dashboard
+  activate NavigationController.renderDashboardPage
+  NavigationController.renderDashboardPage --> dashboardTemplate : loads admin dashboard
+  deactivate NavigationController.renderDashboardPage
+end
+
+AllocationInstanceController.initiateSetup -> InstanceNameService : insertNewInstance()
+activate InstanceNameService
+InstanceNameService -> InstanceNameRepo : save()
+activate InstanceNameRepo
+deactivate InstanceNameRepo
+deactivate InstanceNameService
+
+opt if latest instance not null
+  AllocationInstanceController.initiateSetup -> DBConfig : createSchemaAndSwitch()
+  activate DBConfig
+  
+  par
+    DBConfig -> InstanceNameService : migrateInstances()
+    activate InstanceNameService
+    deactivate InstanceNameService
+  else
+    DBConfig -> UserService : migrateUserData()
+    activate UserService
+    deactivate UserService
+  end
+  
+  DBConfig -> DBConfig : runFlyway()
+  activate DBConfig
+  deactivate DBConfig
+  DBConfig -> DBConfig : createEntityManagerFactory()
+  activate DBConfig
+  deactivate DBConfig
+  DBConfig --> AllocationInstanceController.initiateSetup : return creation status
+  deactivate DBConfig
+  
+  opt if unsuccessful creation
+    par
+      AllocationInstanceController.initiateSetup -> InstanceNameService : deleteInstance()
+      activate InstanceNameService
+      InstanceNameService -> InstanceNameRepo : deleteById()
+      activate InstanceNameRepo
+      deactivate InstanceNameRepo
+      deactivate InstanceNameService
+    else
+      AllocationInstanceController.initiateSetup -> NavigationController.renderDashboardPage : redirect:/admin/admin-dashboard
+      activate NavigationController.renderDashboardPage
+      NavigationController.renderDashboardPage --> dashboardTemplate : loads admin dashboard
+      deactivate NavigationController.renderDashboardPage
+    end
+  end
+  
+  par
+    AllocationInstanceController.initiateSetup -> InstanceNameService : insertFromFile()
+    activate InstanceNameService
+    InstanceNameService --> AllocationInstanceController.initiateSetup : return insertion status
+    deactivate InstanceNameService
+  else
+    AllocationInstanceController.initiateSetup -> UserService : insertFromFile()
+    activate UserService
+    UserService --> AllocationInstanceController.initiateSetup : return insertion status
+    deactivate UserService
+  end
+  
+  opt if unsuccessful instance migration or unsuccessful user migration
+    par
+      AllocationInstanceController.initiateSetup -> InstanceNameService : deleteInstance()
+      activate InstanceNameService
+      InstanceNameService -> InstanceNameRepo : deleteById()
+      activate InstanceNameRepo
+      deactivate InstanceNameRepo
+      deactivate InstanceNameService
+    else
+      AllocationInstanceController.initiateSetup -> NavigationController.renderDashboardPage : redirect:/admin/admin-dashboard
+      activate NavigationController.renderDashboardPage
+      NavigationController.renderDashboardPage --> dashboardTemplate : loads admin dashboard
+      deactivate NavigationController.renderDashboardPage
+    end
+  end
+end
+
+AllocationInstanceController.initiateSetup -> AllocationInstanceController.renderUploadPage : redirect:/admin/update-instance
+deactivate AllocationInstanceController.initiateSetup
+activate AllocationInstanceController.renderUploadPage
+AllocationInstanceController.renderUploadPage -> InstanceNameService : fetchLatestInstance() 
+activate InstanceNameService
+InstanceNameService -> InstanceNameRepo : findTopByOrderByCreatedAtDesc()
+activate InstanceNameRepo
+InstanceNameRepo --> InstanceNameService : return instance-name  
+deactivate InstanceNameRepo
+InstanceNameService --> AllocationInstanceController.renderUploadPage : return instance-name
+deactivate InstanceNameService
+
+opt if latest instance is null
+  AllocationInstanceController.renderUploadPage -> NavigationController.renderDashboardPage : redirect:/admin/admin-dashboard
+  activate NavigationController.renderDashboardPage
+  NavigationController.renderDashboardPage --> dashboardTemplate : loads admin dashboard
+  deactivate NavigationController.renderDashboardPage
+end
+
+loop sem = 5 to 8 
+  par 
+    AllocationInstanceController.renderUploadPage -> StudentService : countBySemester()
+    activate StudentService
+    StudentService -> StudentRepo : countBySemester()
+    activate StudentRepo
+    StudentRepo --> StudentService : return number of students 
+    deactivate StudentRepo
+    StudentService --> AllocationInstanceController.renderUploadPage : return number of students 
+    deactivate StudentService
+  end
+end
+
+AllocationInstanceController.renderUploadPage --> updateInstanceTemplate : loads update instance page 
+deactivate dashboardTemplate
+deactivate AllocationInstanceController.renderUploadPage
+activate updateInstanceTemplate
+
+
+
+
+
+
+
+/' Update Instance Upload part '/
+admin -> updateInstanceTemplate : uploads files 
+updateInstanceTemplate -> AllocationInstanceController.saveUploadedFiles : POST /admin/submit-data
+activate AllocationInstanceController.saveUploadedFiles
+
+par 
+  opt if student data not empty
+    AllocationInstanceController.saveUploadedFiles -> StudentService : insertAll()
+    activate StudentService
+    
+    StudentService -> DataLoader : getStudentData()
+    activate DataLoader
+    DataLoader --> StudentService : return data load status
+    deactivate DataLoader
+    
+    StudentService -> StudentRepo : saveAll()
+    activate StudentRepo
+    deactivate StudentRepo
+    StudentService --> AllocationInstanceController.saveUploadedFiles : return insertion status
+    deactivate StudentService
+  end
+  
+else
+
+ AllocationInstanceController.saveUploadedFiles -> CourseOfferingService : existsAnyOffer()
+ activate CourseOfferingService
+ CourseOfferingService -> CourseOfferingRepo : existsAnyOffer()
+ activate CourseOfferingRepo
+ CourseOfferingRepo --> CourseOfferingService : return existance status
+ deactivate CourseOfferingRepo
+ CourseOfferingService --> AllocationInstanceController.saveUploadedFiles : return existance status
+ deactivate CourseOfferingService
+ 
+ opt if course data not empty
+  AllocationInstanceController.saveUploadedFiles -> CourseService : insertAll()
+  activate CourseService
+  CourseService -> CourseService : deleteAll()
+  activate CourseService
+  deactivate CourseService
+  
+  CourseService -> DataLoader : getCourseData()
+  activate DataLoader
+  DataLoader --> CourseService : return data load status
+  deactivate DataLoader
+  
+  CourseService -> CourseRepo : saveAll()
+  activate CourseRepo
+  deactivate CourseRepo
+  CourseService --> AllocationInstanceController.saveUploadedFiles : return insertion status
+  deactivate CourseService
+ end
+ 
+ opt if course offering data not empty 
+  AllocationInstanceController.saveUploadedFiles -> CourseOfferingService : insertAll()
+  activate CourseOfferingService
+  CourseOfferingService -> CourseOfferingService : deleteAll()
+  activate CourseOfferingService
+  deactivate CourseOfferingService
+  
+  CourseOfferingService -> DataLoader : getCourseForProgram()
+  activate DataLoader
+  DataLoader --> CourseOfferingService : return data load status
+  deactivate DataLoader
+  
+  CourseOfferingService ->  CourseOfferingRepo : saveAll()
+  activate CourseOfferingRepo
+  deactivate CourseOfferingRepo
+  CourseOfferingService --> AllocationInstanceController.saveUploadedFiles : return insertion status
+  deactivate CourseOfferingService
+ end
+ 
+else
+
+ opt if institute requirement data not empty 
+  AllocationInstanceController.saveUploadedFiles -> InstituteReqService : insertAll()
+  activate InstituteReqService
+  InstituteReqService -> InstituteReqService : deleteAll()
+  activate InstituteReqService
+  deactivate InstituteReqService
+  
+  InstituteReqService -> DataLoader : getInstituteRequirements()
+  activate DataLoader
+  DataLoader --> InstituteReqService : return data load status
+  deactivate DataLoader
+  
+  InstituteReqService -> InstituteReqRepo : saveAll()
+  activate InstituteReqRepo
+  deactivate InstituteReqRepo
+  InstituteReqService --> AllocationInstanceController.saveUploadedFiles : return insertion status 
+  deactivate InstituteReqService
+ end
+  
+else 
+
+ opt if uploaded files != 0 
+  AllocationInstanceController.saveUploadedFiles -> UploadService : insertAll()
+  activate UploadService
+  UploadService -> UploadRepo : saveAllAndFlush()
+  activate UploadRepo
+  deactivate UploadRepo
+  deactivate UploadService
+ end
+  
+end
+
+deactivate updateInstanceTemplate
+AllocationInstanceController.saveUploadedFiles -> AllocationInstanceController.renderUploadPage : redirect:/admin/update-instance
+deactivate AllocationInstanceController.saveUploadedFiles
+activate AllocationInstanceController.renderUploadPage
+@enduml

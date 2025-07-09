@@ -1,0 +1,191 @@
+@startuml
+
+actor student
+
+boundary myPreferencesTemplate
+boundary myAllocationResultTemplate
+
+control "HC.RSHP" as HomePageController.renderStudentHomePage
+control "PARC.LMPS" as PreferenceAndResultController.loadMyPreferenceSummary
+control "PARC.LMAR" as PreferenceAndResultController.loadMyAllocationResult
+control "PARC.FPS" as PreferenceAndResultController.fetchPreferenceSummary
+control "PARC.FAR" as PreferenceAndResultController.fetchAllocationResult
+
+participant StudentService
+participant StudentReqService
+participant CoursePrefService
+participant SlotPrefService
+participant AllocationResultService
+participant SystemStatusService
+participant DataLoader
+
+participant StudentRepo
+participant StudentReqRepo
+participant CoursePrefRepo
+participant SlotPrefRepo
+participant AllocationResultRepo
+participant SystemStatusRepo
+
+
+activate student 
+
+/' student Preference Summary Page Part '/
+
+student -> myPreferencesTemplate : search 
+activate myPreferencesTemplate
+myPreferencesTemplate -> PreferenceAndResultController.loadMyPreferenceSummary : GET /student/my-preferences
+activate PreferenceAndResultController.loadMyPreferenceSummary
+
+PreferenceAndResultController.loadMyPreferenceSummary -> PreferenceAndResultController.fetchPreferenceSummary : fetching preferences of student 
+activate PreferenceAndResultController.fetchPreferenceSummary
+PreferenceAndResultController.fetchPreferenceSummary -> StudentService : fetchStudentDto()
+activate StudentService
+StudentService -> StudentRepo : findById()
+activate StudentRepo
+StudentRepo --> StudentService : return student info
+deactivate StudentRepo
+StudentService --> PreferenceAndResultController.fetchPreferenceSummary : return student info
+deactivate StudentService
+
+opt if student info is null
+  PreferenceAndResultController.fetchPreferenceSummary --> PreferenceAndResultController.loadMyPreferenceSummary : redirect:/student/my-preferences
+  PreferenceAndResultController.loadMyPreferenceSummary -> HomePageController.renderStudentHomePage : redirect:/student/home-page
+  activate HomePageController.renderStudentHomePage
+  
+  note over HomePageController.renderStudentHomePage
+    HomePageController.renderStudentHomePage 
+    continues in "Student HomePage - Sequence Diagram".
+  end note
+  deactivate HomePageController.renderStudentHomePage
+end
+
+par 
+
+  PreferenceAndResultController.fetchPreferenceSummary -> StudentReqService : fetchStudentRequirements()
+  activate StudentReqService
+  StudentReqService -> StudentReqRepo : findBySid()
+  activate StudentReqRepo
+  StudentReqRepo --> StudentReqService : return list of student requirements 
+  deactivate StudentReqRepo
+  StudentReqService --> PreferenceAndResultController.fetchPreferenceSummary : return list of student requirements
+  deactivate StudentReqService
+  
+else 
+
+  PreferenceAndResultController.fetchPreferenceSummary -> CoursePrefService : fetchStudentCoursePref()
+  activate CoursePrefService
+  CoursePrefService -> CoursePrefRepo : findStudentCoursePref()
+  activate CoursePrefRepo
+  CoursePrefRepo --> CoursePrefService : return list of student course preferences 
+  deactivate CoursePrefRepo
+  CoursePrefService --> PreferenceAndResultController.fetchPreferenceSummary : return list of student course preferences
+  deactivate CoursePrefService
+
+else 
+
+  PreferenceAndResultController.fetchPreferenceSummary -> SlotPrefService : fetchStudentSlotPref()
+  activate SlotPrefService
+  SlotPrefService -> SlotPrefRepo : findBySidOrderByPrefAsc()
+  activate SlotPrefRepo
+  SlotPrefRepo --> SlotPrefService : return list of student slot preferences 
+  deactivate SlotPrefRepo
+  SlotPrefService --> PreferenceAndResultController.fetchPreferenceSummary : return list of student slot preferences
+  deactivate SlotPrefService
+  
+end
+
+PreferenceAndResultController.fetchPreferenceSummary --> PreferenceAndResultController.loadMyPreferenceSummary : return my preference summary template
+deactivate PreferenceAndResultController.fetchPreferenceSummary
+PreferenceAndResultController.loadMyPreferenceSummary -> myPreferencesTemplate : loads student preference summary page
+deactivate PreferenceAndResultController.loadMyPreferenceSummary
+deactivate myPreferencesTemplate
+
+
+
+
+
+
+
+
+/' student Allocation Result Part '/
+
+student -> myAllocationResultTemplate : search
+activate myAllocationResultTemplate
+myAllocationResultTemplate -> PreferenceAndResultController.loadMyAllocationResult : GET /student/my-allocation-result
+activate PreferenceAndResultController.loadMyAllocationResult
+
+PreferenceAndResultController.loadMyAllocationResult -> SystemStatusService : fetchResultStatus()
+activate SystemStatusService
+SystemStatusService -> SystemStatusRepo : findById()
+activate SystemStatusRepo
+SystemStatusRepo --> SystemStatusService : return result status 
+deactivate SystemStatusRepo
+SystemStatusService --> PreferenceAndResultController.loadMyAllocationResult : return result status
+deactivate SystemStatusService
+
+opt if result status is not declared
+  PreferenceAndResultController.loadMyAllocationResult -> HomePageController.renderStudentHomePage : redirect:/student/home-page
+  activate HomePageController.renderStudentHomePage
+  
+  note over HomePageController.renderStudentHomePage
+    HomePageController.renderStudentHomePage 
+    continues in "Student HomePage - Sequence Diagram".
+  end note
+  deactivate HomePageController.renderStudentHomePage
+end
+
+PreferenceAndResultController.loadMyAllocationResult -> PreferenceAndResultController.fetchAllocationResult : fetching allocation result of student
+activate PreferenceAndResultController.fetchAllocationResult
+PreferenceAndResultController.fetchAllocationResult -> StudentService : fetchStudentDto()
+activate StudentService
+StudentService -> StudentRepo : findById()
+activate StudentRepo
+StudentRepo --> StudentService : return student info
+deactivate StudentRepo
+StudentService --> PreferenceAndResultController.fetchAllocationResult : return student info
+deactivate StudentService
+
+opt if student info is null
+  PreferenceAndResultController.fetchAllocationResult --> PreferenceAndResultController.loadMyAllocationResult : redirect:/student/my-allocation-result
+  PreferenceAndResultController.loadMyAllocationResult -> HomePageController.renderStudentHomePage : redirect:/student/home-page
+  activate HomePageController.renderStudentHomePage
+  
+  note over HomePageController.renderStudentHomePage
+    HomePageController.renderStudentHomePage 
+    continues in "Student HomePage - Sequence Diagram".
+  end note
+  deactivate HomePageController.renderStudentHomePage
+end
+
+par 
+
+  PreferenceAndResultController.fetchAllocationResult -> AllocationResultService : fetchAllocationResult()
+  activate AllocationResultService
+  AllocationResultService -> AllocationResultRepo : fetchAllocationResultBySid()
+  activate AllocationResultRepo
+  AllocationResultRepo --> AllocationResultService : return student allocation report 
+  deactivate AllocationResultRepo
+  AllocationResultService --> PreferenceAndResultController.fetchAllocationResult : return student allocation report 
+  deactivate AllocationResultService
+  
+else 
+
+  PreferenceAndResultController.fetchAllocationResult -> SystemStatusService : fetchSystemStatus()
+  activate SystemStatusService
+  SystemStatusService -> SystemStatusRepo : findById()
+  activate SystemStatusRepo
+  SystemStatusRepo --> SystemStatusService : return result status 
+  deactivate SystemStatusRepo
+  SystemStatusService --> PreferenceAndResultController.fetchAllocationResult : return result status 
+  deactivate SystemStatusService
+
+end
+
+PreferenceAndResultController.fetchAllocationResult --> PreferenceAndResultController.loadMyAllocationResult : return my allocation result template
+deactivate PreferenceAndResultController.fetchAllocationResult
+PreferenceAndResultController.loadMyAllocationResult -> myAllocationResultTemplate : loads my allocation result page
+deactivate PreferenceAndResultController.loadMyAllocationResult
+deactivate myAllocationResultTemplate
+
+deactivate student
+@enduml

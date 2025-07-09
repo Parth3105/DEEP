@@ -1,0 +1,65 @@
+@startuml
+
+actor admin
+
+boundary downloadReportsTemplate
+
+control "DC.DR" as DownloadController.downloadReport
+control "DC.DUD" as DownloadController.downloadUploadedData
+
+participant AllocationReportService
+participant UploadService
+
+participant AllocationReportRepo
+participant UploadRepo
+
+activate admin
+
+
+
+
+/' Downloading Allocation Reports Part '/
+
+admin -> downloadReportsTemplate : export allocation results
+activate downloadReportsTemplate
+downloadReportsTemplate -> DownloadController.downloadReport : GET /admin/download-reports/{semester}/{name}
+activate DownloadController.downloadReport
+
+DownloadController.downloadReport -> AllocationReportService : fetchReport()
+activate AllocationReportService
+AllocationReportService -> AllocationReportRepo : findById()
+activate AllocationReportRepo
+AllocationReportRepo --> AllocationReportService : return allocation report 
+deactivate AllocationReportRepo
+AllocationReportService --> DownloadController.downloadReport : return allocation report 
+deactivate AllocationReportService
+
+note over DownloadController.downloadReport 
+  required report is being downloaded
+end note
+deactivate DownloadController.downloadReport
+
+
+
+
+/' Downloading Uploaded Files Part '/
+
+admin -> downloadReportsTemplate : export input data 
+downloadReportsTemplate -> DownloadController.downloadUploadedData : GET /admin/download-reports/{name}
+activate DownloadController.downloadUploadedData
+
+DownloadController.downloadUploadedData -> UploadService : findFile()
+activate UploadService
+UploadService -> UploadRepo : findById()
+activate UploadRepo
+UploadRepo --> UploadService : return required uploaded file 
+deactivate UploadRepo
+UploadService --> DownloadController.downloadUploadedData : return required uploaded file 
+deactivate UploadService
+
+note over DownloadController.downloadUploadedData
+  required file is being downloaded
+end note
+deactivate DownloadController.downloadUploadedData
+
+@enduml

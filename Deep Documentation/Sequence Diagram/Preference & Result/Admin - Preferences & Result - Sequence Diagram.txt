@@ -1,0 +1,214 @@
+@startuml
+
+actor admin
+
+boundary studentPreferencesTemplate
+boundary allocationResultTemplate
+
+control "NC.RSPP" as NavigationController.renderStudentPreferencesPage
+control "NC.RARP" as NavigationController.renderAllocationResultsPage
+control "PARC.LSP" as PreferenceAndResultController.loadSubmittedPreferences
+control "PARC.DSP" as PreferenceAndResultController.downloadStudentPreferences
+control "PARC.LAR" as PreferenceAndResultController.loadAllocationResult
+control "PARC.FPS" as PreferenceAndResultController.fetchPreferenceSummary
+control "PARC.FAR" as PreferenceAndResultController.fetchAllocationResult
+
+participant StudentService
+participant StudentReqService
+participant CoursePrefService
+participant SlotPrefService
+participant AllocationResultService
+participant SystemStatusService
+participant DataLoader
+
+participant StudentRepo
+participant StudentReqRepo
+participant CoursePrefRepo
+participant SlotPrefRepo
+participant AllocationResultRepo
+participant SystemStatusRepo
+
+
+activate admin 
+
+/' Admin Preference Summary Page Part '/
+
+admin -> studentPreferencesTemplate : search 
+activate studentPreferencesTemplate
+studentPreferencesTemplate -> PreferenceAndResultController.loadSubmittedPreferences : GET /admin/student-preferences/{sid}
+activate PreferenceAndResultController.loadSubmittedPreferences
+
+PreferenceAndResultController.loadSubmittedPreferences -> PreferenceAndResultController.fetchPreferenceSummary : fetching preferences of student 
+activate PreferenceAndResultController.fetchPreferenceSummary
+PreferenceAndResultController.fetchPreferenceSummary -> StudentService : fetchStudentDto()
+activate StudentService
+StudentService -> StudentRepo : findById()
+activate StudentRepo
+StudentRepo --> StudentService : return student info
+deactivate StudentRepo
+StudentService --> PreferenceAndResultController.fetchPreferenceSummary : return student info
+deactivate StudentService
+
+opt if student info is null
+  PreferenceAndResultController.fetchPreferenceSummary --> PreferenceAndResultController.loadSubmittedPreferences : redirect:/admin/student-preferences
+  PreferenceAndResultController.loadSubmittedPreferences -> NavigationController.renderStudentPreferencesPage : redirect:/admin/student-preferences
+  activate NavigationController.renderStudentPreferencesPage
+  NavigationController.renderStudentPreferencesPage --> studentPreferencesTemplate : loads view student preference page
+  deactivate NavigationController.renderStudentPreferencesPage
+end
+
+par 
+
+  PreferenceAndResultController.fetchPreferenceSummary -> StudentReqService : fetchStudentRequirements()
+  activate StudentReqService
+  StudentReqService -> StudentReqRepo : findBySid()
+  activate StudentReqRepo
+  StudentReqRepo --> StudentReqService : return list of student requirements 
+  deactivate StudentReqRepo
+  StudentReqService --> PreferenceAndResultController.fetchPreferenceSummary : return list of student requirements
+  deactivate StudentReqService
+  
+else 
+
+  PreferenceAndResultController.fetchPreferenceSummary -> CoursePrefService : fetchStudentCoursePref()
+  activate CoursePrefService
+  CoursePrefService -> CoursePrefRepo : findStudentCoursePref()
+  activate CoursePrefRepo
+  CoursePrefRepo --> CoursePrefService : return list of student course preferences 
+  deactivate CoursePrefRepo
+  CoursePrefService --> PreferenceAndResultController.fetchPreferenceSummary : return list of student course preferences
+  deactivate CoursePrefService
+
+else 
+
+  PreferenceAndResultController.fetchPreferenceSummary -> SlotPrefService : fetchStudentSlotPref()
+  activate SlotPrefService
+  SlotPrefService -> SlotPrefRepo : findBySidOrderByPrefAsc()
+  activate SlotPrefRepo
+  SlotPrefRepo --> SlotPrefService : return list of student slot preferences 
+  deactivate SlotPrefRepo
+  SlotPrefService --> PreferenceAndResultController.fetchPreferenceSummary : return list of student slot preferences
+  deactivate SlotPrefService
+  
+end
+
+PreferenceAndResultController.fetchPreferenceSummary --> PreferenceAndResultController.loadSubmittedPreferences : redirect:/admin/student-preferences
+deactivate PreferenceAndResultController.fetchPreferenceSummary
+PreferenceAndResultController.loadSubmittedPreferences -> NavigationController.renderStudentPreferencesPage : redirect:/admin/student-preferences
+deactivate PreferenceAndResultController.loadSubmittedPreferences
+activate NavigationController.renderStudentPreferencesPage
+NavigationController.renderStudentPreferencesPage --> studentPreferencesTemplate : loads view student preference page
+deactivate NavigationController.renderStudentPreferencesPage
+
+
+
+
+
+
+
+
+/' Admin Download Student Preferences Part '/
+
+admin -> studentPreferencesTemplate : download student preferences 
+studentPreferencesTemplate -> PreferenceAndResultController.downloadStudentPreferences : GET /admin/student-preferences/download/{semester}
+activate PreferenceAndResultController.downloadStudentPreferences
+
+par 
+
+  PreferenceAndResultController.downloadStudentPreferences -> CoursePrefService : fetchCoursePrefBySemesterSortedBySlotAndPref()
+  activate CoursePrefService
+  CoursePrefService -> CoursePrefRepo : findBySemesterOrderBySidAscSlotAscPrefAsc()
+  activate CoursePrefRepo
+  CoursePrefRepo --> CoursePrefService : list of course preferences 
+  deactivate CoursePrefRepo
+  CoursePrefService --> PreferenceAndResultController.downloadStudentPreferences : list of course preferences
+  deactivate CoursePrefService
+
+else 
+
+  PreferenceAndResultController.downloadStudentPreferences -> SlotPrefService : fetchSlotBySemesterSortedBySidAndPref()
+  activate SlotPrefService
+  SlotPrefService -> SlotPrefRepo : findBySemesterOrderBySidAscPrefAsc()
+  activate SlotPrefRepo
+  SlotPrefRepo --> SlotPrefService : return list of slot preferences 
+  deactivate SlotPrefRepo
+  SlotPrefService --> PreferenceAndResultController.downloadStudentPreferences : return list of slot preferences
+  deactivate SlotPrefService
+
+end
+
+PreferenceAndResultController.downloadStudentPreferences -> DataLoader : createPrefSheet()
+activate DataLoader
+DataLoader --> PreferenceAndResultController.downloadStudentPreferences : return byte stream of preference sheet
+deactivate DataLoader
+deactivate PreferenceAndResultController.downloadStudentPreferences
+deactivate studentPreferencesTemplate
+
+
+
+
+
+
+
+
+/' Admin Allocation Result Part '/
+
+admin -> allocationResultTemplate : search
+activate allocationResultTemplate
+allocationResultTemplate -> PreferenceAndResultController.loadAllocationResult : GET /admin/allocation-results/{sid}
+activate PreferenceAndResultController.loadAllocationResult
+
+PreferenceAndResultController.loadAllocationResult -> PreferenceAndResultController.fetchAllocationResult : fetching allocation result of student
+activate PreferenceAndResultController.fetchAllocationResult
+PreferenceAndResultController.fetchAllocationResult -> StudentService : fetchStudentDto()
+activate StudentService
+StudentService -> StudentRepo : findById()
+activate StudentRepo
+StudentRepo --> StudentService : return student info
+deactivate StudentRepo
+StudentService --> PreferenceAndResultController.fetchAllocationResult : return student info
+deactivate StudentService
+
+opt if student info is null
+  PreferenceAndResultController.fetchAllocationResult --> PreferenceAndResultController.loadAllocationResult : redirect:/admin/allocation-results
+  PreferenceAndResultController.loadAllocationResult -> NavigationController.renderAllocationResultsPage : redirect:/admin/allocation-results
+  activate NavigationController.renderAllocationResultsPage
+  NavigationController.renderAllocationResultsPage --> allocationResultTemplate : loads view student allocation result page
+  deactivate NavigationController.renderAllocationResultsPage
+end
+
+par 
+
+  PreferenceAndResultController.fetchAllocationResult -> AllocationResultService : fetchAllocationResult()
+  activate AllocationResultService
+  AllocationResultService -> AllocationResultRepo : fetchAllocationResultBySid()
+  activate AllocationResultRepo
+  AllocationResultRepo --> AllocationResultService : return student allocation report 
+  deactivate AllocationResultRepo
+  AllocationResultService --> PreferenceAndResultController.fetchAllocationResult : return student allocation report 
+  deactivate AllocationResultService
+  
+else 
+
+  PreferenceAndResultController.fetchAllocationResult -> SystemStatusService : fetchSystemStatus()
+  activate SystemStatusService
+  SystemStatusService -> SystemStatusRepo : findById()
+  activate SystemStatusRepo
+  SystemStatusRepo --> SystemStatusService : return result status 
+  deactivate SystemStatusRepo
+  SystemStatusService --> PreferenceAndResultController.fetchAllocationResult : return result status 
+  deactivate SystemStatusService
+
+end
+
+PreferenceAndResultController.fetchAllocationResult --> PreferenceAndResultController.loadAllocationResult : redirect:/admin/allocation-results
+deactivate PreferenceAndResultController.fetchAllocationResult
+PreferenceAndResultController.loadAllocationResult -> NavigationController.renderAllocationResultsPage : redirect:/admin/allocation-results
+deactivate PreferenceAndResultController.loadAllocationResult
+activate NavigationController.renderAllocationResultsPage
+NavigationController.renderAllocationResultsPage --> allocationResultTemplate : loads view student allocation result page
+deactivate NavigationController.renderAllocationResultsPage
+deactivate allocationResultTemplate
+
+deactivate admin
+@enduml
